@@ -10,7 +10,7 @@ There are sample virtual machines configured for each of the Internet Robustness
 ## nginx (Vagrant)
 
 * Install Vagrant (http://vagrantup.com)
-* ```cd nginx/vagrant```
+* ```cd deploy/nginx/vagrant```
 * ```vagrant up```
 
 
