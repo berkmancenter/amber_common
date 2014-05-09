@@ -31,5 +31,9 @@ cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /us
 chgrp -R www-data /var/lib/cayl /usr/local/nginx/html/cayl/cache
 chmod -R g+w /var/lib/cayl /usr/local/nginx/html/cayl/cache
 
+# Schedule cron job
+crontab -l | { cat; echo "5 * * * * /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh"; } | crontab -
+
+
 # Start nginx
 /usr/local/nginx/sbin/nginx
