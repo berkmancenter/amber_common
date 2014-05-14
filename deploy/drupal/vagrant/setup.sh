@@ -7,10 +7,6 @@ apt-get -y install git mysql-client mysql-server apache2 libapache2-mod-php5 pwg
 
 sed -i "s/^bind-address/#bind-address/" /etc/mysql/my.cnf
 echo "extension=php_pdo_mysql.dll" | sudo tee -a /etc/php5/apache2/php.ini
-easy_install supervisor
-cp /vagrant/start.sh /start.sh
-cp /vagrant/foreground.sh /etc/apache2/foreground.sh
-cp /vagrant/supervisord.conf /etc/supervisord.conf
 
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 mv /usr/local/bin/composer.phar /usr/local/bin/composer
