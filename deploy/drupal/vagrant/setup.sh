@@ -16,7 +16,7 @@ ln -s ~/.composer/vendor/bin/drush  /usr/local/bin
 cp /vagrant/robustness.mk /var/robustness.mk
 rm -rf /var/www/ ; cd /var; mkdir www; cd www; drush make /var/robustness.mk -y 
 chmod a+w /var/www/sites/default ; mkdir /var/www/sites/default/files ; chown -R www-data:www-data /var/www/
-chmod 755 /vagrant/start.sh /etc/apache2/foreground.sh
+chmod 755 /vagrant/start.sh
 
 /vagrant/start.sh
 
