@@ -21,7 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. 
-
+    
   config.vm.network "forwarded_port", guest: 80, host: 9000, auto_correct: true 
 
   # Create a private network, which allows host-only access to the machine
@@ -47,13 +47,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
+  #config.vm.provider "virtualbox" do |vb|
   #   # Don't boot with headless mode
   #   vb.gui = true
   #
   #   # Use VBoxManage to customize the VM. For example to change memory:
   #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
+  #end
+
+  config.vm.provider "aws" do |aws, override|
+    config.vm.box = "dummy"
+    aws.access_key_id = ENV['AWS_ACCESS_KEY_ID']
+    aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+    aws.keypair_name = ENV['AWS_KEYPAIR_NAME']
+
+    aws.ami = "ami-018c9568"
+    aws.instance_type = "t1.micro"
+
+    aws.tags = { 'Name' => 'CAYL Drupal'}
+    override.ssh.username = "ubuntu"
+    override.ssh.private_key_path = ENV['AWS_PRIVATE_AWS_SSH_KEY_PATH']
+  end
+
   #
   # View the documentation for the provider you're using for more
   # information on available options.
