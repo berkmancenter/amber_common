@@ -1,6 +1,6 @@
 # Install prerequisites
 apt-get update
-apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl
+apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl zlib1g-dev
 
 # Get code
 cd /usr/local/src
@@ -30,10 +30,10 @@ cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /us
 # Update permissions
 chgrp -R www-data /var/lib/cayl /usr/local/nginx/html/cayl/cache
 chmod -R g+w /var/lib/cayl /usr/local/nginx/html/cayl/cache
+chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh
 
 # Schedule cron job
-crontab -l | { cat; echo "5 * * * * /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh"; } | crontab -
-
+echo "*/5 * * * * /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh" > /etc/cron.d/cayl
 
 # Start nginx
 /usr/local/nginx/sbin/nginx

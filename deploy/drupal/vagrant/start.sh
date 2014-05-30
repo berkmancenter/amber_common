@@ -22,7 +22,7 @@ a2enmod rewrite vhost_alias
 
 # Install Drupal
 cd /var/www/
-drush site-install standard -y --account-name=admin --account-pass=admin --db-url="mysqli://drupal:${DRUPAL_PASSWORD}@localhost:3306/drupal"     
+drush site-install standard -y --working-copy --account-name=admin --account-pass=admin --db-url="mysqli://drupal:${DRUPAL_PASSWORD}@localhost:3306/drupal"     
 
 # Install CAYL, and configure the CAYL filter for the full_html and filtered_html text formats
 drush en cayl -y
