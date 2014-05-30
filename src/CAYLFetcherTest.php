@@ -36,6 +36,48 @@ EOD
 
 }
 
+class NetworkUtilsTest extends \PHPUnit_Framework_TestCase {
+
+  public function testHeadersParse()
+  {
+    $raw = <<<EOD
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Accept-Ranges: bytes
+ETag: "1805770918"
+Last-Modified: Tue, 20 Nov 2012 02:11:45 GMT
+Content-Length: 611
+nnCoection: close
+Date: Thu, 29 May 2014 20:53:13 GMT
+Connection: Keep-alive
+
+EOD
+;
+    $headers = CAYLNetworkUtils::extract_headers($raw);
+    $this->assertEquals($headers["Content-Type"],"text/plain");
+  }
+
+  public function testHeadersParseCaseSensitive()
+  {
+    $raw = <<<EOD
+HTTP/1.1 200 OK
+Content-type: text/html
+Accept-Ranges: bytes
+ETag: "1805770918"
+Last-Modified: Tue, 20 Nov 2012 02:11:45 GMT
+Content-Length: 611
+nnCoection: close
+Date: Thu, 29 May 2014 20:53:13 GMT
+Connection: Keep-alive
+
+EOD
+;
+    $headers = CAYLNetworkUtils::extract_headers($raw);
+    $this->assertEquals($headers["Content-Type"],"text/html");
+  }
+}
+
+
 class CAYLAssetHelperTest extends \PHPUnit_Framework_TestCase {
 
   public function provider() {
@@ -58,6 +100,24 @@ class CAYLAssetHelperTest extends \PHPUnit_Framework_TestCase {
   {
     $result = $a->extract_assets("<SDFSD>SDFfalsdhf>la<sasdfasdfasdf<DFSFd");
     $this->assertTrue(empty($result));
+  }
+
+  /**
+   * @dataProvider provider
+   */
+  public function testBaseRewrite(CAYLAssetHelper $a)
+  {
+    $result = $a->rewrite_base_tag('<head><base href="http://tinyurl.com"/></head><body><img src="../peacock.png">And the band played on....</body>');
+    $this->assertEquals($result,'<head></head><body><img src="../peacock.png">And the band played on....</body>');
+  }
+
+  /**
+   * @dataProvider provider
+   */
+  public function testBaseRewrite2(CAYLAssetHelper $a)
+  {
+    $result = $a->rewrite_base_tag('<head><base    href=\'http://tinyurl.com\'></head><body><img src="../peacock.png">And the band played on....</body>');
+    $this->assertEquals($result,'<head></head><body><img src="../peacock.png">And the band played on....</body>');
   }
 
   /**
@@ -157,17 +217,32 @@ EOF;
   /**
    * @dataProvider provider
    */
+  public function testExpandReferencesExternal(CAYLAssetHelper $a)
+  {
+    $url = "http://example.com";
+    $assets = array("banana.jpg", 'scripts/ban.js', 'http://bananas.com/fruit');
+    $result = $a->expand_asset_references($url,$assets);
+    $this->assertEquals($result['banana.jpg']['url'],'http://example.com/banana.jpg');
+    $this->assertEquals($result['scripts/ban.js']['url'],'http://example.com/scripts/ban.js');
+    $this->assertEquals($result['http://bananas.com/fruit']['url'],'http://bananas.com/fruit');
+  }
+
+
+  /**
+   * @dataProvider provider
+   */
   public function testExpandReferencesMix(CAYLAssetHelper $a)
   {
     $url = "http://example.com";
     $assets = array("banana.jpg", 'scripts/ban.js', 'http://example.com/example.jpg', 'http://othersite.org/frank/james.css', '//example.com/funky.jpg', '/abs.css');
     $result = $a->expand_asset_references($url,$assets);
-    $this->assertEquals(count($result),5);
+    $this->assertEquals(count($result),6);
     $this->assertEquals('http://example.com/banana.jpg',$result['banana.jpg']['url']);
     $this->assertEquals('http://example.com/scripts/ban.js',$result['scripts/ban.js']['url']);
     $this->assertEquals('http://example.com/example.jpg', $result['http://example.com/example.jpg']['url']);
     $this->assertEquals('http://example.com/funky.jpg', $result['//example.com/funky.jpg']['url']);
     $this->assertEquals('http://example.com/abs.css', $result['/abs.css']['url']);
+    $this->assertEquals('http://othersite.org/frank/james.css', $result['http://othersite.org/frank/james.css']['url']);
   }
 
   /**
@@ -178,12 +253,13 @@ EOF;
     $url = "http://example.com";
     $assets = array("banana.jpg", 'scripts/?h=x', 'http://example.com/data/?q=fruit', 'http://othersite.org/frank/james.css', '//example.com/funky.jpg', '/abs.css');
     $result = $a->expand_asset_references($url,$assets);
-    $this->assertEquals(count($result),5);
+    $this->assertEquals(count($result),6);
     $this->assertEquals($result['banana.jpg']['url'],'http://example.com/banana.jpg');
     $this->assertEquals($result['scripts/?h=x']['url'],'http://example.com/scripts/?h=x');
     $this->assertEquals($result['http://example.com/data/?q=fruit']['url'],'http://example.com/data/?q=fruit');
     $this->assertEquals($result['//example.com/funky.jpg']['url'],'http://example.com/funky.jpg');
     $this->assertEquals($result['/abs.css']['url'],'http://example.com/abs.css');
+    $this->assertEquals($result['http://othersite.org/frank/james.css']['url'],'http://othersite.org/frank/james.css');
   }
 
   /**
@@ -194,12 +270,13 @@ EOF;
     $url = "http://example.com/fruit/cake";
     $assets = array("banana.jpg", 'scripts/?h=x', 'http://example.com/data/?q=fruit', 'http://othersite.org/frank/james.css', '//example.com/funky.jpg', '/abs.css');
     $result = $a->expand_asset_references($url,$assets);
-    $this->assertEquals(count($result),5);
+    $this->assertEquals(count($result),6);
     $this->assertEquals($result['banana.jpg']['url'],'http://example.com/fruit/banana.jpg');
     $this->assertEquals($result['scripts/?h=x']['url'],'http://example.com/fruit/scripts/?h=x');
     $this->assertEquals($result['http://example.com/data/?q=fruit']['url'],'http://example.com/data/?q=fruit');
     $this->assertEquals($result['//example.com/funky.jpg']['url'],'http://example.com/funky.jpg');
     $this->assertEquals($result['/abs.css']['url'],'http://example.com/abs.css');
+    $this->assertEquals($result['http://othersite.org/frank/james.css']['url'],'http://othersite.org/frank/james.css');
   }
 
   /**
@@ -305,7 +382,7 @@ EOF;
     $expected_result = <<<EOF
 <html><head><script src="banana.js" ></head>
 <body>And the band played on....And the BAND said to the
-<a href="leader.html">leader</a>.<div style="position:absolute;top:0;left:0;width:100%;height:30px;z-index:999;background-color:rgba(0,0,0,0.75);color:white;text-align:center;font:bold 18px/30px sans-serif !important;">This is a cached page</div></body></html>
+<a href="leader.html">leader</a>.<div style="position:absolute;top:0;left:0;width:100%;height:30px;z-index:999999;background-color:rgba(0,0,0,0.75);color:white;text-align:center;font:bold 18px/30px sans-serif !important;">This is a cached page</div></body></html>
 EOF;
     $result = $a->insert_banner($s, "This is a cached page");
     $this->assertEquals($result,$expected_result);

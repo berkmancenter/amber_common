@@ -59,7 +59,7 @@ class CAYLFetcher implements iCAYLFetcher {
       foreach ($assets as &$value) {
         $size += $value['info']['size_download'];
         /* For CSS assets, parse the CSS file to find and download any referenced images, and rewrite the CSS file to use them */
-        if (isset($value['headers']['Content-Type']) && ('text/css' == $value['headers']['Content-Type'])) {
+        if (isset($value['headers']['Content-Type']) && (strpos($value['headers']['Content-Type'],'text/css') !== FALSE)) {
           $css_body = stream_get_contents($value['body']);
           $css_asset_paths = $this->assetHelper->extract_css_assets($css_body);
           $css_assets = $this->assetHelper->expand_asset_references($value['url'], $css_asset_paths);
@@ -195,13 +195,14 @@ class CAYLAssetHelper {
       $base = $server . join('/',$path_array);
       foreach ($assets as $asset) {
         $asset_copy = $asset;
-        if (version_compare(phpversion(), '5.4.7', '<') && (strpos($asset,"//") === 0)) {
+        if (strpos($asset,"//") === 0) {
+          /* Ensure that every URL has a scheme. Must be done before running parse_url due to bug in PHP < 5.4.7 */
           /* Workaround for bug in parse_url: http://us2.php.net/parse_url#refsect1-function.parse-url-changelog */
           $asset_copy = "${p['scheme']}:${asset_copy}";
         }
         $asset_url = parse_url($asset_copy);
         if ($asset_url) {
-          if ((isset($asset_url['host']) && ($asset_url['host'] == $p['host'])) || !isset($asset_url['host'])) {
+          if (!isset($asset_url['host'])) {
             $asset_copy = CAYLNetworkUtils::full_relative_path($asset_copy);
             if ($asset_copy && $asset_copy[0] == '/') {
               /* Absolute path */
@@ -212,6 +213,8 @@ class CAYLAssetHelper {
               $asset_path = join('/',array($base, $asset_copy));
             }
             $result[$asset]['url'] = $asset_path;
+          } else {
+            $result[$asset]['url'] = $asset_copy;
           }
         }
       }
@@ -240,14 +243,28 @@ class CAYLAssetHelper {
         $result = str_replace($key,$p,$result);
       }
     }
+    $result = $this->rewrite_base_tag($result);
     return $result;
   }
 
+  /** 
+   * Rewrite the "<base href='foo'/>" tag in the header if it exists. This tag sets the base URL from which 
+   * relative URLs are relative to, which gives us problems if it refers back to the original site.
+   **/ 
+  public function rewrite_base_tag($body) {
+    $body = preg_replace('/<base\s+href=[\'"]\S+[\'"]\/?>/','',$body,1);
+    return $body;
+  }
+
+/* <script type="text/javascript">window.onbeforeunload = function(e) { return "This page is trying to beat it"; }; window.onload = function() { window.onbeforeunload=null; }</script>  */
   public function insert_banner($body, $text) {
     $banner = <<<EOD
-<div style="position:absolute;top:0;left:0;width:100%;height:30px;z-index:999;background-color:rgba(0,0,0,0.75);color:white;text-align:center;font:bold 18px/30px sans-serif !important;">${text}</div>
+<div style="position:absolute;top:0;left:0;width:100%;height:30px;z-index:999999;background-color:rgba(0,0,0,0.75);color:white;text-align:center;font:bold 18px/30px sans-serif !important;">${text}</div>
 EOD;
-    $result = str_ireplace("</body>","${banner}</body>",$body);
+    $result = str_ireplace("</body>","${banner}</body>",$body,$count);
+    if ($count == 0) {
+      $result = $body . $banner;
+    }
     return $result;
   }
 
@@ -300,7 +317,8 @@ class CAYLNetworkUtils {
 
   public static function full_relative_path($url) {
     $dict = parse_url($url);
-    $result = isset($dict['path']) ? $dict['path'] : '';
+    $result = isset($dict['host']) ? "/" . $dict['host'] : '';
+    $result .= isset($dict['path']) ? $dict['path'] : '';
     $result .= isset($dict['query']) ? '?' . $dict['query'] : '';
     return $result;
   }
@@ -310,12 +328,15 @@ class CAYLNetworkUtils {
    * @param $raw_headers string of headers from the HTTP response header
    * @return array
    */
-  private static function extract_headers($raw_headers) {
+  public static function extract_headers($raw_headers) {
     $headers = array();
       if ($raw_headers) {
       foreach (explode(PHP_EOL,$raw_headers) as $line) {
         $header = explode(":",$line);
         if (count($header) == 2) {
+          if (strtolower($header[0]) == "content-type") {
+            $header[0] = "Content-Type"; /* Fix up case if necessary */
+          }
           $headers[$header[0]] = trim($header[1]);
         }
       }
@@ -355,6 +376,10 @@ class CAYLNetworkUtils {
           CURLOPT_HEADER => TRUE,           /* Return header information as part of the file */
           CURLOPT_FILE => $tmp_body_file,
           CURLOPT_WRITEHEADER => $tmp_header_file,
+          CURLOPT_USERAGENT => "CAYL/0.1",
+          // CURLOPT_VERBOSE => true,
+          // CURLOPT_PROXY => 'localhost:8889',
+          // CURLOPT_PROXYTYPE => CURLPROXY_SOCKS5,
         );
 
         if (curl_setopt_array($ch, $additional_options + $options) === FALSE) {
@@ -370,7 +395,6 @@ class CAYLNetworkUtils {
         curl_close($ch);
         fclose($tmp_header_file);
         fclose($tmp_body_file);
-
       } catch (RuntimeException $e) {
         error_log($e->getMessage());
         curl_close($ch);
