@@ -30,7 +30,7 @@ The Drupal server will be available at http://localhost:9000, with the Internet 
     * AWS_KEYPAIR_NAME
     * AWS_PRIVATE_AWS_SSH_KEY_PATH
 * ```cd deploy/drupal/vagrant```
-* ```vagrant up --provider=AWS```
+* ```vagrant up --provider=aws```
 * ```vagrant ssh```
 * Edit the /etc/apache2/sites-available/000-default.conf to contain:
 ```
