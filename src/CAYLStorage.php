@@ -75,6 +75,31 @@ class CAYLStorage implements iCAYLStorage {
   }
 
   /**
+   * Define the relative path for the asset, based on the asset filename, body, and
+   * headers provided.  
+   */
+  public function build_asset_path($asset) {
+    $url = md5($asset['url']);
+    $ext = "";
+    /* Add .css extension if Content-Type is text/css */
+    $ct = isset($asset['headers']['Content-Type']) ? $asset['headers']['Content-Type'] : "";
+    if ((strpos($ct,'text/css') !== FALSE)) {
+      $ext = ".css";
+    } else {
+      $extension_candidate = substr($asset['url'], strrpos($asset['url'], '.'));
+      /* Additional heuristic to see if this is really an extension that the browser needs to parse the html 
+         Could also create a mapping of content-types to filename extensions */
+
+      if (strrpos($extension_candidate, '?') !== FALSE) {
+        $extension_candidate = substr($extension_candidate, 0, strrpos($extension_candidate, '?'));
+      }
+      if ((strlen($extension_candidate) < 5) && (substr($extension_candidate,-1,1) != "/"))
+        $ext = $extension_candidate;      
+    }
+    return $url . $ext;
+  }
+
+  /**
    * Lookup metadata for a cached item based on ID or URL
    * @param $key string URL or an MD5 hash
    * @return array
@@ -130,15 +155,10 @@ class CAYLStorage implements iCAYLStorage {
 
     // Save root file
     $filename = join(DIRECTORY_SEPARATOR,array($dir,$id));
-    $root_file = fopen($filename,'w');
-    if (!$root_file) {
+    if (file_put_contents($filename, $root) === FALSE) {
       error_log(join(":", array(__FILE__, __METHOD__, "Could not save cache file", $dir)));
       return false;
     }
-    while ($line = fgets($root)) {
-      fputs($root_file,$line);
-    }
-    fclose($root_file);
 
     if (!empty($assets)) {
       $this->save_assets($id, $assets);
@@ -278,7 +298,8 @@ class CAYLStorage implements iCAYLStorage {
   }
 
   /**
-   * Save a list of assets for an ID to a directory within the cache file system
+   * Save a list of assets for an ID to a directory within the cache file system. Filename of the asset
+   * is an MD5 hash of the URL, with the file extension added back
    * @param $id string of the item for which the assets are being saved
    * @param array $assets with the url and an open resource for each asset to be saved
    * @return bool
@@ -289,29 +310,28 @@ class CAYLStorage implements iCAYLStorage {
       return false;
     }
     foreach ($assets as $asset) {
-      $url_path = CAYLNetworkUtils::full_relative_path($asset['url']);
-      $url_path = preg_replace("/^\\//","",$url_path); /* Remove leading '/' */
-      if ($url_path) {
-        $path_array = explode('/',$url_path);
-        $asset_path = join(DIRECTORY_SEPARATOR,array_merge(array($base_asset_path), $path_array));
-        if (!file_exists(dirname($asset_path))) {
-          if (!mkdir(dirname($asset_path), 0777, true)) {
-            error_log(join(":", array(__FILE__, __METHOD__, "Could not create asset directory for asset", $asset_path)));
-            continue;
-          }
-        }
-        $asset_file = fopen($asset_path,"w");
-        if (!$asset_file) {
-          error_log(join(":", array(__FILE__, __METHOD__, "Could not save asset", $id, $asset_path)));
+      if (empty($asset['url'])) {
+        error_log(join(":", array(__FILE__, __METHOD__, "Could not save asset with no URL specified", $id)));
+        continue;
+      }
+      $asset_path = join(DIRECTORY_SEPARATOR,array($base_asset_path, $this->build_asset_path($asset)));
+      if (empty($asset_path)) {
+        error_log(join(":", array(__FILE__, __METHOD__, "Could not generate asset path to save asset ", $id, $asset['url'])));
+        continue;
+      }
+      if (!file_exists(dirname($asset_path))) {
+        if (!mkdir(dirname($asset_path), 0777, true)) {
+          error_log(join(":", array(__FILE__, __METHOD__, "Could not create asset directory for asset", $asset_path, $asset['url'])));
           continue;
         }
-        while ($line = fgets($asset['body'])) {
-          fputs($asset_file,$line);
-        }
-        fclose($asset_file);
-      } else {
-        //TODO: This could happen if the asset points to the domain root. A problem, true, but this error message is not right in that case
-        error_log(join(":", array(__FILE__, __METHOD__, "Could not parse asset URL", $id, $asset['url'])));
+      }
+      if (empty($asset['body'])) {
+        error_log(join(":", array(__FILE__, __METHOD__, "Could not save asset with empty content", $id, $asset_path, $asset['url'])));
+        continue;
+      }
+      if (file_put_contents($asset_path, $asset['body']) === FALSE) {
+        error_log(join(":", array(__FILE__, __METHOD__, "Could not save asset", $id, $asset_path, $asset['url'])));
+        continue;
       }
     }
     return true;
