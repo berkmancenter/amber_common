@@ -40,9 +40,13 @@ http {
         #access_log  logs/host.access.log  main;
 
         location / {
-    	    include cayl.conf;
+            include cayl.conf;
             root   html;
             index  index.html index.htm;
+        }
+
+        location /noamber {
+            cayl off;
         }
 
         #error_page  404              /404.html;
