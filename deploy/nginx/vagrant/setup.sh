@@ -1,6 +1,6 @@
 # Install prerequisites
-apt-get update
-apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl zlib1g-dev
+sudo apt-get update
+sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl zlib1g-dev
 
 # Get code
 cd /usr/local/src
@@ -14,7 +14,7 @@ tar xzf nginx-1.6.0.tar.gz
 cd nginx-1.6.0
 ./configure --add-module=../ngx_http_substitutions_filter_module --add-module=../robustness_nginx
 make
-make install
+sudo make install
 
 # CAYL configuration
 cp /vagrant/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
