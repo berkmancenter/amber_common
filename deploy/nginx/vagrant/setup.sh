@@ -33,7 +33,7 @@ chmod -R g+w /var/lib/cayl /usr/local/nginx/html/cayl/cache
 chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh
 
 # Schedule cron job
-echo "*/5 * * * * /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh" > /etc/cron.d/cayl
+echo "*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh" > /etc/cron.d/cayl
 
 # Start nginx
 /usr/local/nginx/sbin/nginx
