@@ -33,7 +33,10 @@ chmod -R g+w /var/lib/amber /usr/local/nginx/html/amber/cache
 chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh
 
 # Schedule cron job
-echo "*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh" > /etc/cron.d/amber
+cat > /etc/cron.d/amber << EOF
+*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh
+15 3 * * *  www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-check.sh
+EOF
 
 # Start nginx
 /usr/local/nginx/sbin/nginx
