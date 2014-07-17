@@ -40,13 +40,13 @@ http {
         #access_log  logs/host.access.log  main;
 
         location / {
-            include cayl.conf;
+            include amber.conf;
             root   html;
             index  index.html index.htm;
         }
 
         location /noamber {
-            cayl off;
+            amber off;
         }
 
         #error_page  404              /404.html;

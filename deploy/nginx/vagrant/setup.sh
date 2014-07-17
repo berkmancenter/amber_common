@@ -18,22 +18,22 @@ sudo make install
 
 # CAYL configuration
 cp /vagrant/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
-cp /usr/local/src/robustness_nginx/cayl.conf /usr/local/nginx/conf
+cp /usr/local/src/robustness_nginx/amber.conf /usr/local/nginx/conf
 
-mkdir /var/lib/cayl
-sqlite3 /var/lib/cayl/cayl.db < /usr/local/src/robustness_nginx/cayl.sql
+mkdir /var/lib/amber
+sqlite3 /var/lib/amber/amber.db < /usr/local/src/robustness_nginx/amber.sql
 
-mkdir /usr/local/nginx/html/cayl
-mkdir /usr/local/nginx/html/cayl/cache
-cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /usr/local/nginx/html/cayl
+mkdir /usr/local/nginx/html/amber
+mkdir /usr/local/nginx/html/amber/cache
+cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /usr/local/nginx/html/amber
 
 # Update permissions
-chgrp -R www-data /var/lib/cayl /usr/local/nginx/html/cayl/cache
-chmod -R g+w /var/lib/cayl /usr/local/nginx/html/cayl/cache
+chgrp -R www-data /var/lib/amber /usr/local/nginx/html/amber/cache
+chmod -R g+w /var/lib/amber /usr/local/nginx/html/amber/cache
 chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh
 
 # Schedule cron job
-echo "*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh" > /etc/cron.d/cayl
+echo "*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh" > /etc/cron.d/amber
 
 # Start nginx
 /usr/local/nginx/sbin/nginx

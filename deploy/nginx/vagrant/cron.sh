@@ -1,9 +1,9 @@
  #!/bin/bash
 
- PIDS=`ps aux | grep CAYLRunner.php | grep -v grep`
+ PIDS=`ps aux | grep AmberRunner.php | grep -v grep`
  if [ -z "$PIDS" ]; then
-     echo "Starting CAYLRunner.php ..."
-     while php /usr/local/src/robustness_common/src/CAYLRunner.php dequeue; do true ; done
+     echo "Starting AmberRunner.php ..."
+     while php /usr/local/src/robustness_common/src/AmberRunner.php dequeue; do true ; done
  else
-     echo "CAYLRunner.php already running."
+     echo "AmberRunner.php already running."
  fi
