@@ -30,13 +30,17 @@ cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /us
 # Update permissions
 chgrp -R www-data /var/lib/amber /usr/local/nginx/html/amber/cache
 chmod -R g+w /var/lib/amber /usr/local/nginx/html/amber/cache
-chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron.sh
+chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-check.sh
 
 # Schedule cron job
 cat > /etc/cron.d/amber << EOF
-*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh
-15 3 * * *  www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-check.sh
+*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh 2>&1 /var/log/amber
+15 3 * * *  www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-check.sh 2>&1 /var/log/amber
 EOF
+
+# Setup permissions for cron job logs
+touch /var/log/amber
+chown www-data /var/log/amber
 
 # Start nginx
 /usr/local/nginx/sbin/nginx
