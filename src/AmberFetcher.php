@@ -44,6 +44,9 @@ class AmberFetcher implements iAmberFetcher {
     }
 
     $size = $root_item['info']['size_download'];
+    if ($size == 0) {
+      throw new RuntimeException("Empty document"); 
+    }
     // Get other assets
     if (isset($root_item['headers']['Content-Type']) &&
         ($content_type = $root_item['headers']['Content-Type']) &&
