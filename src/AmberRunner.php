@@ -60,6 +60,8 @@ function cache($url) {
       $cache_metadata = $fetcher->fetch($url);
     } catch (RuntimeException $re) {
       error_log(sprintf("Did not cache (%s): %s", $url, $re->getMessage()));
+      $update['message'] = $re->getMessage();
+      $status->save_check($update);        
       return;
     }
     if ($cache_metadata) {
