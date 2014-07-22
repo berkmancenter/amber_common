@@ -43,7 +43,7 @@ class AmberStatus implements iAmberStatus {
   private function get_item($url, $table) {
     $query = $this->db->prepare("SELECT * FROM $table WHERE url = :url");
     $query->execute(array('url' => $url));
-    $result = ($query->rowCount() == 1) ? $query->fetch(PDO::FETCH_ASSOC) : array();
+    $result = $query->fetch(PDO::FETCH_ASSOC);
     $query->closeCursor();
     return $result;
   }
