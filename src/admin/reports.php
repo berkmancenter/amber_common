@@ -47,6 +47,14 @@
 		return $status->get_cache_size();		
 	}
 
+	function last_check() {
+		global $config;
+		$db = get_database($config['database']);
+		$result = $db->query("SELECT value FROM amber_variables WHERE name = 'last_run'");
+		$row = $result->fetch();
+		return (empty($row) ? "Never" : date("r", $row[0]));
+	}
+
 	/* Delete an item */
 	function delete($id) {
 		global $config;
@@ -62,15 +70,57 @@
 
 	}
 
+	function get_sort() {
+		$result = "";
+		if (isset($_GET['sort'])) {
+			switch ($_GET['sort']) {
+				case 'checked':
+					$result = "ORDER BY c.last_checked";
+					break;
+				case 'cached':
+					$result = "ORDER BY ca.date";
+					break;
+				case 'status':
+					$result = "ORDER BY c.status";
+					break;
+			}
+			if (isset($_GET['dir'])) {
+				switch ($_GET['dir']) {
+					case "asc":
+						$result .= " ASC";
+						break;
+					case "desc":
+						$result .= " DESC";
+						break;
+				}
+			}
+		}
+		return $result;
+	}
+
+	function sort_link($column) {
+		$href = "${script_location}?sort=${column}";
+		if (isset($_GET['sort']) && ($_GET['sort'] == $column)) {
+			if (isset($_GET['dir']) && ($_GET['dir'] == "desc")) {
+				$href .= "&dir=asc";
+			} else {
+				$href .= "&dir=desc";
+			}
+		}
+		return $href;
+	}
+
 	/* Get the data to display on the report page */
 	function get_report() {
 		global $config;
 		$db = get_database($config['database']);
-		$result = $db->query(
+		$statement = 
 			"SELECT c.id, c.url, c.status, c.last_checked, c.message, ca.date, ca.size, ca.location, a.views, a.date as activity_date " .
 			"FROM amber_check c " .
 			"LEFT JOIN amber_cache ca on ca.id = c.id " .
-			"LEFT JOIN amber_activity a on ca.id = a.id ");
+			"LEFT JOIN amber_activity a on ca.id = a.id ";
+		$statement .= get_sort();
+		$result = $db->query($statement);
 		$rows = array();
 		while ($row = $result->fetch()) {
 			$rows[] = $row;
@@ -115,7 +165,7 @@
 				<tbody>
 					<tr><td>Captures preserved</td><td><?php print(cache_size()); ?></td></tr>
 					<tr><td>Links to capture</td><td><?php print(queue_size()); ?></td></tr>
-					<tr><td>Last check</td><td></td></tr>
+					<tr><td>Last check</td><td><?php print(last_check()); ?></td></tr>
 					<tr><td>Disk space used</td><td><?php print(disk_usage() . " of " . $config['amber_max_disk'] * 1024 * 1024); ?></td></tr>
 				</tbody>
 			</table>
@@ -151,9 +201,9 @@
 <tr>
 <th>Site</th>
 <th>URL</th>
-<th>Status</th>
-<th>Last Checked</th>
-<th>Date Preserved</th>
+<th><a href='<?php print sort_link("status"); ?>'>Status</a></th>
+<th><a href='<?php print sort_link("checked"); ?>'>Last Checked</a></th>
+<th><a href='<?php print sort_link("cached"); ?>'>Date Preserved</a></th>
 <th>Size</th>
 <th>Last Viewed</th>
 <th>Total Views</th>
