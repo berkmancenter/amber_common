@@ -135,7 +135,7 @@ function disk_space_purge() {
   global $config;
 
   $status = get_status();
-  $max_size = isset($config['amber_max_disk']) ? isset($config['amber_max_disk']) : 1000;
+  $max_size = isset($config['amber_max_disk']) ? $config['amber_max_disk'] : 1000;
   $purge = $status->get_items_to_purge($max_size * 1024 * 1024);
   if ($purge) {
     $storage = get_storage();
