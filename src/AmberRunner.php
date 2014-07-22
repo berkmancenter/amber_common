@@ -75,22 +75,31 @@ function read_config($location) {
 
 /* Download a single URL and save it to the cache */
 function cache($url) {
+  global $config;
+
   $fetcher = get_fetcher();
   $status = get_status();
   $checker = get_checker();
+  print "Checking ${url}\n";
   $last_check = $status->get_check($url);
   if (($update = $checker->check(empty($last_check) ? array('url' => $url) : $last_check, true)) !== false) {
     $status->save_check($update);
-    try {
-      $cache_metadata = $fetcher->fetch($url);
-    } catch (RuntimeException $re) {
-      error_log(sprintf("Did not cache (%s): %s", $url, $re->getMessage()));
-      $update['message'] = $re->getMessage();
-      $status->save_check($update);        
-      return;
-    }
-    if ($cache_metadata) {
-      $status->save_cache($cache_metadata);
+
+    /* Now cache the item if we should */
+    $existing_cache = $status->get_cache($url);
+    if ($update['status'] && ((isset($config['amber_update_strategy']) && $config['amber_update_strategy']) || !$existing_cache)) {
+      print "Caching ${url}\n";
+      try {
+        $cache_metadata = $fetcher->fetch($url);
+      } catch (RuntimeException $re) {
+        error_log(sprintf("Did not cache (%s): %s", $url, $re->getMessage()));
+        $update['message'] = $re->getMessage();
+        $status->save_check($update);        
+        return;
+      }
+      if ($cache_metadata) {
+        $status->save_cache($cache_metadata);
+      }
     }
   }
 }
@@ -107,7 +116,6 @@ function dequeue() {
   if ($row and $row['url']) {
     $update_query = $db_connection->prepare('UPDATE amber_queue SET lock = :time WHERE url = :url');
     $update_query->execute(array('url' => $row['url'], 'time' => time()));
-    print "Caching " . $row['url'] . "\n";
     cache($row['url']);
     $update_query = $db_connection->prepare('DELETE from amber_queue where url = :url');
     $update_query->execute(array('url' => $row['url']));
