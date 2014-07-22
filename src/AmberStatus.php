@@ -191,10 +191,17 @@ class AmberStatus implements iAmberStatus {
     $result = array();
     $current_size = $this->get_cache_size();
     if ($current_size > $max_disk) {
+      
+      /* Sqlite and Mysql have different names for a function we need */
+      if ($this->db->getAttribute(PDO::ATTR_DRIVER_NAME) == "sqlite")
+        $max_function = "max";
+      else
+        $max_function = "greatest";
+
       $query = $this->db->prepare(
-        'SELECT cc.id, cc.url, size FROM amber_cache cc ' .
-        'LEFT JOIN amber_activity ca ON cc.id = ca.id ' .
-        'ORDER BY greatest(IFNULL(ca.date,0),cc.date) ASC');
+        "SELECT cc.id, cc.url, size FROM amber_cache cc " .
+        "LEFT JOIN amber_activity ca ON cc.id = ca.id " .
+        "ORDER BY ${max_function}(IFNULL(ca.date,0),cc.date) ASC");
       $query->execute();
       $size_needed = $current_size - $max_disk;
       while ($row = $query->fetch(PDO::FETCH_ASSOC)) {

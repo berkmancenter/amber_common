@@ -36,6 +36,7 @@ function main($argc, $argv) {
   switch ($options["action"]) {
     case false:
     case "dequeue":
+      disk_space_purge();
       dequeue();
       break;
     case "check":
@@ -128,6 +129,22 @@ function schedule_checks() {
     $insert_query->execute(array('url' => $url, 'created' => time()));
   }
   print "Scheduled " . count($urls) . " urls for checking\n";
+}
+
+function disk_space_purge() {
+  global $config;
+
+  $status = get_status();
+  $max_size = isset($config['amber_max_disk']) ? isset($config['amber_max_disk']) : 1000;
+  $purge = $status->get_items_to_purge($max_size * 1024 * 1024);
+  if ($purge) {
+    $storage = get_storage();
+    foreach ($purge as $item) {
+      $storage->clear_cache_item($item['id']);
+      $status->delete($item['id']);
+      print ("Deleting to stay under disk space limits: " . $item['url'] . "\n");
+    }
+  }
 }
 
 function get_database() {
