@@ -219,8 +219,8 @@ class AmberStatus implements iAmberStatus {
    * Delete all status information. Do NOT delete activity data.
    */
   public function delete_all() {
-    $this->db->prepare("TRUNCATE amber_cache")->execute();
-    $this->db->prepare("TRUNCATE amber_check")->execute();
+    $this->db->prepare("DELETE FROM amber_cache")->execute();
+    $this->db->prepare("DELETE FROM amber_check")->execute();
   }
 
   /**
