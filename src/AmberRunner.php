@@ -37,6 +37,7 @@ function main($argc, $argv) {
     case false:
     case "dequeue":
       disk_space_purge();
+      update_last_checked();
       dequeue();
       break;
     case "check":
@@ -153,6 +154,13 @@ function disk_space_purge() {
       print ("Deleting to stay under disk space limits: " . $item['url'] . "\n");
     }
   }
+}
+
+function update_last_checked() {
+    global $config;
+    $db_connection = get_database();
+    $insert_query = $db_connection->prepare("INSERT OR REPLACE INTO amber_variables (name, value) VALUES('last_run', :time)");
+    $insert_query->execute(array('time' => time()));
 }
 
 function get_database() {
