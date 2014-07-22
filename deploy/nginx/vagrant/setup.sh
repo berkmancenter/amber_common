@@ -16,19 +16,29 @@ cd nginx-1.6.0
 make
 sudo make install
 
-# CAYL configuration
+# Amber configuration - Install template nginx configuration file
 cp /vagrant/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
+
+# Amber configuration - Install the amber-specific nginx configuration file
 cp /usr/local/src/robustness_nginx/amber.conf /usr/local/nginx/conf
 
+# Amber configuration - Setup the database
 mkdir /var/lib/amber
 sqlite3 /var/lib/amber/amber.db < /usr/local/src/robustness_nginx/amber.sql
 
+# Amber configuration - Setup the cache directory
 mkdir /usr/local/nginx/html/amber
 mkdir /usr/local/nginx/html/amber/cache
+
+# Amber configuration - Setup the admin control panel
+mkdir /usr/local/nginx/html/amber/admin
+ln -s /usr/local/src/robustness_common/src/admin/reports.php /usr/local/nginx/html/amber/admin/reports.php
+
+# Amber configuration - Install the Amber CSS and Javascript
 cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /usr/local/nginx/html/amber
 
 # Update permissions
-chgrp -R www-data /var/lib/amber /usr/local/nginx/html/amber/cache
+chgrp -R www-data /var/lib/amber /usr/local/nginx/html/amber
 chmod -R g+w /var/lib/amber /usr/local/nginx/html/amber/cache
 chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-check.sh
 
