@@ -10,7 +10,7 @@
 	/* Required initialization. The AMBER_CONFIG attribute must be set in the nginx configuration */
 	date_default_timezone_set('UTC');
 	$config = parse_ini_file($_SERVER['AMBER_CONFIG']);
-	$script_location = "/amber/admin/reports.php";
+	$script_location = "/amber/admin/";
 
 	function get_database($db) {
 	  	try {
@@ -22,13 +22,44 @@
 	  	return $db_connection;
 	}
 
+	function cache_size() {
+		global $config;
+		$db = get_database($config['database']);
+		$query = $db->query("SELECT COUNT(*) FROM amber_cache");
+		$result = $query->fetch();
+    	$query->closeCursor();
+	  	return $result[0];
+	}
+
+	function queue_size() {
+		global $config;
+		$db = get_database($config['database']);
+		$query = $db->query("SELECT COUNT(*) FROM amber_queue");
+		$result = $query->fetch();
+    	$query->closeCursor();
+	  	return $result[0];
+	}
+
+	function disk_usage() {
+		global $config;
+		$db = get_database($config['database']);
+		$status = new AmberStatus(get_database($config['database']));
+		return $status->get_cache_size();		
+	}
+
 	/* Delete an item */
 	function delete($id) {
 		global $config;
 		$storage = new AmberStorage($config['cache']);
-		$storage->clear_cache_item($id);
 		$status = new AmberStatus(get_database($config['database']));
-		$status->delete($id);
+		if ($id == "all") {
+			$storage->clear_cache();
+			$status->delete_all();
+		} else {
+			$storage->clear_cache_item($id);
+			$status->delete($id);
+		}
+
 	}
 
 	/* Get the data to display on the report page */
@@ -63,10 +94,58 @@
 
 <!DOCTYPE html>
 <head>
+<meta name="robots" content="nofollow" />
 </head>
 <body>
-<h1>Amber Data</h1>
 
+<h1>Amber Dashboard</h1>
+
+<table>
+	<tr>
+		<td>
+			<h2>Global Statistics</h2>
+		</td>
+		<td>
+			<h2>Storage Settings</h2>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<table border=1>
+				<tbody>
+					<tr><td>Captures preserved</td><td><?php print(cache_size()); ?></td></tr>
+					<tr><td>Links to capture</td><td><?php print(queue_size()); ?></td></tr>
+					<tr><td>Last check</td><td></td></tr>
+					<tr><td>Disk space used</td><td><?php print(disk_usage() . " of " . $config['amber_max_disk'] * 1024 * 1024); ?></td></tr>
+				</tbody>
+			</table>
+			<a href="<?php print $script_location ?>?delete=all">Delete all captures</a>
+		</td>
+
+		<td valign="top">
+			<table border=1>
+				<thead>
+					<tr>
+						<th>Setting</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><td>Maximum file size (kB)</td><td><?php print $config['amber_max_file']; ?></td></tr>
+					<tr><td>Maximum disk usage (MB)</td><td><?php print $config['amber_max_disk']; ?></td></tr>
+					<tr><td>Database location</td><td><?php print $config['database']; ?></td></tr>
+					<tr><td>Storage location</td><td><?php print $config['cache']; ?></td></tr>
+					<tr><td>Update captures periodically</td><td><?php print ($config['amber_update_strategy'] ? "Yes" : "No"); ?></td></tr>
+					<tr><td valign="top">Excluded sites</td><td><?php print join("<br/>",$config['amber_excluded_sites']); ?></td></tr>
+					<tr><td valign="top">Excluded file formats</td><td><?php print join("<br>", $config['amber_excluded_format']); ?></td></tr>
+					</tr>
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<h2>Amber Data</h2>
 <table border=1>
 <thead>
 <tr>
