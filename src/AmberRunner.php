@@ -5,18 +5,25 @@ require_once 'AmberFetcher.php';
 require_once 'AmberStorage.php';
 require_once 'AmberStatus.php';
 
-$db = "/var/lib/amber/amber.db";
-$cache_location = "/usr/local/nginx/html/amber/cache";
+$config = array();
+$config['database'] = "/var/lib/amber/amber.db";
+$config['cache'] = "/usr/local/nginx/html/amber/cache";
 date_default_timezone_set('UTC');
 
 function main($argc, $argv) {
-  global $db, $cache_location;
-  $options = getopt("",array("action::", "db::", "cache::", "url::", "help"));
+  global $config;
+  $options = getopt("",array("action::", "db::", "cache::", "url::", "ini::", "help"));
+  if (isset($options["ini"])) {
+    $ini_config = read_config($options["ini"]);
+    if (!empty($ini_config)) {
+      $config = array_merge($config, $ini_config);
+    }
+  }
   if (isset($options["db"])) {
-    $db = $options["db"];
+    $config['database'] = $options["db"];
   }
   if (isset($options["cache"])) {
-    $cache_location = $options["cache"];
+    $config['cache'] = $options["cache"];
   }
   if (isset($options["help"])) {
     usage();
@@ -25,6 +32,7 @@ function main($argc, $argv) {
   if (!isset($options["action"])) {
     $options["action"] = "dequeue";
   }
+
   switch ($options["action"]) {
     case false:
     case "dequeue":
@@ -48,7 +56,20 @@ function main($argc, $argv) {
 }
 
 function usage() {
-  print "Usage: $argc [--action=dequeue|cache|check|help] [--db=path_to_database] [--cache=path_to_cache] [--url=url_to_cache]\n";
+  print "Usage: $argc [--action=dequeue|cache|check|help] [--db=path_to_database] [--cache=path_to_cache] [--ini=path_to_config_file] [--url=url_to_cache]\n";
+}
+
+function read_config($location) {
+  if (!file_exists($location)) {
+    error_log(sprintf("Could not load ini file at (%s): %s", $location, "File does not exist"));  
+    return array();
+  }
+  try {
+    $ini_config = parse_ini_file($location);  
+  } catch (RuntimeException $re) {
+    error_log(sprintf("Could not load ini file at (%s): %s", $location, $re->getMessage()));
+  }
+  return $ini_config;
 }
 
 /* Download a single URL and save it to the cache */
@@ -110,9 +131,9 @@ function schedule_checks() {
 }
 
 function get_database() {
-  global $db;
+  global $config;
   try {
-    $db_connection = new PDO('sqlite:' . $db);
+    $db_connection = new PDO('sqlite:' . $config['database']);
   } catch (PDOException $e) {
     print "Error: Cannot open database: " . $e->getMessage();
     exit(1);
@@ -121,15 +142,13 @@ function get_database() {
 }
 
 function get_storage() {
-  global $cache_location;
-  return new AmberStorage($cache_location);
+  global $config;
+  return new AmberStorage($config['cache']);
 }
 
 function get_fetcher() {
-  return new AmberFetcher(get_storage(), array(
-    'amber_max_file' => 1000,
-    'header_text' => "This is a cached page",
-  ));
+  global $config;
+  return new AmberFetcher(get_storage(), $config);
 }
 
 function get_checker() {
@@ -137,9 +156,9 @@ function get_checker() {
 }
 
 function get_status() {
-  global $db;
+  global $config;
   try {
-    $db_connection = new PDO('sqlite:' . $db);
+    $db_connection = new PDO('sqlite:' . $config['database']);
   } catch (PDOException $e) {
     print "Error: Cannot open database: " . $e->getMessage();
     return null;
