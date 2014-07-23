@@ -1,5 +1,6 @@
 robustness_common
 =================
+[![Build Status](https://travis-ci.org/berkmancenter/robustness_common.png?branch=master)](https://travis-ci.org/berkmancenter/robustness_common)
 
 Code and documentation for the Internet Robustness project that's used across multiple platforms
 
