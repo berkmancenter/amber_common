@@ -1,6 +1,6 @@
 # Install prerequisites
 sudo apt-get update
-sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl zlib1g-dev
+sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl php5-fpm zlib1g-dev
 
 # Get code
 cd /usr/local/src
@@ -31,8 +31,7 @@ mkdir /usr/local/nginx/html/amber
 mkdir /usr/local/nginx/html/amber/cache
 
 # Amber configuration - Setup the admin control panel
-mkdir /usr/local/nginx/html/amber/admin
-ln -s /usr/local/src/robustness_common/src/admin/reports.php /usr/local/nginx/html/amber/admin/reports.php
+ln -s /usr/local/src/robustness_common/src/admin /usr/local/nginx/html/amber/admin
 
 # Amber configuration - Install the Amber CSS and Javascript
 cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /usr/local/nginx/html/amber
