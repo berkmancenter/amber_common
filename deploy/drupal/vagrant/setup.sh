@@ -17,11 +17,15 @@ mv /usr/local/bin/composer.phar /usr/local/bin/composer
 composer global require drush/drush:6.* 
 ln -sf ~/.composer/vendor/bin/drush  /usr/local/bin
 
-
 cp /vagrant/robustness.mk /var/robustness.mk
 rm -rf /var/www/ ; cd /var; mkdir www; cd www; drush make /var/robustness.mk -y 
 chmod a+w /var/www/sites/default ; mkdir /var/www/sites/default/files ; chown -R www-data:www-data /var/www/
 chmod 755 /vagrant/start.sh
+
+# Get Amber code
+cd /usr/local/src
+git clone https://github.com/berkmancenter/robustness_drupal.git
+mv /usr/local/src/robustness_drupal/amber /var/www/sites/all/modules
 
 /vagrant/start.sh
 
