@@ -2,8 +2,6 @@
 	/* Avoid printing any output until we know we don't want to redirect */
 	ob_start();
 
-	require_once '../AmberChecker.php';
-	require_once '../AmberFetcher.php';
 	require_once '../AmberStorage.php';
 	require_once '../AmberStatus.php';
 
