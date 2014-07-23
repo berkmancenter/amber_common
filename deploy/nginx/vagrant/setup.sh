@@ -34,7 +34,7 @@ mkdir /usr/local/nginx/html/amber/cache
 ln -s /usr/local/src/robustness_common/src/admin /usr/local/nginx/html/amber/admin
 
 # Amber configuration - Install the Amber CSS and Javascript
-cp -r /usr/local/src/robustness_nginx/css /usr/local/src/robustness_nginx/js /usr/local/nginx/html/amber
+cp -r /usr/local/src/robustness_common/src/css /usr/local/src/robustness_common/src/js /usr/local/nginx/html/amber
 
 # Update permissions
 chgrp -R www-data /var/lib/amber /usr/local/nginx/html/amber
