@@ -42,7 +42,8 @@
 		global $config;
 		$db = get_database($config['database']);
 		$status = new AmberStatus(get_database($config['database']));
-		return $status->get_cache_size();		
+		$result = $status->get_cache_size();		
+		return $result ? $result : 0;
 	}
 
 	function last_check() {
@@ -50,17 +51,22 @@
 		$db = get_database($config['database']);
 		$result = $db->query("SELECT value FROM amber_variables WHERE name = 'last_run'");
 		$row = $result->fetch();
+		$result->closeCursor();
 		return (empty($row) ? "Never" : date("r", $row[0]));
 	}
 
 	/* Delete an item */
 	function delete($id) {
 		global $config;
+		$db = get_database($config['database']);
 		$storage = new AmberStorage($config['cache']);
-		$status = new AmberStatus(get_database($config['database']));
+		$status = new AmberStatus($db);
 		if ($id == "all") {
 			$storage->clear_cache();
 			$status->delete_all();
+			$query = $db->query("DELETE FROM amber_queue");
+			$result = $query->fetch();
+			$query->closeCursor();
 		} else {
 			$storage->clear_cache_item($id);
 			$status->delete($id);
