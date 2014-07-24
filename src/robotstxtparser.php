@@ -322,9 +322,12 @@
 		 */
 		protected function increment()
 		{
-			// $this->current_char = mb_strtolower(mb_substr($this->content, $this->char_index, 1));
-			// $this->current_char = mb_strtolower($this->content[$this->char_index]);
-			$this->current_char = mb_strtolower($this->contentArray[$this->char_index]);
+			if (count($this->contentArray) > $this->char_index) {
+				$this->current_char = mb_strtolower($this->contentArray[$this->char_index]);	
+			} else {
+				$this->current_char = "\n";
+			}
+			
 			$this->current_word .= $this->current_char;
 			$this->current_word = trim($this->current_word);
 			$this->char_index++;
