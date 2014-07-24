@@ -87,6 +87,12 @@
 				case 'status':
 					$result = "ORDER BY c.status";
 					break;
+				case 'viewdate':
+					$result = "ORDER BY a.date";
+					break;
+				case 'views':
+					$result = "ORDER BY a.views";
+					break;
 			}
 			if (isset($_GET['dir'])) {
 				switch ($_GET['dir']) {
@@ -209,8 +215,8 @@
 <th><a href='<?php print sort_link("checked"); ?>'>Last Checked</a></th>
 <th><a href='<?php print sort_link("cached"); ?>'>Date Preserved</a></th>
 <th>Size</th>
-<th>Last Viewed</th>
-<th>Total Views</th>
+<th><a href='<?php print sort_link("viewdate"); ?>'>Last Viewed</a></th>
+<th><a href='<?php print sort_link("views"); ?>'>Total Views</a></th>
 <th> </th>
 <th> </th>
 </tr>
@@ -226,7 +232,7 @@
 		print("<td>" . (isset($row['last_checked']) ? date("r", $row['last_checked']) : "") . "</td>");
 		print("<td>" . (isset($row['date']) ? date("r", $row['date']) : "") . "</td>");
 		print("<td>" . (isset($row['size']) ? $row['size'] : (isset($row['message']) ? htmlspecialchars($row['message']) : "")) . "</td>");
-		print("<td>" . $row['activity_date'] . "</td>");
+		print("<td>" . (isset($row['activity_date']) ? date("r", $row['activity_date']) : "") . "</td>");
 		print("<td>" . $row['views'] . "</td>");
 		print("<td>" . (isset($row['location']) ? "<a href='/" . htmlspecialchars($row['location']) . "'>View</a>" : "") . "</td>");
 		print("<td>" . "<a href='" .$script_location . "?delete=" . $row['id'] . "'>Delete</a>" . "</td>");
