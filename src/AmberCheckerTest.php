@@ -21,8 +21,8 @@ class AmberCheckerTest extends PHPUnit_Framework_TestCase {
    */
   public function testNextCheckFirst(IAmberChecker $checker) {	
 	$now = new DateTime();	
-	$result = $checker->next_check_date(null,null,null,true);
-    $this->assertTrue($result > $now,"Get a next check date");
+	$result = $checker->next_check_date(null,null,100,true);
+    $this->assertTrue($result > $now->getTimeStamp(),"Get a next check date");
   }
 
   /**
