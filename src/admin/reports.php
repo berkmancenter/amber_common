@@ -4,6 +4,7 @@
 
 	require_once '../AmberStorage.php';
 	require_once '../AmberStatus.php';
+	require_once '../AmberDB.php';
 
 	/* Required initialization. The AMBER_CONFIG attribute must be set in the nginx configuration */
 	date_default_timezone_set('UTC');
@@ -41,7 +42,7 @@
 	function disk_usage() {
 		global $config;
 		$db = get_database($config['database']);
-		$status = new AmberStatus(get_database($config['database']));
+		$status = new AmberStatus(new AmberPDO(get_database($config['database'])));
 		$result = $status->get_cache_size();		
 		return $result ? $result : 0;
 	}
@@ -60,7 +61,7 @@
 		global $config;
 		$db = get_database($config['database']);
 		$storage = new AmberStorage($config['cache']);
-		$status = new AmberStatus($db);
+		$status = new AmberStatus(new AmberPDO($db));
 		if ($id == "all") {
 			$storage->clear_cache();
 			$status->delete_all();

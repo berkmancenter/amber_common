@@ -196,7 +196,7 @@ function get_status() {
     print "Error: Cannot open database: " . $e->getMessage();
     return null;
   }
-  return new AmberStatus($db_connection);
+  return new AmberStatus(new AmberPDO($db_connection));
 }
 
 main($argc,$argv);
