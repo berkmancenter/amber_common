@@ -22,16 +22,21 @@ Class AmberPDO implements iAmberDB {
   		return $this->db;
   	}
 
+  	private function convert_to_question_marks($sql) {
+  		$sql = str_replace('%s', '?', $sql);
+  		$sql = str_replace('%d', '?', $sql);
+		return $sql;  		
+  	}
+
   	private function execute($sql, $options) {
-	    $query = $this->db->prepare($sql);
-	    // TODO: Replace %d/%s/%something with '?'
+	    $query = $this->db->prepare($this->convert_to_question_marks($sql));
 	    $query->execute($options);
 	    return $query;
   	}
 
   	public function select($sql, $options = array()) {
 
-  		$query = $this->execute($sql, $options);
+  		$query = $this->execute($this->convert_to_question_marks($sql), $options);
   		if (!$query) {
   			return false;
   		}
@@ -42,7 +47,7 @@ Class AmberPDO implements iAmberDB {
 
   	public function selectAll($sql, $options = array()) {
 
-  		$query = $this->execute($sql, $options);
+  		$query = $this->execute($this->convert_to_question_marks($sql), $options);
   		if (!$query) {
   			return false;
   		}
@@ -52,17 +57,17 @@ Class AmberPDO implements iAmberDB {
   	}
 
   	public function insert($sql, $options = array()) {
-      $query = $this->execute($sql, $options);
+      $query = $this->execute($this->convert_to_question_marks($sql), $options);
       $query->closeCursor();      
   	}
 	
   	public function update($sql, $options = array()) {
-  		$query = $this->execute($sql, $options);
+  		$query = $this->execute($this->convert_to_question_marks($sql), $options);
       $query->closeCursor();      
   	}
 	
   	public function delete($sql, $options = array()) {
-      $query = $this->execute($sql, $options);
+      $query = $this->execute($this->convert_to_question_marks($sql), $options);
       $query->closeCursor();      
   	}	
 }
@@ -86,17 +91,20 @@ Class AmberWPDB implements iAmberDB {
 
   	public function insert($sql, $options = array())
   	{
-  		# code...
+  		$query = $this->db->prepare($sql, $options);
+  		$this->db->query($query,$options);
   	}
 
   	public function update($sql, $options = array())
   	{
-  		# code...
+  		$query = $this->db->prepare($sql, $options);
+  		$this->db->query($query,$options);
   	}
 
   	public function delete($sql, $options = array())
   	{
-  		# code...
+  		$query = $this->db->prepare($sql, $options);
+  		$this->db->query($query,$options);
   	}
 
 

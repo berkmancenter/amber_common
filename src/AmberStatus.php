@@ -38,7 +38,8 @@ class AmberStatus implements iAmberStatus {
   }
 
   private function get_item($url, $table) {
-    $result = $this->db->select("SELECT * FROM $table WHERE url = ?", array($url));
+    $prefix = $this->table_prefix;
+    $result = $this->db->select("SELECT * FROM ${prefix}${table} WHERE url = %s", array($url));
     return $result;
   }
 
@@ -57,6 +58,7 @@ class AmberStatus implements iAmberStatus {
    * @return false on failure
    */
   public function save_check(array $data) {
+    $prefix = $this->table_prefix;
 
     foreach (array('last_checked', 'next_check', 'status', 'url') as $key) {
       if (!array_key_exists($key,$data)) {
@@ -72,23 +74,23 @@ class AmberStatus implements iAmberStatus {
       $data['id'] = md5($data['url']);
       //TODO: Remove duplication of this with AmberStorage
     }
-    $result = $this->db->select("SELECT COUNT(id) as count FROM amber_check WHERE id = ?", array($data['id']));
+    $result = $this->db->select("SELECT COUNT(id) as count FROM ${prefix}amber_check WHERE id = %s", array($data['id']));
     $params = array($data['url'], $data['status'], $data['last_checked'], $data['next_check'], 
                     $data['message'], $data['id']);
     if ($result['count']) {
-      $updateQuery = 'UPDATE amber_check ' .
+      $updateQuery = "UPDATE ${prefix}amber_check " .
                      'SET ' .
-                     'url = ?, ' .
-                     'status = ?, ' .
-                     'last_checked = ?, ' .
-                     'next_check = ?, ' .
-                     'message = ? ' .
-                     'WHERE id = ?';
+                     'url = %s, ' .
+                     'status = %d, ' .
+                     'last_checked = %d, ' .
+                     'next_check = %d, ' .
+                     'message = %s ' .
+                     'WHERE id = %s';
       $this->db->update($updateQuery, $params);
     } else {
-      $updateQuery = 'INSERT into amber_check ' .
+      $updateQuery = "INSERT into ${prefix}amber_check " .
                      '(url, status, last_checked, next_check, message, id) ' .
-                     'VALUES(?, ?, ?, ?, ?, ?)';
+                     'VALUES(%s, %d, %d, %d, %s, %s)';
       $this->db->insert($updateQuery, $params);
     }
     return true;
@@ -100,29 +102,31 @@ class AmberStatus implements iAmberStatus {
    * @return false on failure
    */
   public function save_cache(array $data) {
+    $prefix = $this->table_prefix;
+
     foreach (array('id', 'url', 'location', 'date', 'type', 'size') as $key) {
       if (!array_key_exists($key,$data)) {
         error_log(join(":", array(__FILE__, __METHOD__, "Missing required key when updating cache", $key)));
         return false;
       }
     }
-    $result = $this->db->select("SELECT COUNT(id) as count FROM amber_cache WHERE id = ?", array($data['id']));
+    $result = $this->db->select("SELECT COUNT(id) as count FROM ${prefix}amber_cache WHERE id = %s", array($data['id']));
     $params = array($data['url'], $data['location'], $data['date'], $data['type'], 
                     $data['size'], $data['id']);
     if ($result['count']) {
-      $updateQuery = 'UPDATE amber_cache ' .
+      $updateQuery = "UPDATE ${prefix}amber_cache " .
                                         'SET ' .
-                                        'url = ?, ' .
-                                        'location = ?, ' .
-                                        'date = ?, ' .
-                                        'type = ?, ' .
-                                        'size = ? ' .
-                                        'WHERE id = ?';
+                                        'url = %s, ' .
+                                        'location = %s, ' .
+                                        'date = %d, ' .
+                                        'type = %s, ' .
+                                        'size = %d ' .
+                                        'WHERE id = %s';
       $this->db->update($updateQuery, $params);
     } else {
-      $updateQuery = 'INSERT into amber_cache ' .
+      $updateQuery = "INSERT into ${prefix}amber_cache " .
                                         '(url, location, date, type, size, id) ' .
-                                        'VALUES(?, ?, ?, ?, ?, ?)';
+                                        'VALUES(%s, %s, %d, %s, %d, %s)';
       $this->db->insert($updateQuery, $params);
     }
 
@@ -133,8 +137,10 @@ class AmberStatus implements iAmberStatus {
    * Get a list of URLs which are overdue for checking.
    */
   public function get_urls_to_check() {
+    $prefix = $this->table_prefix;
+
     $result = array();
-    $rows = $this->db->selectAll('SELECT url FROM amber_check WHERE next_check < ? ORDER BY next_check ASC', 
+    $rows = $this->db->selectAll("SELECT url FROM ${prefix}amber_check WHERE next_check < %d ORDER BY next_check ASC", 
                                     array(time()));
     if ($result === FALSE) {
       error_log(join(":", array(__FILE__, __METHOD__, "Error retrieving URLs to check from database")));
@@ -148,18 +154,20 @@ class AmberStatus implements iAmberStatus {
   }
 
   public function save_view($id) {
-    $result = $this->db->select("SELECT COUNT(id) as count FROM amber_activity WHERE id = ?", array($id));
+    $prefix = $this->table_prefix;
+
+    $result = $this->db->select("SELECT COUNT(id) as count FROM ${prefix}amber_activity WHERE id = %s", array($id));
     $params = array(time(), $id);
     if ($result['count']) {
       $updateQuery = 'UPDATE amber_activity ' .
                                         'SET views = views + 1, ' .
-                                        'date = ? ' .
-                                        'WHERE id = ?';
+                                        'date = %d ' .
+                                        'WHERE id = %s';
       $this->db->update($updateQuery, $params);
     } else {
       $updateQuery = 'INSERT into amber_activity ' .
                                         '(date, views, id) ' .
-                                        'VALUES(?, 1, ?)';
+                                        'VALUES(%d, 1, %s)';
       $this->db->insert($updateQuery, $params);
     }
   }
@@ -169,7 +177,9 @@ class AmberStatus implements iAmberStatus {
    * @return string
    */
   public function get_cache_size() {
-    $result = $this->db->select('SELECT sum(size) as sum FROM amber_cache');
+    $prefix = $this->table_prefix;
+
+    $result = $this->db->select("SELECT sum(size) as sum FROM ${prefix}amber_cache");
     return $result['sum'];
   }
 
@@ -178,6 +188,8 @@ class AmberStatus implements iAmberStatus {
    * @param $max_size
    */
   public function get_items_to_purge($max_disk) {
+    $prefix = $this->table_prefix;
+
     $result = array();
     $current_size = $this->get_cache_size();
     if ($current_size > $max_disk) {
@@ -188,8 +200,8 @@ class AmberStatus implements iAmberStatus {
       else
         $max_function = "greatest";
 
-      $rows = $this->db->selectAll("SELECT cc.id, cc.url, size FROM amber_cache cc " .
-                                   "LEFT JOIN amber_activity ca ON cc.id = ca.id " .
+      $rows = $this->db->selectAll("SELECT cc.id, cc.url, size FROM ${prefix}amber_cache cc " .
+                                   "LEFT JOIN ${prefix}amber_activity ca ON cc.id = ca.id " .
                                    "ORDER BY ${max_function}(IFNULL(ca.date,0),cc.date) ASC");
       $size_needed = $current_size - $max_disk;
       foreach ($rows as $row) {
@@ -207,8 +219,10 @@ class AmberStatus implements iAmberStatus {
    * Delete all status information. Do NOT delete activity data.
    */
   public function delete_all() {
-    $this->db->delete("DELETE FROM amber_cache");
-    $this->db->delete("DELETE FROM amber_check");
+    $prefix = $this->table_prefix;
+
+    $this->db->delete("DELETE FROM ${prefix}amber_cache");
+    $this->db->delete("DELETE FROM ${prefix}amber_check");
   }
 
   /**
@@ -216,8 +230,10 @@ class AmberStatus implements iAmberStatus {
    * @param $id
    */
   public function delete($id) {
+    $prefix = $this->table_prefix;
+
     foreach (array('amber_cache', 'amber_check') as $table) {
-      $this->db->delete("DELETE FROM $table WHERE id = ?", array($id));
+      $this->db->delete("DELETE FROM ${prefix}${table} WHERE id = %s", array($id));
     }
   }
 
