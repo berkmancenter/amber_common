@@ -24,6 +24,10 @@ a2enmod rewrite vhost_alias
 cd /var/www/
 drush site-install standard -y --account-name=admin --account-pass=admin --db-url="mysqli://drupal:${DRUPAL_PASSWORD}@localhost:3306/drupal"     
 
+# Fix apache configuration
+sudo cp /vagrant/000-default.conf.sample /etc/apache2/sites-available/000-default.conf
+sudo service apache2 restart
+
 # Install CAYL, and configure the CAYL filter for the full_html and filtered_html text formats
 drush en amber -y
 
