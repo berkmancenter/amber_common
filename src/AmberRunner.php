@@ -10,6 +10,10 @@ $config['database'] = "/var/lib/amber/amber.db";
 $config['cache'] = "/usr/local/nginx/html/amber/cache";
 date_default_timezone_set('UTC');
 
+function amber_log($str) {
+  print date("r") . " -- " . $str . "\n";
+}
+
 function main($argc, $argv) {
   global $config;
   $options = getopt("",array("action::", "db::", "cache::", "url::", "ini::", "help"));
@@ -47,7 +51,7 @@ function main($argc, $argv) {
       if ($options["url"]) {
         cache($options["url"]);
       } else {
-        print "Error: Provide URL to cache";
+        "Error: Provide URL to cache";
       }
       break;
     case "help":
@@ -81,7 +85,7 @@ function cache($url) {
   $fetcher = get_fetcher();
   $status = get_status();
   $checker = get_checker();
-  print "Checking ${url}\n";
+  amber_log("Checking ${url}");
   $last_check = $status->get_check($url);
   if (($update = $checker->check(empty($last_check) ? array('url' => $url) : $last_check, true)) !== false) {
     $status->save_check($update);
@@ -89,7 +93,7 @@ function cache($url) {
     /* Now cache the item if we should */
     $existing_cache = $status->get_cache($url);
     if ($update['status'] && ((isset($config['amber_update_strategy']) && $config['amber_update_strategy']) || !$existing_cache)) {
-      print "Caching ${url}\n";
+      amber_log("Caching ${url}");
       try {
         $cache_metadata = $fetcher->fetch($url);
       } catch (RuntimeException $re) {
@@ -123,7 +127,7 @@ function dequeue() {
     // TODO: Need to determine behavior on failure
     exit(0);
   } else {
-    print "No more items to cache\n";
+    // print "No more items to cache\n";
     exit(1);
   }
 }
@@ -137,7 +141,7 @@ function schedule_checks() {
     $insert_query = $db_connection->prepare('INSERT OR IGNORE INTO amber_queue (url, created) VALUES(:url, :created)');
     $insert_query->execute(array('url' => $url, 'created' => time()));
   }
-  print "Scheduled " . count($urls) . " urls for checking\n";
+  amber_log("Scheduled " . count($urls) . " urls for checking");
 }
 
 function disk_space_purge() {
@@ -151,7 +155,7 @@ function disk_space_purge() {
     foreach ($purge as $item) {
       $storage->clear_cache_item($item['id']);
       $status->delete($item['id']);
-      print ("Deleting to stay under disk space limits: " . $item['url'] . "\n");
+      amber_log ("Deleting to stay under disk space limits: " . $item['url']);
     }
   }
 }
