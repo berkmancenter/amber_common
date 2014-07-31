@@ -43,8 +43,8 @@ chmod +x /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh /us
 
 # Schedule cron job
 cat > /etc/cron.d/amber << EOF
-*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh 2>> /var/log/amber >> /var/log/amber
-15 3 * * *  www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-check.sh 2>> /var/log/amber >> /var/log/amber
+*/5 * * * * www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-cache.sh --ini=/usr/local/src/robustness_common/src/amber.ini 2>> /var/log/amber >> /var/log/amber
+15 3 * * *  www-data /bin/sh /usr/local/src/robustness_common/deploy/nginx/vagrant/cron-check.sh --ini=/usr/local/src/robustness_common/src/amber.ini 2>> /var/log/amber >> /var/log/amber
 EOF
 
 # Setup permissions for cron job logs
