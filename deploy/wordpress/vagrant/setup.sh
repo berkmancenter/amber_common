@@ -36,9 +36,6 @@ echo $WP_PASSWORD > /wp-db-pw.txt
 mysqladmin -u root --password=changeme password $MYSQL_PASSWORD 
 mysql -uroot -p$MYSQL_PASSWORD -e "CREATE DATABASE wp; GRANT ALL PRIVILEGES ON wp.* TO 'wp'@'localhost' IDENTIFIED BY '$WP_PASSWORD'; FLUSH PRIVILEGES;"
 
-#sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/sites-available/*default*
-#sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www/' /etc/apache2/sites-available/*default*
-
 # Fix apache configuration
 sudo cp /vagrant/000-default.conf.sample /etc/apache2/sites-available/000-default.conf
 sudo service apache2 restart
@@ -62,7 +59,18 @@ cd /usr/local/src
 git clone https://github.com/berkmancenter/robustness_wordpress.git
 mv /usr/local/src/robustness_wordpress/amber /var/www/wordpress/wp-content/plugins
 
+# Update permissions on the uploads directory
+chmod a+w /var/www/wordpress/wp-content/uploads
+
+# Activate the plugin
 /srv/wp-cli/bin/wp plugin activate amber 
+
+# Setup .htaccess to support cache access (remove once we can do this within WP code)
+cat >> /var/www/wordpress/.htaccess <<EOF
+RewriteEngine on
+RewriteRule ^.*amber/cache/([a-f0-9]+)/?$ /index.php?amber_cache=\$1 [L,QSA]
+RewriteRule ^.*amber/cache/([a-f0-9]+)/assets/(.*)/?$ /index.php?amber_cache=\$1&amber_asset=\$2 [L,QSA]
+EOF
 
 service apache2 restart
 
