@@ -36,8 +36,8 @@ echo $WP_PASSWORD > /wp-db-pw.txt
 mysqladmin -u root --password=changeme password $MYSQL_PASSWORD 
 mysql -uroot -p$MYSQL_PASSWORD -e "CREATE DATABASE wp; GRANT ALL PRIVILEGES ON wp.* TO 'wp'@'localhost' IDENTIFIED BY '$WP_PASSWORD'; FLUSH PRIVILEGES;"
 
-sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/sites-available/*default*
-sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www/wordpress-default' /etc/apache2/sites-available/*default*
+#sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/sites-available/*default*
+#sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www/' /etc/apache2/sites-available/*default*
 
 # Fix apache configuration
 sudo cp /vagrant/000-default.conf.sample /etc/apache2/sites-available/000-default.conf
@@ -49,9 +49,8 @@ a2enmod rewrite vhost_alias
 cd /var/www/
 curl -O http://wordpress.org/latest.tar.gz
 tar -xvf latest.tar.gz
-mv wordpress wordpress-default
 rm latest.tar.gz
-cd /var/www/wordpress-default
+cd /var/www/wordpress
 
 /srv/wp-cli/bin/wp core config --allow-root --dbname=wp --dbuser=wp --dbpass=${WP_PASSWORD} --quiet --extra-php <<PHP
 define( 'WP_DEBUG', true );
@@ -61,7 +60,7 @@ PHP
 # Get Amber code
 cd /usr/local/src
 git clone https://github.com/berkmancenter/robustness_wordpress.git
-mv /usr/local/src/robustness_wordpress/amber /var/www/wordpress-default/wp-content/plugins
+mv /usr/local/src/robustness_wordpress/amber /var/www/wordpress/wp-content/plugins
 
 service apache2 restart
 
