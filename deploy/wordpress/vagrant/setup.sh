@@ -55,12 +55,14 @@ cd /var/www/wordpress
 /srv/wp-cli/bin/wp core config --allow-root --dbname=wp --dbuser=wp --dbpass=${WP_PASSWORD} --quiet --extra-php <<PHP
 define( 'WP_DEBUG', true );
 PHP
-/srv/wp-cli/bin/wp core install --allow-root --url=local.wordpress.dev --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="password"
+/srv/wp-cli/bin/wp core install --allow-root --url=`curl http://169.254.169.254/latest/meta-data/public-hostname` --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="password"
 
 # Get Amber code
 cd /usr/local/src
 git clone https://github.com/berkmancenter/robustness_wordpress.git
 mv /usr/local/src/robustness_wordpress/amber /var/www/wordpress/wp-content/plugins
+
+/srv/wp-cli/bin/wp plugin activate amber 
 
 service apache2 restart
 
