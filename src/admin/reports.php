@@ -198,7 +198,7 @@
 					<tr><td>Storage location</td><td><?php print $config['cache']; ?></td></tr>
 					<tr><td>Update captures periodically</td><td><?php print ($config['amber_update_strategy'] ? "Yes" : "No"); ?></td></tr>
 					<tr><td valign="top">Excluded sites</td><td><?php print join("<br/>",$config['amber_excluded_sites']); ?></td></tr>
-					<tr><td valign="top">Excluded file formats</td><td><?php print join("<br>", $config['amber_excluded_format']); ?></td></tr>
+					<tr><td valign="top">Excluded file formats</td><td><?php print join("<br>", $config['amber_excluded_formats']); ?></td></tr>
 					</tr>
 				</tbody>
 			</table>
