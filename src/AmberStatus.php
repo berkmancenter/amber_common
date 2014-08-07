@@ -159,13 +159,13 @@ class AmberStatus implements iAmberStatus {
     $result = $this->db->select("SELECT COUNT(id) as count FROM ${prefix}amber_activity WHERE id = %s", array($id));
     $params = array(time(), $id);
     if ($result['count']) {
-      $updateQuery = 'UPDATE ${prefix}amber_activity ' .
+      $updateQuery = "UPDATE ${prefix}amber_activity " .
                                         'SET views = views + 1, ' .
                                         'date = %d ' .
                                         'WHERE id = %s';
       $this->db->update($updateQuery, $params);
     } else {
-      $updateQuery = 'INSERT into ${prefix}amber_activity ' .
+      $updateQuery = "INSERT into ${prefix}amber_activity " .
                                         '(date, views, id) ' .
                                         'VALUES(%d, 1, %s)';
       $this->db->insert($updateQuery, $params);
@@ -195,11 +195,11 @@ class AmberStatus implements iAmberStatus {
     if ($current_size > $max_disk) {
       
       /* Sqlite and Mysql have different names for a function we need */
-      if ($this->db->original_db()->getAttribute(PDO::ATTR_DRIVER_NAME) == "sqlite")
+      if ($this->db->db_type() == "sqlite")
         $max_function = "max";
       else
         $max_function = "greatest";
-
+        
       $rows = $this->db->selectAll("SELECT cc.id, cc.url, size FROM ${prefix}amber_cache cc " .
                                    "LEFT JOIN ${prefix}amber_activity ca ON cc.id = ca.id " .
                                    "ORDER BY ${max_function}(IFNULL(ca.date,0),cc.date) ASC");
