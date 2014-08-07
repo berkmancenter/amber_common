@@ -85,6 +85,16 @@ function cache($url) {
   $fetcher = get_fetcher();
   $status = get_status();
   $checker = get_checker();
+  if (excluded_link($url)) {
+    $status->save_check(array(
+      'url' => $url, 
+      'next_check' => PHP_INT_MAX, 
+      'last_checked' => 0, 
+      'message' => 'Excluded site',
+      'status' => 0
+      ));
+    return;
+  }
   amber_log("Checking ${url}");
   $last_check = $status->get_check($url);
   if (($update = $checker->check(empty($last_check) ? array('url' => $url) : $last_check, true)) !== false) {
@@ -108,6 +118,32 @@ function cache($url) {
     }
   }
 }
+
+  /**
+   * Filter links that are candidates for caching to exclude local links, or links to URLs on the blacklist
+   * @param $links array of links to check
+   * @param $blacklist array of hostnames to exclude
+   */
+  function excluded_link($link)
+  {
+    global $config;
+
+    $blacklist = isset($config['amber_excluded_sites']) ? $config['amber_excluded_sites'] : array();
+    if (!$blacklist) {
+      return true;
+    }   
+    $host = parse_url($link,PHP_URL_HOST);
+    if ($host) {
+      foreach ($blacklist as $blacklistitem) {
+        $blacklistitem = trim($blacklistitem);
+        $blacklistitem = preg_replace("/https?:\\/\\//", "", $blacklistitem);
+        if (strcasecmp($host,$blacklistitem) === 0) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
 /* Pull an item off the "queue", and save it to the cache.
    Note that if this is run in parallel, it's possible that the same item could be processed multiple times
