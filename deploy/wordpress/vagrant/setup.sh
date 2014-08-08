@@ -58,6 +58,7 @@ PHP
 cd /usr/local/src
 git clone https://github.com/berkmancenter/robustness_wordpress.git
 mv /usr/local/src/robustness_wordpress/amber /var/www/wordpress/wp-content/plugins
+cd /var/www/wordpress
 
 # Activate the plugin
 /srv/wp-cli/bin/wp plugin activate amber --allow-root 
@@ -70,7 +71,7 @@ RewriteRule ^.*amber/cache/([a-f0-9]+)/assets/(.*)/?$ /index.php?amber_cache=\$1
 EOF
 
 # Update permissions
-chown -R www-data:www-data /var/www/ /var/www/.htaccess
+chown -R www-data:www-data /var/www/ /var/www/wordpress/.htaccess
 
 service apache2 restart
 
