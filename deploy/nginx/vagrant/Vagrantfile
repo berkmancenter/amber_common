@@ -83,7 +83,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     aws.ami = "ami-018c9568"
     aws.instance_type = "t1.micro"
 
-    aws.tags = { 'Name' => 'CAYL nginx'}
+    aws.tags = { 'Name' => 'Amber nginx'}
     override.ssh.username = "ubuntu"
     override.ssh.private_key_path = ENV['AWS_PRIVATE_AWS_SSH_KEY_PATH']
   end
