@@ -1,14 +1,21 @@
 # Install prerequisites
 sudo apt-get update
-sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl php5-fpm zlib1g-dev apache2
+sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl php5-fpm zlib1g-dev apache2 apache2-dev
 
 # Get code
 cd /usr/local/src
 git clone https://github.com/berkmancenter/robustness_common.git
 git clone https://github.com/berkmancenter/robustness_apache.git
 
-# Amber configuration - Install the amber-specific apache configuration file
-cp /usr/local/src/robustness_apache/amber.conf /etc/apache2/conf.d/others
+# Build module
+cd /usr/local/src/robustness_apache/
+apxs -i -a -c mod_amber.c
+
+# Configure apache
+cp /usr/local/src/robustness_apache/amber.conf /etc/apache2/conf-available
+/usr/sbin/a2enmod substitute
+/usr/sbin/a2enconf amber.conf
+service apache2 reload
 
 # Amber configuration - Setup the database
 mkdir /var/lib/amber
@@ -19,7 +26,7 @@ mkdir /var/www/amber
 mkdir /var/www/amber/cache
 
 # Amber configuration - Setup the admin control panel
-ln -s /usr/local/src/robustness_common/src/admin /var/www/amber/admin
+cp -r /usr/local/src/robustness_common/src/admin /var/www/amber
 
 # Amber configuration - Install the Amber CSS and Javascript
 cp -r /usr/local/src/robustness_common/src/css /usr/local/src/robustness_common/src/js /var/www/amber
@@ -39,6 +46,3 @@ EOF
 touch /var/log/amber
 chown www-data /var/log/amber
 chgrp www-data /var/log/amber
-
-# Start apache
-sudo service apache2 reload
