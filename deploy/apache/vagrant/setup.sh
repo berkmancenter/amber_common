@@ -16,6 +16,9 @@ cp /usr/local/src/robustness_apache/amber.conf /etc/apache2/conf-available
 /usr/sbin/a2enmod rewrite
 /usr/sbin/a2enmod substitute
 /usr/sbin/a2enconf amber.conf
+# Disable the deflate module, because the default configuration has this
+# run BEFORE the substitute filter, which prevents the substitution from working
+/usr/sbin/a2dismod deflate
 service apache2 reload
 
 # Amber configuration - Setup the database
