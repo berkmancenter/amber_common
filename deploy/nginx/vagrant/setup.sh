@@ -24,7 +24,7 @@ cp /usr/local/src/robustness_nginx/amber.conf /usr/local/nginx/conf
 
 # Amber configuration - Setup the database
 mkdir /var/lib/amber
-sqlite3 /var/lib/amber/amber.db < /usr/local/src/robustness_nginx/amber.sql
+sqlite3 /var/lib/amber/amber.db < /usr/local/src/robustness_common/src/amber.sql
 
 # Amber configuration - Setup the cache directory
 mkdir /usr/local/nginx/html/amber
