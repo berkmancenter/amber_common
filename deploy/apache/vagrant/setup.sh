@@ -9,10 +9,11 @@ git clone https://github.com/berkmancenter/robustness_apache.git
 
 # Build module
 cd /usr/local/src/robustness_apache/
-apxs -i -a -c mod_amber.c
+apxs -i -a -c mod_amber.c -lsqlite3 -lpcre
 
 # Configure apache
 cp /usr/local/src/robustness_apache/amber.conf /etc/apache2/conf-available
+/usr/sbin/a2enmod rewrite
 /usr/sbin/a2enmod substitute
 /usr/sbin/a2enconf amber.conf
 service apache2 reload
@@ -22,18 +23,18 @@ mkdir /var/lib/amber
 sqlite3 /var/lib/amber/amber.db < /usr/local/src/robustness_common/src/amber.sql
 
 # Amber configuration - Setup the cache directory
-mkdir /var/www/amber
-mkdir /var/www/amber/cache
+mkdir /var/www/html/amber
+mkdir /var/www/html/amber/cache
 
 # Amber configuration - Setup the admin control panel
-cp -r /usr/local/src/robustness_common/src/admin /var/www/amber
+cp -r /usr/local/src/robustness_common/src/admin /var/www/html/amber
 
 # Amber configuration - Install the Amber CSS and Javascript
-cp -r /usr/local/src/robustness_common/src/css /usr/local/src/robustness_common/src/js /var/www/amber
+cp -r /usr/local/src/robustness_common/src/css /usr/local/src/robustness_common/src/js /var/www/html/amber
 
 # Update permissions
-chgrp -R www-data /var/lib/amber /var/www/amber
-chmod -R g+w /var/lib/amber /var/www/amber/cache
+chgrp -R www-data /var/lib/amber /var/www/html/amber
+chmod -R g+w /var/lib/amber /var/www/html/amber/cache
 chmod +x /usr/local/src/robustness_common/deploy/apache/vagrant/cron-cache.sh /usr/local/src/robustness_common/deploy/apache/vagrant/cron-check.sh
 
 # Schedule cron job
