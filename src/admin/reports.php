@@ -110,6 +110,7 @@
 	}
 
 	function sort_link($column) {
+		global $script_location;
 		$href = "${script_location}?sort=${column}";
 		if (isset($_GET['sort']) && ($_GET['sort'] == $column)) {
 			if (isset($_GET['dir']) && ($_GET['dir'] == "desc")) {
@@ -124,6 +125,7 @@
 	/* Get the data to display on the report page */
 	function get_report() {
 		global $config;
+		global $script_location;
 		$db = get_database($config['database']);
 		$statement = 
 			"SELECT c.id, c.url, c.status, c.last_checked, c.message, ca.date, ca.size, ca.location, a.views, a.date as activity_date " .
