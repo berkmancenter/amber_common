@@ -75,6 +75,51 @@
 
 	}
 
+	/* Export contents of the dashboard detail page as CSV */
+	function export() {
+	  $data = get_report();
+
+	  $header = array(
+	    'Site',
+	    'URL',
+	    'Status',
+	    'Last Checked',
+	    'Date preserved',
+	    'Size',
+	    'Last viewed',
+	    'Total views',
+	    'Notes',
+	  );
+
+	  $rows = array();
+	  foreach ($data as $r) {
+	    $host = parse_url($r['url'],PHP_URL_HOST);
+	    $rows[] = array(
+	      'site' => $host,
+	      'url' => $r['url'],
+	      'status' => $r['status'] ? 'Up' : 'Down',
+	      'last_checked' => isset($r['last_checked']) ? date('c',$r['last_checked']) : "",
+	      'date' => isset($r['date']) ? date('c',$r['date']) : "",
+	      'size' => $r['size'],
+	      'a.date' => isset($r['a_date']) ? date('c',$r['a_date']) : "",
+	      'views' => isset($r['views']) ? $r['views'] : 0,
+	      'message' => isset($r['message']) ? $r['message'] : ""
+	    );
+	  }
+
+	  header('Content-Type: text/csv');
+	  header('Content-Disposition: attachment;filename=report.csv');
+
+	  $fp = fopen('php://output', 'w');
+	  fputcsv($fp, $header);
+	  foreach($rows as $line){
+	    fputcsv($fp, $line);
+	  }
+	  fclose($fp);
+	  die();
+	}
+
+
 	function get_sort() {
 		$result = "";
 		if (isset($_GET['sort'])) {
@@ -146,6 +191,8 @@
 	if (isset($_GET['delete'])) {
 		delete($_GET['delete']);
 		header("Location: $script_location");
+	} else if (isset($_GET['export'])) {
+		export();
 	}
 
 	/* Setup data for display */
@@ -209,6 +256,9 @@
 </table>
 
 <h2>Amber Data</h2>
+
+<a href="<?php print $script_location ?>?export">Export</a>
+
 <table border=1>
 <thead>
 <tr>
