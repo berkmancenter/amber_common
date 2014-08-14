@@ -1,6 +1,6 @@
 # Install prerequisites
 sudo apt-get update
-sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl php5-fpm zlib1g-dev apache2 apache2-dev
+sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl php5-fpm zlib1g-dev apache2 apache2-dev libapache2-mod-php5
 
 # Get code
 cd /usr/local/src
@@ -16,9 +16,16 @@ cp /usr/local/src/robustness_apache/amber.conf /etc/apache2/conf-available
 /usr/sbin/a2enmod rewrite
 /usr/sbin/a2enmod substitute
 /usr/sbin/a2enconf amber.conf
+
 # Disable the deflate module, because the default configuration has this
 # run BEFORE the substitute filter, which prevents the substitution from working
 /usr/sbin/a2dismod deflate
+
+# Install a new virtual site with our mod_rewrite rules enabled
+cp /vagrant/001-default-amber.conf /etc/apache2/sites-available
+/usr/sbin/a2dissite 000-default
+/usr/sbin/a2ensite 001-default-amber
+
 service apache2 reload
 
 # Amber configuration - Setup the database
@@ -29,8 +36,9 @@ sqlite3 /var/lib/amber/amber.db < /usr/local/src/robustness_common/src/amber.sql
 mkdir /var/www/html/amber
 mkdir /var/www/html/amber/cache
 
-# Amber configuration - Setup the admin control panel
-cp -r /usr/local/src/robustness_common/src/admin /var/www/html/amber
+# Amber configuration - Setup the admin control panel 
+# (Link instead of copying so that we can reference files in the parent directory)
+ln -s /usr/local/src/robustness_common/src/admin /var/www/html/amber/admin
 
 # Amber configuration - Install the Amber CSS and Javascript
 cp -r /usr/local/src/robustness_common/src/css /usr/local/src/robustness_common/src/js /var/www/html/amber
