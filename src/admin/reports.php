@@ -167,6 +167,22 @@
 		return $href;
 	}
 
+	function page_link($page) {
+		global $script_location;
+		$href = "${script_location}?page=${page}";
+		if (isset($_GET['sort'])) {
+			$href .= "&sort=" . $_GET['sort'];			
+		}
+		if (isset($_GET['dir'])) {
+			$href .= "&dir=" . $_GET['dir'];			
+		}
+		return $href;
+	}
+
+	function get_pagenum() {
+		return ((isset($_GET['page'])) ? intval($_GET['page']) : 1);
+	}
+
 	/* Get the data to display on the report page */
 	function get_report() {
 		global $config;
@@ -197,6 +213,14 @@
 
 	/* Setup data for display */
 	$data = get_report();
+
+	/* Handle paging */
+	$per_page = 50;
+    $current_page = get_pagenum();
+    $total_items = count($data);
+    $page_count = ceil($total_items / $per_page);
+    $data = array_slice($data,(($current_page-1)*$per_page),$per_page);
+
 
 	/* No need to cache output anymore */
 	ob_end_flush();
@@ -257,8 +281,14 @@
 
 <h2>Amber Data</h2>
 
-<a href="<?php print $script_location ?>?export">Export</a>
-
+Showing items <?php print ($per_page * ($current_page - 1) + 1); ?> to <?php print (min($total_items, $current_page * $per_page)); ?> of <?php print($total_items); ?>.
+<br/>
+<?php 
+	if ($current_page > 1) { print ("<a href='" . page_link(1) . "'>First</a> "); }
+	if ($current_page > 1) { print ("<a href='" . page_link($current_page - 1) . "'>Previous</a> "); }
+	if ($current_page * $per_page < $total_items) { print ("<a href='" . page_link($current_page + 1) . "'>Next</a> "); }
+	if ($current_page * $per_page < $total_items) { print ("<a href='" . page_link($page_count) . "'>Last</a> "); }
+?>
 <table border=1>
 <thead>
 <tr>
@@ -296,6 +326,7 @@
 ?>
 </tbody>
 </table>
+<a href="<?php print $script_location ?>?export">Export</a>
 
 
 </body>
