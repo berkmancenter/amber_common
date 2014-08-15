@@ -281,7 +281,11 @@
 
 <h2>Amber Data</h2>
 
-Showing items <?php print ($per_page * ($current_page - 1) + 1); ?> to <?php print (min($total_items, $current_page * $per_page)); ?> of <?php print($total_items); ?>.
+<?php 
+if ($total_items > 0) { ?>
+	Showing items <?php print ($per_page * ($current_page - 1) + 1); ?> to <?php print (min($total_items, $current_page * $per_page)); ?> of <?php print($total_items); ?>.
+<?php } ?>
+
 <br/>
 <?php 
 	if ($current_page > 1) { print ("<a href='" . page_link(1) . "'>First</a> "); }
