@@ -91,7 +91,7 @@ function cache($url) {
       'next_check' => PHP_INT_MAX, 
       'last_checked' => 0, 
       'message' => 'Excluded site',
-      'status' => 0
+      'status' => NULL
       ));
     return;
   }

@@ -97,7 +97,7 @@
 	    $rows[] = array(
 	      'site' => $host,
 	      'url' => $r['url'],
-	      'status' => $r['status'] ? 'Up' : 'Down',
+	      'status' => (is_null($r['status']) ? "" : ($r['status'] ? "Up" : "Down")),
 	      'last_checked' => isset($r['last_checked']) ? date('c',$r['last_checked']) : "",
 	      'date' => isset($r['date']) ? date('c',$r['date']) : "",
 	      'size' => $r['size'],
@@ -192,7 +192,8 @@
 			"SELECT c.id, c.url, c.status, c.last_checked, c.message, ca.date, ca.size, ca.location, a.views, a.date as activity_date " .
 			"FROM amber_check c " .
 			"LEFT JOIN amber_cache ca on ca.id = c.id " .
-			"LEFT JOIN amber_activity a on ca.id = a.id ";
+			"LEFT JOIN amber_activity a on ca.id = a.id " .
+			"WHERE c.message <> 'Excluded site' ";
 		$statement .= get_sort();
 		$result = $db->query($statement);
 		$rows = array();
@@ -315,7 +316,7 @@ if ($total_items > 0) { ?>
 		print "<tr>";
 		print("<td>" . htmlspecialchars(parse_url($row['url'],PHP_URL_HOST)) . "</td>");
 		print("<td>" . "<a href='" . htmlspecialchars($row['url']) . "'>" . htmlspecialchars($row['url']) . "</a>" . "</td>");
-		print("<td>" . ($row['status'] ? "Up" : "Down") . "</td>");
+		print("<td>" . (is_null($row['status']) ? "" : ($row['status'] ? "Up" : "Down")) . "</td>");
 		print("<td>" . (isset($row['last_checked']) ? date("r", $row['last_checked']) : "") . "</td>");
 		print("<td>" . (isset($row['date']) ? date("r", $row['date']) : "") . "</td>");
 		print("<td>" . (isset($row['size']) ? $row['size'] : (isset($row['message']) ? htmlspecialchars($row['message']) : "")) . "</td>");
