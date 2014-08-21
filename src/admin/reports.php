@@ -43,7 +43,7 @@
 		global $config;
 		$db = get_database($config['database']);
 		$status = new AmberStatus(new AmberPDO(get_database($config['database'])));
-		$result = $status->get_cache_size();		
+        $result = round($status->get_cache_size() / (1024 * 1024), 2);        
 		return $result ? $result : 0;
 	}
 
@@ -85,7 +85,7 @@
 	    'Status',
 	    'Last Checked',
 	    'Date preserved',
-	    'Size',
+	    'Size (kB)',
 	    'Last viewed',
 	    'Total views',
 	    'Notes',
@@ -100,7 +100,7 @@
 	      'status' => (is_null($r['status']) ? "" : ($r['status'] ? "Up" : "Down")),
 	      'last_checked' => isset($r['last_checked']) ? date('c',$r['last_checked']) : "",
 	      'date' => isset($r['date']) ? date('c',$r['date']) : "",
-	      'size' => $r['size'],
+	      'size' => round($r['size'] / 1024, 2),
 	      'a.date' => isset($r['a_date']) ? date('c',$r['a_date']) : "",
 	      'views' => isset($r['views']) ? $r['views'] : 0,
 	      'message' => isset($r['message']) ? $r['message'] : ""
@@ -138,6 +138,9 @@
 					break;
 				case 'views':
 					$result = "ORDER BY a.views";
+					break;
+				case 'size':
+					$result = "ORDER BY ca.size";
 					break;
 			}
 			if (isset($_GET['dir'])) {
@@ -251,7 +254,7 @@
 					<tr><td>Captures preserved</td><td><?php print(cache_size()); ?></td></tr>
 					<tr><td>Links to capture</td><td><?php print(queue_size()); ?></td></tr>
 					<tr><td>Last check</td><td><?php print(last_check()); ?></td></tr>
-					<tr><td>Disk space used</td><td><?php print(disk_usage() . " of " . $config['amber_max_disk'] * 1024 * 1024); ?></td></tr>
+					<tr><td>Disk space used</td><td><?php print(disk_usage() . " of " . $config['amber_max_disk']); ?> MB</td></tr>
 				</tbody>
 			</table>
 			<a href="<?php print $script_location ?>?delete=all">Delete all captures</a>
@@ -302,7 +305,7 @@ if ($total_items > 0) { ?>
 <th><a href='<?php print sort_link("status"); ?>'>Status</a></th>
 <th><a href='<?php print sort_link("checked"); ?>'>Last Checked</a></th>
 <th><a href='<?php print sort_link("cached"); ?>'>Date Preserved</a></th>
-<th>Size</th>
+<th><a href='<?php print sort_link("size"); ?>'>Size (kB)</a></th>
 <th><a href='<?php print sort_link("viewdate"); ?>'>Last Viewed</a></th>
 <th><a href='<?php print sort_link("views"); ?>'>Total Views</a></th>
 <th> </th>
@@ -319,7 +322,7 @@ if ($total_items > 0) { ?>
 		print("<td>" . (is_null($row['status']) ? "" : ($row['status'] ? "Up" : "Down")) . "</td>");
 		print("<td>" . (isset($row['last_checked']) ? date("r", $row['last_checked']) : "") . "</td>");
 		print("<td>" . (isset($row['date']) ? date("r", $row['date']) : "") . "</td>");
-		print("<td>" . (isset($row['size']) ? $row['size'] : (isset($row['message']) ? htmlspecialchars($row['message']) : "")) . "</td>");
+		print("<td>" . (isset($row['size']) ? round($row['size']/1024,2) : (isset($row['message']) ? htmlspecialchars($row['message']) : "")) . "</td>");
 		print("<td>" . (isset($row['activity_date']) ? date("r", $row['activity_date']) : "") . "</td>");
 		print("<td>" . $row['views'] . "</td>");
 		print("<td>" . (isset($row['location']) ? "<a href='/" . htmlspecialchars($row['location']) . "'>View</a>" : "") . "</td>");
