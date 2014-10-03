@@ -32,6 +32,8 @@ mkdir /usr/local/nginx/html/amber/cache
 
 # Amber configuration - Setup the admin control panel
 ln -s /usr/local/src/robustness_common/src/admin /usr/local/nginx/html/amber/admin
+mkdir /etc/amber
+cp /usr/local/src/robustness_common/src/amber-nginx.ini /etc/amber
 
 # Amber configuration - Install the Amber CSS and Javascript
 cp -r /usr/local/src/robustness_common/src/css /usr/local/src/robustness_common/src/js /usr/local/nginx/html/amber

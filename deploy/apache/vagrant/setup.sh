@@ -39,6 +39,8 @@ mkdir /var/www/html/amber/cache
 # Amber configuration - Setup the admin control panel 
 # (Link instead of copying so that we can reference files in the parent directory)
 ln -s /usr/local/src/robustness_common/src/admin /var/www/html/amber/admin
+mkdir /etc/amber
+cp /usr/local/src/robustness_common/src/amber-apache.ini /etc/amber
 
 # Amber configuration - Install the Amber CSS and Javascript
 cp -r /usr/local/src/robustness_common/src/css /usr/local/src/robustness_common/src/js /var/www/html/amber
