@@ -255,6 +255,7 @@
 					<tr><td>Links to capture</td><td><?php print(queue_size()); ?></td></tr>
 					<tr><td>Last check</td><td><?php print(last_check()); ?></td></tr>
 					<tr><td>Disk space used</td><td><?php print(disk_usage() . " of " . $config['amber_max_disk']); ?> MB</td></tr>
+					<tr><td>Configuration file</td><td><?php print($_SERVER['AMBER_CONFIG']); ?></td></tr>
 				</tbody>
 			</table>
 			<a href="<?php print $script_location ?>?delete=all">Delete all captures</a>
