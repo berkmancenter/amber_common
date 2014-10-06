@@ -44,7 +44,7 @@ a2enmod rewrite vhost_alias
 
 # Install Wordpress
 cd /var/www/
-curl -O http://wordpress.org/latest.tar.gz
+curl -O -L http://wordpress.org/latest.tar.gz
 tar -xvf latest.tar.gz
 rm latest.tar.gz
 cd /var/www/wordpress
