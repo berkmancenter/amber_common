@@ -24,8 +24,8 @@ chmod 755 /vagrant/start.sh
 
 # Get Amber code
 cd /usr/local/src
-git clone https://github.com/berkmancenter/robustness_drupal.git
-mv /usr/local/src/robustness_drupal/amber /var/www/sites/all/modules
+git clone https://github.com/berkmancenter/amber_drupal.git
+mv /usr/local/src/amber_drupal/amber /var/www/sites/all/modules
 
 /vagrant/start.sh
 

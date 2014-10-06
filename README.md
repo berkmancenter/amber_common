@@ -1,6 +1,6 @@
-robustness_common
+amber_common
 =================
-[![Build Status](https://travis-ci.org/berkmancenter/robustness_common.png?branch=master)](https://travis-ci.org/berkmancenter/robustness_common)
+[![Build Status](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
 
 Code and documentation for the Internet Robustness project that's used across multiple platforms
 

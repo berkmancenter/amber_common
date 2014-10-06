@@ -1,2 +1,2 @@
  #!/bin/bash
-php /usr/local/src/robustness_common/src/AmberRunner.php --action=check $*
+php /usr/local/src/amber_common/src/AmberRunner.php --action=check $*

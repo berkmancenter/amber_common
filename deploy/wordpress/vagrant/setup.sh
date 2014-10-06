@@ -56,8 +56,8 @@ PHP
 
 # Get Amber code
 cd /usr/local/src
-git clone https://github.com/berkmancenter/robustness_wordpress.git
-mv /usr/local/src/robustness_wordpress/amber /var/www/wordpress/wp-content/plugins
+git clone https://github.com/berkmancenter/amber_wordpress.git
+mv /usr/local/src/amber_wordpress/amber /var/www/wordpress/wp-content/plugins
 cd /var/www/wordpress
 
 # Activate the plugin
