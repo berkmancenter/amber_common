@@ -210,7 +210,7 @@
 	}
 
 	function get_reportCount() {
-
+		global $config;
 		$db = get_database($config['database']);
 		$statement = 
 			"SELECT count(*) as totalCount " .
