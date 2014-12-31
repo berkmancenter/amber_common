@@ -187,7 +187,7 @@
 	}
 
 	/* Get the data to display on the report page */
-	function get_report() {
+	function get_report($page_num, $num_results) {
 		global $config;
 		global $script_location;
 		$db = get_database($config['database']);
@@ -198,6 +198,8 @@
 			"LEFT JOIN amber_activity a on ca.id = a.id " .
 			"WHERE c.message <> 'Excluded site' ";
 		$statement .= get_sort();
+		$statement .= " LIMIT " . $num_results . " OFFSET " . ($num_results * ($page_num -1));
+
 		$result = $db->query($statement);
 		$rows = array();
 		while ($row = $result->fetch()) {
@@ -205,6 +207,22 @@
 		}
 		$result->closeCursor();
 		return $rows;
+	}
+
+	function get_reportCount() {
+
+		$db = get_database($config['database']);
+		$statement = 
+			"SELECT count(*) as totalCount " .
+			"FROM amber_check c " .
+			"LEFT JOIN amber_cache ca on ca.id = c.id " .
+			"LEFT JOIN amber_activity a on ca.id = a.id " .
+			"WHERE c.message <> 'Excluded site' ";
+		$query = $db->query($statement);
+		
+		$result = $query->fetch();
+    	$query->closeCursor();
+	  	return $result[0];
 	}
 
 	/* If a delete request, delete the item and reload the page */
@@ -215,15 +233,15 @@
 		export();
 	}
 
-	/* Setup data for display */
-	$data = get_report();
-
-	/* Handle paging */
 	$per_page = 50;
     $current_page = get_pagenum();
-    $total_items = count($data);
+    $total_items = get_reportCount();
     $page_count = ceil($total_items / $per_page);
-    $data = array_slice($data,(($current_page-1)*$per_page),$per_page);
+	/* Setup data for display */
+	$data = get_report($current_page, $per_page);
+
+	/* Handle paging */
+//    $data = array_slice($data,(($current_page-1)*$per_page),$per_page);
 
 
 	/* No need to cache output anymore */
