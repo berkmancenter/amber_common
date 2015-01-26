@@ -240,10 +240,6 @@
 	/* Setup data for display */
 	$data = get_report($current_page, $per_page);
 
-	/* Handle paging */
-//    $data = array_slice($data,(($current_page-1)*$per_page),$per_page);
-
-
 	/* No need to cache output anymore */
 	ob_end_flush();
 ?>
