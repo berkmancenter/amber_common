@@ -51,7 +51,7 @@ function main($argc, $argv) {
       if ($options["url"]) {
         cache($options["url"]);
       } else {
-        "Error: Provide URL to cache";
+        print "Error: Provide URL to cache\n";
       }
       break;
     case "help":
@@ -130,7 +130,7 @@ function cache($url) {
 
     $blacklist = isset($config['amber_excluded_sites']) ? $config['amber_excluded_sites'] : array();
     if (!$blacklist) {
-      return true;
+      return false;
     }   
     $host = parse_url($link,PHP_URL_HOST);
     if ($host) {
