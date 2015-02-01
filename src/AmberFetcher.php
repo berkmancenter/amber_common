@@ -57,7 +57,7 @@ class AmberFetcher implements iAmberFetcher {
       $asset_paths = $this->assetHelper->extract_assets($body);
       /* Use the url of the document we end up downloading as a reference point for
          relative asset references, since we may have been redirected from the one
-         we originally requested. */
+         we originally requested. */ 
       $assets = $this->assetHelper->expand_asset_references($root_item['info']['url'], $asset_paths, 
                                                             $this->assetHelper->extract_base_tag($body));
       $assets = $this->download_assets($assets, $root_item['info']['url']); 
@@ -144,7 +144,7 @@ class AmberFetcher implements iAmberFetcher {
       $reason = "File size too large";
       return FALSE;
     }
-    if ($data['headers']['Content-Type'] && !empty($this->excludedContentTypes)) {
+    if (isset($data['headers']['Content-Type']) && !empty($this->excludedContentTypes)) {
       $content_type = $data['headers']['Content-Type'];
       foreach ($this->excludedContentTypes as $exclude) {
         if (trim($exclude) && (strpos(strtolower($content_type), trim($exclude)) !== FALSE)) {
