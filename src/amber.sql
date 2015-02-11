@@ -43,3 +43,6 @@ CREATE TABLE amber_variables (
   value           TEXT NOT NULL,
   PRIMARY KEY(name)
 );
+
+CREATE INDEX main.amber_cache_url ON amber_cache (url);
+CREATE INDEX main.amber_check_url ON amber_check (url);
