@@ -85,7 +85,7 @@ function cache($url) {
   $fetcher = get_fetcher();
   $status = get_status();
   $checker = get_checker();
-  if (excluded_link($url)) {
+  if (regexp_excluded_link($url)) {
     $status->save_check(array(
       'url' => $url, 
       'next_check' => PHP_INT_MAX, 
@@ -121,7 +121,7 @@ function cache($url) {
 
   /**
    * Filter links that are candidates for caching to exclude local links, or links to URLs on the blacklist
-   * @param $links array of links to check
+   * @param $link link to check
    * @param $blacklist array of hostnames to exclude
    */
   function excluded_link($link)
@@ -140,6 +140,32 @@ function cache($url) {
         if (strcasecmp($host,$blacklistitem) === 0) {
           return true;
         }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Filter links that are candidates for caching to exclude local links, or links to URLs on the blacklist
+   * @param $link link to check
+   * @param $blacklist array of regular expressions to exclude
+   */
+  function regexp_excluded_link($link)
+  {
+    global $config;
+
+    $blacklist = isset($config['amber_excluded_sites']) ? $config['amber_excluded_sites'] : array();
+    if (!$blacklist) {
+      return false;
+    }   
+    foreach ($blacklist as $blacklistitem) {
+      $blacklistitem = trim($blacklistitem);
+      $blacklistitem = preg_replace("/https?:\\/\\//i", "", $blacklistitem);
+      $blacklistitem = str_replace("@", "\@", $blacklistitem); 
+      $blacklistitem = '@' . $blacklistitem . '@';
+      $cleanedlink = preg_replace("/https?:\\/\\//i", "", $link);
+      if (preg_match($blacklistitem, $cleanedlink)) {
+        return true;
       }
     }
     return false;
