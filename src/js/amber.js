@@ -17,15 +17,15 @@ var amber = {
       this_site: "This site"
     },
     fa : {
-        interstitial_html_up :
-        '<div class="amber-interstitial"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">این سایت باید در دسترس باشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div>' +
-        '<a class="amber-focus" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
-        interstitial_html_down :
-        '<div class="amber-interstitial"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">این وب سایت ممکن است در دسترس نباشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div>' +
-        '<a class="amber-focus" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
-        hover_html_up   : '<div class="amber-hover amber-up"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این سایت باید در دسترس باشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a href="{{CACHE}}">دیدن نسخه ذخیره</a><a href="{{LINK}}" class="amber-focus">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
-        hover_html_down : '<div class="amber-hover amber-down"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این وب سایت ممکن است در دسترس نباشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a href="{{CACHE}}" class="amber-focus">دیدن نسخه ذخیره<a href="{{LINK}}">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
-        this_site: "این وب سایت"
+      interstitial_html_up :
+      '<div class="amber-interstitial"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">این سایت باید در دسترس باشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div>' +
+      '<a class="amber-focus" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
+      interstitial_html_down :
+      '<div class="amber-interstitial"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">این وب سایت ممکن است در دسترس نباشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div>' +
+      '<a class="amber-focus" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
+      hover_html_up   : '<div class="amber-hover amber-up"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این سایت باید در دسترس باشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a href="{{CACHE}}">دیدن نسخه ذخیره</a><a href="{{LINK}}" class="amber-focus">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
+      hover_html_down : '<div class="amber-hover amber-down"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این وب سایت ممکن است در دسترس نباشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a href="{{CACHE}}" class="amber-focus">دیدن نسخه ذخیره</a><a href="{{LINK}}">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
+      this_site: "این وب سایت"
       }
     },
 
@@ -35,7 +35,7 @@ var amber = {
   },
 
   country_specific_behavior_exists : function() {
-    return (document.querySelectorAll("a[data-cache][data-amber-behavior*=\\,]").length > 0);
+    return (document.querySelectorAll("a[data-versionurl][data-amber-behavior*=\\,]").length > 0);
   },
 
   callback : function(json) {
@@ -109,28 +109,11 @@ var amber = {
     return result;
   },
 
-  parse_cache_source : function(s) {
+  parse_cache : function(cache_url, cache_date) {
     var result = {};
-    var x = s.split(" ");
-    if (x.length != 2) {
-      return false;
-    } else {
-      result.cache = x[0];
-      result.date = x[1];
-    }
-    return result;
-  },
-
-  parse_cache : function(s) {
-    var result = {};
-    /* Split by cache source */
-    var sources = s.split(",");
-    result.default = amber.parse_cache_source(sources[0]);
-    if (sources.length > 1) {
-      for (i = 0; i < sources.length; i++) {
-        // Logic for additional cache sources will go here
-      }
-    }
+    result.default = {};
+    result.default.cache = cache_url;
+    result.default.date = cache_date;
     return result;
   },
 
@@ -154,7 +137,7 @@ var amber = {
 
   show_cache : function(e) {
     var behavior = amber.parse_behavior(this.getAttribute("data-amber-behavior"));
-    var cache = amber.parse_cache(this.getAttribute("data-cache"));
+    var cache = amber.parse_cache(this.getAttribute("data-versionurl"), this.getAttribute("data-versiondate"));
     if (amber.execute_action(behavior,"cache") && cache.default) {
       window.location.href = cache.default.cache;
       e.preventDefault();
@@ -163,7 +146,7 @@ var amber = {
 
   show_interstitial : function (e) {
     var behavior = amber.parse_behavior(this.getAttribute("data-amber-behavior"));
-    var cache = amber.parse_cache(this.getAttribute("data-cache"));
+    var cache = amber.parse_cache(this.getAttribute("data-versionurl"), this.getAttribute("data-versiondate"));
 
     if (amber.execute_action(behavior,"popup") && cache.default) {
       /* Add the window to the DOM */
@@ -253,7 +236,7 @@ var amber = {
   start_link_hover : function (e) {
     var behavior = amber.parse_behavior(this.getAttribute("data-amber-behavior"));
     if (amber.execute_action(behavior,"hover")) {
-      var cache = amber.parse_cache(this.getAttribute("data-cache"));
+      var cache = amber.parse_cache(this.getAttribute("data-versionurl"), this.getAttribute("data-versiondate"));
       var args = {
         '{{DATE}}' : amber.format_date_from_string(cache.default.date),
         '{{NAME}}' : (amber.name == undefined) ? amber.get_text('this_site') : amber.name,
@@ -347,13 +330,13 @@ var amber = {
 
 amber.util_ready(function($) {
 
-    amber.util_forEachElement("a[data-cache][data-amber-behavior*=cache]", function(e, i) {
+    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=cache]", function(e, i) {
       amber.util_addEventListener(e, 'click', amber.show_cache);
     });
-    amber.util_forEachElement("a[data-cache][data-amber-behavior*=popup]", function(e, i) {
+    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=popup]", function(e, i) {
       amber.util_addEventListener(e, 'click', amber.show_interstitial);
     });
-    amber.util_forEachElement("a[data-cache][data-amber-behavior*=hover]", function(e, i) {
+    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=hover]", function(e, i) {
       amber.util_addEventListener(e, 'mouseover', amber.start_link_hover);
       amber.util_addEventListener(e, 'mouseout', amber.end_link_hover);
       amber.util_addEventListener(e, 'click', amber.clear_hover);
