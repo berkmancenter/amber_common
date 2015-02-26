@@ -142,6 +142,9 @@
 				case 'size':
 					$result = "ORDER BY ca.size";
 					break;
+				case 'url':
+					$result = "ORDER BY c.url";
+					break;
 			}
 			if (isset($_GET['dir'])) {
 				switch ($_GET['dir']) {
@@ -316,7 +319,7 @@ if ($total_items > 0) { ?>
 <thead>
 <tr>
 <th>Site</th>
-<th>URL</th>
+<th><a href='<?php print sort_link("url"); ?>'>URL</a></th>
 <th><a href='<?php print sort_link("status"); ?>'>Status</a></th>
 <th><a href='<?php print sort_link("checked"); ?>'>Last Checked</a></th>
 <th><a href='<?php print sort_link("cached"); ?>'>Date Preserved</a></th>
