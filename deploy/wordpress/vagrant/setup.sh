@@ -63,14 +63,6 @@ cd /var/www/wordpress
 # Activate the plugin
 /srv/wp-cli/bin/wp plugin activate amber --allow-root 
 
-# Setup .htaccess to support cache access (remove once we can do this within WP code)
-cat >> /var/www/wordpress/.htaccess <<EOF
-RewriteEngine on
-RewriteRule ^.*amber/cache/([a-f0-9]+)/?$ /index.php?amber_cache=$1 [L,QSA]
-RewriteRule ^.*amber/cacheframe/([a-f0-9]+)/?$ /index.php?amber_cacheframe=$1 [L,QSA]
-RewriteRule ^.*amber/cacheframe/([a-f0-9]+)/assets/(.*)/?$ /index.php?amber_cacheframe=$1&amber_asset=$2 [L,QSA]
-EOF
-
 # Update permissions
 chown -R www-data:www-data /var/www/ /var/www/wordpress/.htaccess
 
