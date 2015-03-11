@@ -143,7 +143,7 @@
 					$result = "ORDER BY ca.size";
 					break;
 				case 'url':
-					$result = "ORDER BY c.url";
+					$result = "ORDER BY ltrim(c.url,'https')";
 					break;
 			}
 			if (isset($_GET['dir'])) {
