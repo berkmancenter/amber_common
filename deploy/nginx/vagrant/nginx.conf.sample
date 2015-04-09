@@ -39,6 +39,8 @@ http {
 
         #access_log  logs/host.access.log  main;
 
+        include amber-cache.conf;
+        
         location / {
             include amber.conf;
             root   html;

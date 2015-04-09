@@ -21,6 +21,7 @@ cp /vagrant/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
 
 # Amber configuration - Install the amber-specific nginx configuration file
 cp /usr/local/src/amber_nginx/amber.conf /usr/local/nginx/conf
+cp /usr/local/src/amber_nginx/amber-cache.conf /usr/local/nginx/conf
 
 # Amber configuration - Setup the database
 mkdir /var/lib/amber
