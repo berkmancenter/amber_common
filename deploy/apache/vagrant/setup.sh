@@ -52,8 +52,8 @@ chmod +x /usr/local/src/amber_common/deploy/apache/vagrant/cron-cache.sh /usr/lo
 
 # Schedule cron job
 cat > /etc/cron.d/amber << EOF
-*/5 * * * * www-data /bin/sh /usr/local/src/amber_common/deploy/apache/vagrant/cron-cache.sh --ini=/usr/local/src/amber_common/src/amber-apache.ini 2>> /var/log/amber >> /var/log/amber
-15 3 * * *  www-data /bin/sh /usr/local/src/amber_common/deploy/apache/vagrant/cron-check.sh --ini=/usr/local/src/amber_common/src/amber-apache.ini 2>> /var/log/amber >> /var/log/amber
+*/5 * * * * www-data /bin/sh /usr/local/src/amber_common/deploy/apache/vagrant/cron-cache.sh --ini=/etc/amber/amber-apache.ini 2>> /var/log/amber >> /var/log/amber
+15 3 * * *  www-data /bin/sh /usr/local/src/amber_common/deploy/apache/vagrant/cron-check.sh --ini=/etc/amber/amber-apache.ini 2>> /var/log/amber >> /var/log/amber
 EOF
 
 # Setup permissions for cron job logs
