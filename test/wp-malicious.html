@@ -5,6 +5,25 @@
     <h1>Malicious WP</h1>
 
     <p>This page will attempt to access content on WP that it shouldn't be able to, even if you're signed into WP while looking at it.</p>
+
+    <p>First, what can I do with WordPress in developer tools while directly on the site?</p>
+
+    <p>The following can get the HTML for the new post form:</p>
+
+    <pre><code>jQuery.get( '/wp-admin/post-new.php', function( result ) { console.log( result ); } )</code></pre>
+
+    <h2>output</h2>
+
+    <div id="output"></div>
+
+    <script>
+      var req = new XMLHttpRequest();
+      req.onload = function() {
+        document.getElementById( 'output' ).innerHTML = this.responseText;
+      };
+      req.open( 'get', '/wp-admin/post-new.php', true );
+      req.send();
+    </script>
   </body>
 </html>
 
