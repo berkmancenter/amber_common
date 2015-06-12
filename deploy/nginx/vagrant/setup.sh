@@ -1,3 +1,12 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+	echo "RELEASE_TAG not specified. Proceeding with release of master branch"
+	export RELEASE_TAG=master
+else
+	export RELEASE_TAG=$1
+fi	
+
 # Install prerequisites
 sudo apt-get update
 sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-dev php5-cli php5-common php5-sqlite php5-curl php5-fpm zlib1g-dev
@@ -5,7 +14,9 @@ sudo apt-get -y install git make curl libpcre3 libpcre3-dev sqlite3 libsqlite3-d
 # Get code
 cd /usr/local/src
 git clone https://github.com/berkmancenter/amber_common.git
+git -C /usr/local/src/amber_common checkout $RELEASE_TAG
 git clone https://github.com/berkmancenter/amber_nginx.git
+git -C /usr/local/src/amber_nginx checkout $RELEASE_TAG
 git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module
 
 # Build nginx
@@ -54,6 +65,9 @@ EOF
 touch /var/log/amber
 chown www-data /var/log/amber
 chgrp www-data /var/log/amber
+
+# Install any provided public keys
+cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys 
 
 # Start nginx
 /usr/local/nginx/sbin/nginx
