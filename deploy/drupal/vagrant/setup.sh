@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ -z "$1" ]]; then
+	echo "RELEASE_TAG not specified. Proceeding with release of master branch"
+	export RELEASE_TAG=master
+else
+	export RELEASE_TAG=$1
+fi	
+
 # Make mysql-install non-interactive, so it doesn't prompt for password
 export DEBIAN_FRONTEND=noninteractive
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password changeme'
@@ -25,6 +32,7 @@ chmod 755 /vagrant/start.sh
 # Get Amber code
 cd /usr/local/src
 git clone https://github.com/berkmancenter/amber_drupal.git
+git -C /usr/local/src/amber_drupal checkout $RELEASE_TAG
 mv /usr/local/src/amber_drupal/amber /var/www/sites/all/modules
 
 /vagrant/start.sh
