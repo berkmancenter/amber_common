@@ -82,5 +82,5 @@ service apache2 restart
 echo Wordpress admin password: $WP_ADMIN_PASSWORD
 
 # Install any provided public keys
-cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys 
+if [ -d "/vagrant_public_keys" ]; then cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys ; fi
 

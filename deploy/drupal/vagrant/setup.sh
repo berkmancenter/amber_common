@@ -79,4 +79,4 @@ drush user-password admin --password=$DRUPAL_ADMIN_PASSWORD
 service apache2 restart
 
 # Install any provided public keys
-cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys 
+if [ -d "/vagrant_public_keys" ]; then cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys ; fi

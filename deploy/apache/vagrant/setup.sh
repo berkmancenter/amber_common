@@ -73,5 +73,5 @@ chown www-data /var/log/amber
 chgrp www-data /var/log/amber
 
 # Install any provided public keys
-cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys 
+if [ -d "/vagrant_public_keys" ]; then cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys ; fi
 
