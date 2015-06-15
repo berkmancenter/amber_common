@@ -11,8 +11,10 @@ amber_common
 
 * Vagrant
 * Vagrant AWS provider. To install:
-```vagrant plugin install vagrant-aws```
-```vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box```
+```
+vagrant plugin install vagrant-aws
+vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
+```
 * AWS command-line tools (if automatically assigning IP addresses)
 * AWS credentials in the following environment variables
     * AWS_ACCESS_KEY_ID
@@ -22,7 +24,7 @@ amber_common
     * AWS_KEYPAIR_NAME
     * AWS_PRIVATE_AWS_SSH_KEY_PATH
 * (Optional) Additional environment variables
-    * AMBER_PUBLIC_KEY_DIR => Directory containing public SSH keys to be copied to authorized_keys on the new server, to allow SSH login
+    * AMBER_PUBLIC_KEY_DIR => Directory containing public SSH keys to be copied to ```authorized_keys``` on the new server, to allow SSH login
     * AMBER_drupal_ELASTIC_IP => AWS Elastic IP to assign to the Drupal server
     * AMBER_wordpress_ELASTIC_IP => AWS Elastic IP to assign to the Wordpress server
     * AMBER_apache_ELASTIC_IP => AWS Elastic IP to assign to the Apache server
