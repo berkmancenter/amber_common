@@ -2,72 +2,40 @@ amber_common
 =================
 [![Build Status](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
 
-Code and documentation for the Internet Robustness project that's used across multiple platforms
+# Shared Amber Code
 
-## Sample environments
+Certain code is shared across the various Amber implementations for different platforms. That code is maintained here
 
-There are sample virtual machines configured for each of the Internet Robustness environments
+# Test environments
 
-### nginx (Vagrant)
+Vagrant virtual machines and scripts to deploy to AWS for each of the Amber plaforms (Drupal, Wordpress, Nginx, Apache)
 
-* Install Vagrant (http://vagrantup.com)
-* ```cd deploy/nginx/vagrant```
-* ```vagrant up```
+## Requirements
 
-### Drupal (Vagrant)
-
-* Install Vagrant (http://vagrantup.com)
-* ```cd deploy/drupal/vagrant```
-* ```vagrant up```
-
-The Drupal server will be available at http://localhost:9000, with the Internet Robustness plugin enabled
-
-### Drupal (Vagrant - AWS)
-
-* Install Vagrant (http://vagrantup.com)
-* Setup environment variables with your AWS credentials
+* Vagrant
+* Vagrant AWS provider. To install:
+```vagrant plugin install vagrant-aws```
+```vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box```
+* AWS command-line tools (if automatically assigning IP addresses)
+* AWS credentials in the following environment variables
     * AWS_ACCESS_KEY_ID
+    * AWS_ACCESS_KEY (same as AWS_ACCESS_KEY_ID)
     * AWS_SECRET_ACCESS_KEY
+    * AWS_SECRET_KEY (same as AWS_SECRET_ACCESS_KEY)
     * AWS_KEYPAIR_NAME
     * AWS_PRIVATE_AWS_SSH_KEY_PATH
-* ```cd deploy/drupal/vagrant```
-* ```vagrant up --provider=aws```
-* ```vagrant ssh```
+* (Optional) Additional environment variables
+    * AMBER_PUBLIC_KEY_DIR => Directory containing public SSH keys to be copied to authorized_keys on the new server, to allow SSH login
+    * AMBER_drupal_ELASTIC_IP => AWS Elastic IP to assign to the Drupal server
+    * AMBER_wordpress_ELASTIC_IP => AWS Elastic IP to assign to the Wordpress server
+    * AMBER_apache_ELASTIC_IP => AWS Elastic IP to assign to the Apache server
+    * AMBER_nginx_ELASTIC_IP => AWS Elastic IP to assign to the Nginx server
 
-### Nginx (Vagrant - AWS)
+## Deployment
 
-* Install Vagrant (http://vagrantup.com)
-* Setup environment variables with your AWS credentials
-    * AWS_ACCESS_KEY_ID
-    * AWS_SECRET_ACCESS_KEY
-    * AWS_KEYPAIR_NAME
-    * AWS_PRIVATE_AWS_SSH_KEY_PATH
-* ```cd deploy/nginx/vagrant```
-* ```vagrant up --provider=aws```
-* ```vagrant ssh```
+```deploy.sh --platform=[drupal|wordpress|nginx|apache|all] --release=RELEASE```
 
-### Wordpress (Vagrant - AWS)
+Where ```RELEASE``` is the version of the code to deploy - a git tag/hash/branch from the relevant Github repository
 
-* Install Vagrant (http://vagrantup.com)
-* Setup environment variables with your AWS credentials
-    * AWS_ACCESS_KEY_ID
-    * AWS_SECRET_ACCESS_KEY
-    * AWS_KEYPAIR_NAME
-    * AWS_PRIVATE_AWS_SSH_KEY_PATH
-* ```cd deploy/wordpress/vagrant```
-* ```vagrant up --provider=aws```
-* ```vagrant ssh```
-
-### Apache (Vagrant - AWS)
-
-* Install Vagrant (http://vagrantup.com)
-* Setup environment variables with your AWS credentials
-    * AWS_ACCESS_KEY_ID
-    * AWS_SECRET_ACCESS_KEY
-    * AWS_KEYPAIR_NAME
-    * AWS_PRIVATE_AWS_SSH_KEY_PATH
-* ```cd deploy/apache/vagrant```
-* ```vagrant up --provider=aws```
-* ```vagrant ssh```
 
 
