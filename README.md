@@ -2,13 +2,10 @@ amber_common
 =================
 [![Build Status](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
 
-# Shared Amber Code
+# Contents
 
-Certain code is shared across the various Amber implementations for different platforms. That code is maintained here
-
-# Test environments
-
-Vagrant virtual machines and scripts to deploy to AWS for each of the Amber plaforms (Drupal, Wordpress, Nginx, Apache)
+* Any code that is shared across the different platform-specific Amber implementations
+* Scripts to deploy sample websites to AWS with Amber intalled for each of the Amber plaforms (Drupal, Wordpress, Nginx, Apache)
 
 ## Requirements
 
