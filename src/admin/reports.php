@@ -275,7 +275,7 @@
 					<tr><td>Configuration file</td><td><?php print($_SERVER['AMBER_CONFIG']); ?></td></tr>
 				</tbody>
 			</table>
-			<a href="<?php print $script_location ?>?delete=all">Delete all captures</a>
+			<a class="delete-all" href="<?php print $script_location ?>?delete=all">Delete all captures</a>
 		</td>
 
 		<td valign="top">
@@ -343,8 +343,8 @@ if ($total_items > 0) { ?>
 		print("<td>" . (isset($row['size']) ? round($row['size']/1024,2) : (isset($row['message']) ? htmlspecialchars($row['message']) : "")) . "</td>");
 		print("<td>" . (isset($row['activity_date']) ? date("r", $row['activity_date']) : "") . "</td>");
 		print("<td>" . $row['views'] . "</td>");
-		print("<td>" . (isset($row['location']) ? "<a href='/" . htmlspecialchars($row['location']) . "'>View</a>" : "") . "</td>");
-		print("<td>" . "<a href='" .$script_location . "?delete=" . $row['id'] . "'>Delete</a>" . "</td>");
+		print("<td>" . (isset($row['location']) ? "<a class='view' href='/" . htmlspecialchars($row['location']) . "'>View</a>" : "") . "</td>");
+		print("<td>" . "<a class='delete' href='" .$script_location . "?delete=" . $row['id'] . "'>Delete</a>" . "</td>");
 		print "</tr>";
 	}
 

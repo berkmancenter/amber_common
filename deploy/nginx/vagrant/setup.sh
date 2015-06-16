@@ -69,5 +69,8 @@ chgrp www-data /var/log/amber
 # Install any provided public keys
 if [ -d "/vagrant_public_keys" ]; then cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys ; fi
 
+# Setup test pages for data validation
+cp -r /tmp/data /usr/local/nginx/html
+
 # Start nginx
 /usr/local/nginx/sbin/nginx
