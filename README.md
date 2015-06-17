@@ -1,13 +1,12 @@
-amber_common
-=================
 [![Build Status](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
 
 # Contents
 
 * Any code that is shared across the different platform-specific Amber implementations
 * Scripts to deploy sample websites to AWS with Amber intalled for each of the Amber plaforms (Drupal, Wordpress, Nginx, Apache)
+* Integration test suites for each platform
 
-## Requirements
+## Deployment Requirements
 
 * Vagrant
 * Vagrant AWS provider. To install:
@@ -35,6 +34,27 @@ vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.
 ```deploy.sh --platform=[drupal|wordpress|nginx|apache|all] --release=RELEASE```
 
 Where ```RELEASE``` is the version of the code to deploy - a git tag/hash/branch from the relevant Github repository
+
+## Test Suite Requirements
+
+* CasperJS
+
+## Test Suite Execution (Nginx / Apache)
+
+Copy ```config.js.sample``` to ```config.js``` and update the ```servers``` variable with the IP addresses of the target servers for each plaform.
+
+```
+cd test
+casperjs test test-webserver-admin.js test-webserver-pagelinks.js --includes=config.js
+```
+Wait 10 minutes for automated caching to complete
+```
+casperjs test test-webserver-postcache.js --includes=config.js
+```
+
+
+
+
 
 
 
