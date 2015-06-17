@@ -1,31 +1,10 @@
- /* Webservers - Immediate tests
+/**
+ * Tests for the Nginx and Apache Admin pages that can be 
+ * run immediately after the server comes online
+ */
 
-- Webserver home page is up
-- Webserver home page content is mostly correct / non-blank
-- Amber admin page is available
-- Predefined test pages are available and have correct content
-	- Small page
-	- Big page
-- Amberjs and Ambercss are being inserted
-*/
+/**** Sniff Tests ****/
 
-/* Webservers - Delayed tests
-
-Preconditions: 
-- site has been up for at least 10 minutes (assume 5 minute cron interval)
-- pages to be tested have been warmed up
-
-Test
-- Repeat immediate tests
-- Check for amber annotations on specific links on all pages
-- Check that popup appears on hover event
-- Check for cache existence for links
-
-*/
-
-require("./config.js");
-
-/* Sniff Tests */
 casper.test.begin('Nginx page sniff test', function suite(test) {
 	testHttpStatus('nginx', test);
 
@@ -52,7 +31,7 @@ casper.test.begin('Drupal page sniff test', function suite(test) {
 });
 
 
-/* Webserver initial tests - before any content is cached */
+/**** Check some basic content on the page ****/
 
 casper.test.begin('Nginx test page sniff test', function suite(test) {
     casper.start(getServer('nginx'), function() {
@@ -71,6 +50,8 @@ casper.test.begin('Apache test page sniff test', function suite(test) {
 
     casper.run(function() { test.done(); });
 });
+
+/**** Run through specific test pages ****/
 
 casper.test.begin('Nginx Test Page 1', function suite(test) {
 	testPage1SimpleNoLinks('nginx', test);
@@ -98,6 +79,7 @@ casper.test.begin('Apache Test Page 2', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+/**** Utility functions ****/
 
 function testPage1SimpleNoLinks(platform, test) {
     casper.start(getServer(platform) + "/data/test1.html", function() {
