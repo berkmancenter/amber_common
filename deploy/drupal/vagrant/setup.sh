@@ -7,6 +7,13 @@ else
 	export RELEASE_TAG=$1
 fi	
 
+if [[ -z "$2" ]]; then
+	echo "Site admin password not specified. A Drupal admin password will be generated"
+	export DRUPAL_ADMIN_PASSWORD=`pwgen -1 8`
+else
+	export DRUPAL_ADMIN_PASSWORD=$2
+fi	
+
 # Make mysql-install non-interactive, so it doesn't prompt for password
 export DEBIAN_FRONTEND=noninteractive
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password changeme'
@@ -39,7 +46,6 @@ mv /usr/local/src/amber_drupal/amber /var/www/sites/all/modules
 DRUPAL_DB="drupal"
 MYSQL_PASSWORD=`pwgen -c -n -1 12`
 DRUPAL_DB_PASSWORD=`pwgen -c -n -1 12`
-DRUPAL_ADMIN_PASSWORD=`pwgen -1 8`
 
 # This is so the passwords show up in logs. 
 echo mysql root password: $MYSQL_PASSWORD

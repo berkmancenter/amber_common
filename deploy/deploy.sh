@@ -9,7 +9,7 @@ function report () {
 }
 
 # Validation messages
-USAGE="Usage: deploy.sh --platform=[drupal|wordpress|nginx|apache|all] --release=RELEASE"
+USAGE="Usage: deploy.sh --platform=[drupal|wordpress|nginx|apache|all] --release=RELEASE [--site-password=PASSWORD]"
 ENVIRONMENT="The following environment variables must be set in order to spin up the AWS instance: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_KEYPAIR_NAME"
 
 # Get absolute path to the script
@@ -29,6 +29,10 @@ case $i in
     ;;
     --release=*)
     RELEASE="${i#*=}"
+    shift # past argument=value
+    ;;
+    --site-password=*)
+    SITE_PASSWORD="${i#*=}"
     shift # past argument=value
     ;;
     *)
@@ -55,7 +59,12 @@ fi
 
 # Validate the platform(s) to which to install
 case $PLATFORM in
-	(drupal|wordpress|nginx|apache)
+	(drupal|wordpress)
+		if [[ -z "$SITE_PASSWORD" ]]; then
+			report "Notice: The --site-password parameter was not set. A CMS admin password will be generated when the server launches"
+		fi
+	;;
+	(nginx|apache)
 	;;
 	all)
 	 	PLATFORM="drupal wordpress nginx apache"
@@ -74,7 +83,7 @@ report "====================="
 for P in $PLATFORM; do
 	cd $SCRIPT_DIR/$P/vagrant
 	find .vagrant -name id -exec rm {} \;
-	RELEASE_TAG=$RELEASE vagrant up --provider=aws
+	SITE_PASSWORD=$SITE_PASSWORD RELEASE_TAG=$RELEASE vagrant up --provider=aws
 	INSTANCE_ID=$(<`find .vagrant -name id`)
 
 	# Set the IP address for the new server to the elastic IP defined in $AMBER_[platform]_ELASTIC_IP
