@@ -17,19 +17,6 @@ casper.test.begin('Apache page sniff test', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
-casper.test.begin('Wordpress page sniff test', function suite(test) {
-	// testHttpStatus('wordpress', test);
-	test.skip(1, "Skipped one test");
-
-    casper.run(function() { test.done(); });
-});
-
-casper.test.begin('Drupal page sniff test', function suite(test) {
-	testHttpStatus('drupal', test);
-
-    casper.run(function() { test.done(); });
-});
-
 
 /**** Check some basic content on the page ****/
 
@@ -60,8 +47,8 @@ casper.test.begin('Nginx Test Page 1', function suite(test) {
 });
 
 casper.test.begin('Apache Test Page 1', function suite(test) {
-	// testPage1SimpleNoLinks('apache', test);
-	test.skip(1, "Skipped one test");
+	testPage1SimpleNoLinks('apache', test);
+	// test.skip(1, "Skipped one test");
 
     casper.run(function() { test.done(); });
 });
@@ -73,13 +60,19 @@ casper.test.begin('Nginx Test Page 2', function suite(test) {
 });
 
 casper.test.begin('Apache Test Page 2', function suite(test) {
-	// testPage2WarAndPeace('apache', test);
-	test.skip(1, "Skipped one test");
+	testPage2WarAndPeace('apache', test);
+	// test.skip(1, "Skipped one test");
 
     casper.run(function() { test.done(); });
 });
 
 /**** Utility functions ****/
+
+function testHttpStatus(platform, test) {
+    casper.start(getServer(platform), function() {
+		test.assertHttpStatus(200);
+    });
+}
 
 function testPage1SimpleNoLinks(platform, test) {
     casper.start(getServer(platform) + "/data/test1.html", function() {

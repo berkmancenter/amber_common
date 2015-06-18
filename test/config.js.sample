@@ -7,6 +7,11 @@ var servers = {
 	'nginx' : 'http://xx.xx.xx.xx'
 }
 
+var passwords = {
+	'drupal' : 'amber',
+	'wordpress' : 'amber',
+}
+
 var web_server_pages = {
 	'apache' : ['/'],
 	'nginx' : ['/']
@@ -18,10 +23,6 @@ function getServer(platform) {
 	return servers[platform];
 }
 
-function testHttpStatus(platform, test) {
-    casper.start(getServer(platform), function() {
-		test.assertHttpStatus(200);
-    });
+function getAdminPassword(platform) {
+	return passwords[platform];
 }
-
-
