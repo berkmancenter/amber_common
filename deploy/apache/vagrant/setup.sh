@@ -73,7 +73,7 @@ chown www-data /var/log/amber
 chgrp www-data /var/log/amber
 
 # Setup test pages for data validation
-cp -r /tmp/data /var/www
+cp -r /tmp/data /var/www/html
 
 # Install any provided public keys
 if [ -d "/vagrant_public_keys" ]; then cat /vagrant_public_keys/* >> /home/ubuntu/.ssh/authorized_keys ; fi
