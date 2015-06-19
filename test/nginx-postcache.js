@@ -51,7 +51,7 @@ casper.test.begin('Nginx: Delete cache', function suite(test) {
         startCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
     })
 
-    casper.thenClick("table a.delete");
+    casper.thenClick("table tr.cached a.delete");
     casper.wait(5000, function() {this.echo("Waited 5 seconds after deleting row");});
 
     casper.then(function() {
