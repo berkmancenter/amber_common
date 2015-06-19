@@ -40,11 +40,32 @@ casper.test.begin('Nginx: View cache (using popup)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+casper.test.begin('Nginx: Cache view count incremented', function suite(test) {
+    casper.start(getServer('nginx') + "/amber/admin", function() { });
+
+    var startViewCount;
+    casper.then(function() {
+        startViewCount = this.fetchText("tr.cached td:nth-child(8)");
+        if (startViewCount == "") {
+        	startViewCount = 0;
+        } else {
+        	startViewCount = parseInt(startViewCount);
+        }
+    });
+
+    casper.thenClick("table tr.cached a.view");
+	casper.thenOpen(getServer('nginx') + "/amber/admin");
+
+    casper.then(function() {
+        var endViewCount = parseInt(this.fetchText("tr.cached td:nth-child(8)"));
+        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
+    });
+
+    casper.run(function() { test.done(); });
+});
+
 casper.test.begin('Nginx: Delete cache', function suite(test) {
-    casper.start(getServer('nginx') + "/amber/admin", function() {
-		test.assertHttpStatus(200);
-		test.assertSelectorHasText('h1','Amber Dashboard');
-	});
+    casper.start(getServer('nginx') + "/amber/admin", function() { });
 
     var startCacheCount;
     casper.then(function() {

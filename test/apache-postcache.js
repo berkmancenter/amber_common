@@ -46,6 +46,33 @@ casper.test.begin('Apache: View cache (using hover)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+casper.test.begin('Apache: Cache view count incremented', function suite(test) {
+    casper.start(getServer('apache') + "/amber/admin", function() { });
+
+    var startViewCount;
+    casper.then(function() {
+        startViewCount = this.fetchText("tr.cached td:nth-child(8)");
+        if (startViewCount == "") {
+        	startViewCount = 0;
+        } else {
+        	startViewCount = parseInt(startViewCount);
+        }
+    });
+
+    casper.thenClick("table tr.cached a.view");
+	casper.thenOpen(getServer('nginx') + "/amber/admin");
+
+    casper.wait(5000, function() {this.echo("Waited 5 seconds after viewing cache");});
+
+    casper.then(function() {
+        var endViewCount = parseInt(this.fetchText("tr.cached td:nth-child(8)"));
+        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
+    });
+
+    casper.run(function() { test.done(); });
+});
+
+
 casper.test.begin('Apache: Delete cache', function suite(test) {
     casper.start(getServer('apache') + "/amber/admin", function() {
 		test.assertHttpStatus(200);
