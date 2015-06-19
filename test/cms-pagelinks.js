@@ -5,12 +5,11 @@
 
 /**** Sniff Tests ****/
 
-// casper.test.begin('Wordpress page sniff test', function suite(test) {
-	// testHttpStatus('wordpress', test);
-	//test.skip(1, "Skipped one test");
+casper.test.begin('Wordpress page sniff test', function suite(test) {
+	testHttpStatus('wordpress', test);
 
-    //casper.run(function() { test.done(); });
-// });
+    casper.run(function() { test.done(); });
+});
 
 casper.test.begin('Drupal page sniff test', function suite(test) {
 	testHttpStatus('drupal', test);
@@ -32,11 +31,10 @@ casper.test.begin('Drupal test page sniff test', function suite(test) {
 });
 
 casper.test.begin('Wordpress test page sniff test', function suite(test) {
-    // casper.start(getServer('wordpress'), function() {
-	// 	test.assertTitle('Apache2 Ubuntu Default Page: It works');
-	//     test.assertTextExists('Please report bugs specific to modules', "Text at the end of the page exists");
-	//});
-	test.skip(1, "Skipped one test");
+    casper.start(getServer('wordpress'), function() {
+		test.assertTitle('Amber WordPress | Just another WordPress site');
+	    test.assertTextExists('Proudly powered by WordPress');
+	});
 
     casper.run(function() { test.done(); });
 });
