@@ -8,9 +8,16 @@ else
 fi	
 
 if [[ -z "$2" ]]; then
+	echo "Site URL not specified. Required for Wordpress. Dying now"
+	exit 1
+else
+	export SITE_URL=$2
+fi	
+
+if [[ -z "$3" ]]; then
 	echo "Site admin password not specified. A Wordpress admin password will be generated"
 else
-	export WP_ADMIN_PASSWORD=$2
+	export WP_ADMIN_PASSWORD=$3
 fi	
 
 # Make mysql-install non-interactive, so it doesn't prompt for password
@@ -72,7 +79,7 @@ cd /var/www/wordpress
 define( 'WP_DEBUG', true );
 PHP
 # /srv/wp-cli/bin/wp core install --allow-root --url=`curl http://169.254.169.254/latest/meta-data/public-hostname` --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="$WP_ADMIN_PASSWORD"
-/srv/wp-cli/bin/wp core install --allow-root --url=http://54.83.43.20 --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="$WP_ADMIN_PASSWORD"
+/srv/wp-cli/bin/wp core install --allow-root --url=$SITE_URL --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="$WP_ADMIN_PASSWORD"
 
 # Get Amber code
 cd /usr/local/src

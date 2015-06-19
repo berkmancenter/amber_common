@@ -83,11 +83,11 @@ report "====================="
 for P in $PLATFORM; do
 	cd $SCRIPT_DIR/$P/vagrant
 	find .vagrant -name id -exec rm {} \;
-	SITE_PASSWORD=$SITE_PASSWORD RELEASE_TAG=$RELEASE vagrant up --provider=aws
+	IP=AMBER_${P}_ELASTIC_IP
+	SERVER_URL="http://${!IP}" SITE_PASSWORD=$SITE_PASSWORD RELEASE_TAG=$RELEASE vagrant up --provider=aws
 	INSTANCE_ID=$(<`find .vagrant -name id`)
 
 	# Set the IP address for the new server to the elastic IP defined in $AMBER_[platform]_ELASTIC_IP
-	IP=AMBER_${P}_ELASTIC_IP
 	type ec2-associate-address >/dev/null 2>/dev/null && test "${!IP}" && ec2-associate-address ${!IP} --instance $INSTANCE_ID
 	report "Server available with $P release $RELEASE and instance id: $INSTANCE_ID and IP: ${!IP}"
 done
