@@ -46,6 +46,28 @@ casper.test.begin('Apache: View cache (using hover)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+casper.test.begin('Apache: Delete cache', function suite(test) {
+    casper.start(getServer('apache') + "/amber/admin", function() {
+		test.assertHttpStatus(200);
+		test.assertSelectorHasText('h1','Amber Dashboard');
+	});
+
+    var startCacheCount;
+    casper.then(function() {
+        startCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
+    })
+
+    casper.thenClick("table tr.cached a.delete");
+    casper.then(function() {this.echo("Waiting 5 seconds after deleting row");})
+    casper.wait(5000, function() {});
+
+    casper.then(function() {
+        var endCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
+        test.assertEquals(startCacheCount, endCacheCount + 1, "One cache item deleted");
+    })
+
+    casper.run(function() { test.done(); });
+});
 
 
 
