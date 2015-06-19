@@ -31,25 +31,35 @@ vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.
 
 ## Deployment
 
-```deploy.sh --platform=[drupal|wordpress|nginx|apache|all] --release=RELEASE```
+```deploy.sh --platform=[drupal|wordpress|nginx|apache|all] --release=RELEASE --site-password=[PASSWORD]```
 
-Where ```RELEASE``` is the version of the code to deploy - a git tag/hash/branch from the relevant Github repository
+Where:
+
+* ```RELEASE``` is the version of the code to deploy - a git tag/hash/branch from the relevant Github repository; and
+* ```PASSWORD``` is the CMS admin password to set on the new site (Drupal and Wordpress only)
 
 ## Test Suite Requirements
 
-* CasperJS
+* CasperJS 1.1 - (http://casperjs.readthedocs.org/en/latest/installation.html)
 
-## Test Suite Execution (Nginx / Apache)
+## Test Suite Execution
 
-Copy ```config.js.sample``` to ```config.js``` and update the ```servers``` variable with the IP addresses of the target servers for each plaform.
+Copy ```config.js.sample``` to ```config.js``` and update the ```servers``` variable with the IP addresses of the target servers for each plaform, and the ```passwords``` variable with the admin passwords for the Drupal and Wordpress sites.
 
+Run tests for each platform
 ```
 cd test
-casperjs test test-webserver-admin.js test-webserver-pagelinks.js --includes=config.js
+casperjs test nginx-precache.js --includes=config.js,ws-include.js
+casperjs test apache-precache.js --includes=config.js,ws-include.js
+casperjs test drupal.js --includes=config.js
+casperjs test wordpress.js --includes=config.js
 ```
-Wait 10 minutes for automated caching to complete
+
+Wait 10 minutes for automated caching to complete on the web servers, and then run the final tests:
+
 ```
-casperjs test test-webserver-postcache.js --includes=config.js
+casperjs test nginx-postcache.js --includes=config.js,ws-include.js
+casperjs test apache-postcache.js --includes=config.js,ws-include.js
 ```
 
 
