@@ -59,6 +59,8 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
     });   
     
     casper.thenClick("span#view-post-btn a");
+    casper.wait(5000, function() {this.echo("Waited for 5 seconds");})    
+
     casper.then(function() {
         test.assertTitle("Test 1 – Small page with no links | Amber WordPress");
         test.assertTextExists('the peanut is not technically a nut');
@@ -114,3 +116,114 @@ casper.test.begin('Wordpress: "Cache now" functionality works', function suite(t
 
     casper.run(function() { test.done(); });
 });
+
+/*casper.test.begin('Wordpress: Batch cache functionality works', function suite(test) {
+    casper.start(getServer('wordpress') + "/wp-login.php", function() {
+        this.fillSelectors('form', {
+            'input[name="log"]':    'admin',
+            'input[name="pwd"]':    getAdminPassword('wordpress'),
+        }, true);
+    });
+
+    var link = "http://www.google.com" + "?" + Math.floor(Math.random() * 100);
+
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
+        casper.thenClick("button#content-html");
+        this.fillSelectors('form[name="post"]', {
+            'input[name="post_title"]':    'Test Page for Cache Now test',
+            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
+        }, false);
+    });   
+     
+    casper.thenClick("#publish");
+
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
+        test.assertHttpStatus(200);
+        test.assertTitle("Amber Dashboard ‹ Amber Wordpress — WordPress");
+    });
+
+    casper.thenClick("input#scan");
+    casper.waitForText("Done scanning content", function() { 
+        this.echo("Done scanning content");
+    });
+    casper.thenClick("input#stop");
+
+    casper.thenClick("input#cache_now");
+    casper.waitForText("Done preserving links", function() { 
+        this.echo("Done preserving links");
+    });
+*/
+    // casper.waitForText("These links were cached", function() {
+    //         this.echo("Links cached, waiting for 5 seconds");
+    //         casper.wait(5000, function() {this.echo("Done waiting");});
+    // });
+
+    // casper.thenClick("span#view-post-btn a");
+
+    // casper.then(function() {
+    //     test.assertExists('a[href="' + link + '"]');
+    //     test.assertTitle("Test Page for Cache Now test | Amber WordPress");
+    //     // test.assertExists('a[href="' + link + '"][data-amber-behavior]');
+    //     test.assertExists('a[href="' + link + '"][data-versionurl]');
+    //     test.assertExists('a[href="' + link + '"][data-versiondate]');
+    // });
+
+
+    // /* Cleanup */
+    // casper.thenClick("li#wp-admin-bar-edit a");
+    // casper.thenClick("#delete-action a");
+/*
+    casper.run(function() { test.done(); });
+});
+*/
+
+casper.test.begin('Wordpress: Delete cache', function suite(test) {
+    casper.start(getServer('wordpress') + "/wp-login.php", function() {
+        this.fillSelectors('form', {
+            'input[name="log"]':    'admin',
+            'input[name="pwd"]':    getAdminPassword('wordpress'),
+        }, true);
+    });
+
+    var link = "http://www.google.com" + "?" + Math.floor(Math.random() * 100);
+
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
+        casper.thenClick("button#content-html");
+        this.fillSelectors('form[name="post"]', {
+            'input[name="post_title"]':    'Test Page for Cache Now test',
+            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
+        }, false);
+    });   
+     
+    casper.thenClick("#publish");
+    casper.thenClick("input#cache_now");
+
+    casper.waitForText("These links were cached", function() {
+            this.echo("Links cached, waiting for 5 seconds");
+            casper.wait(5000, function() {this.echo("Done waiting");});
+    });
+
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
+        test.assertHttpStatus(200);
+        test.assertTitle("Amber Dashboard ‹ Amber Wordpress — WordPress");
+    });
+
+    var startCacheCount;
+    casper.then(function() {
+        startCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
+    })
+
+    casper.thenClick("table.wp-list-table tbody tr:first-child .delete a");
+    casper.wait(5000, function() {this.echo("Waited 5 seconds after deleting row");});
+
+    casper.then(function() {
+        var endCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
+        test.assertEquals(startCacheCount, endCacheCount + 1, "One cache item deleted");
+    })
+
+    casper.run(function() { test.done(); });
+});
+
+
+
+
