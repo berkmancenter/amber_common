@@ -334,7 +334,7 @@ if ($total_items > 0) { ?>
 <?php 
 	
 	foreach ($data as $row) {
-		print "<tr>";
+		print(isset($row['location']) ? "<tr class='cached'>" : "<tr>");
 		print("<td>" . htmlspecialchars(parse_url($row['url'],PHP_URL_HOST)) . "</td>");
 		print("<td>" . "<a href='" . htmlspecialchars($row['url']) . "'>" . htmlspecialchars($row['url']) . "</a>" . "</td>");
 		print("<td>" . (is_null($row['status']) ? "" : ($row['status'] ? "Up" : "Down")) . "</td>");
