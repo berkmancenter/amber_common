@@ -9,7 +9,6 @@ fi
 
 if [[ -z "$2" ]]; then
 	echo "Site admin password not specified. A Drupal admin password will be generated"
-	export DRUPAL_ADMIN_PASSWORD=`pwgen -1 8`
 else
 	export DRUPAL_ADMIN_PASSWORD=$2
 fi	
@@ -46,6 +45,10 @@ mv /usr/local/src/amber_drupal/amber /var/www/sites/all/modules
 DRUPAL_DB="drupal"
 MYSQL_PASSWORD=`pwgen -c -n -1 12`
 DRUPAL_DB_PASSWORD=`pwgen -c -n -1 12`
+
+if [[ -z "$DRUPAL_ADMIN_PASSWORD" ]]; then
+	export DRUPAL_ADMIN_PASSWORD=`pwgen -1 8`
+fi	
 
 # This is so the passwords show up in logs. 
 echo mysql root password: $MYSQL_PASSWORD

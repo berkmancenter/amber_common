@@ -9,7 +9,6 @@ fi
 
 if [[ -z "$2" ]]; then
 	echo "Site admin password not specified. A Wordpress admin password will be generated"
-	export WP_ADMIN_PASSWORD=`pwgen -1 8`
 else
 	export WP_ADMIN_PASSWORD=$2
 fi	
@@ -40,6 +39,10 @@ sudo composer install
 MYSQL_PASSWORD=`pwgen -c -n -1 12`
 WP_DB_PASSWORD=`pwgen -c -n -1 12`
 
+if [[ -z "$WP_ADMIN_PASSWORD" ]]; then
+	export WP_ADMIN_PASSWORD=`pwgen -1 8`
+fi	
+
 # This is so the passwords show up in logs. 
 echo mysql root password: $MYSQL_PASSWORD
 echo wp db password: $WP_DB_PASSWORD
@@ -68,7 +71,8 @@ cd /var/www/wordpress
 /srv/wp-cli/bin/wp core config --allow-root --dbname=wp --dbuser=wp --dbpass=${WP_DB_PASSWORD} --quiet --extra-php <<PHP
 define( 'WP_DEBUG', true );
 PHP
-/srv/wp-cli/bin/wp core install --allow-root --url=`curl http://169.254.169.254/latest/meta-data/public-hostname` --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="$WP_ADMIN_PASSWORD"
+# /srv/wp-cli/bin/wp core install --allow-root --url=`curl http://169.254.169.254/latest/meta-data/public-hostname` --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="$WP_ADMIN_PASSWORD"
+/srv/wp-cli/bin/wp core install --allow-root --url=http://54.83.43.20 --quiet --title="Amber Wordpress" --admin_name=admin --admin_email="admin@local.dev" --admin_password="$WP_ADMIN_PASSWORD"
 
 # Get Amber code
 cd /usr/local/src
