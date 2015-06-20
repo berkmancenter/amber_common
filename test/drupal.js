@@ -14,16 +14,11 @@ casper.test.begin('Drupal: Site with plugin installed is up', function suite(tes
 });
 
 casper.test.begin('Drupal: Admin pages are up', function suite(test) {
-    casper.start(getServer('drupal'), function() {
-        this.fillSelectors('form#user-login-form', {
-            'input[name="name"]':    'admin',
-            'input[name="pass"]':    getAdminPassword('drupal'),
-        }, true);
-    });
+    drupal_login();
 
     casper.thenOpen(getServer('drupal') + "/admin/reports/amber", function() {
         test.assertHttpStatus(200, "Amber Dashboard is up");
-        test.assertTitle("Amber Dashboard | Site-Install", "Amber Dashboard has correct title");
+        test.assertTitle("Amber Dashboard | Site-Install", "Amber Dashboard summary page has correct title");
     });
 
     casper.thenOpen(getServer('drupal') + "/admin/reports/amber/detail", function() {
@@ -40,14 +35,7 @@ casper.test.begin('Drupal: Admin pages are up', function suite(test) {
 });
 
 casper.test.begin('Drupal: Pages with test content are up before being cached', function suite(test) {
-    casper.start(getServer('drupal'), function() {
-        if (this.exists("form#user-login-form")) {
-            this.fillSelectors('form#user-login-form', {
-                'input[name="name"]':    'admin',
-                'input[name="pass"]':    getAdminPassword('drupal'),
-            }, true);
-        }
-    });
+    drupal_login();
 
     casper.thenOpen(getServer('drupal') + "/node/add/article", function() {
         this.fillSelectors('form#article-node-form', {
@@ -68,37 +56,15 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
         test.assertTextExists('the peanut is not technically a nut', "Test page displays correct content");
     });
 
-    /* Cleanup */
-    casper.thenClick(("ul.tabs.primary li:nth-child(2) a"));
-    casper.thenClick(("#edit-delete"));
-    casper.thenClick(("#edit-submit"));
-
+    drupal_delete_current_page();
     casper.run(function() { test.done(); });
-
 });
 
 casper.test.begin('Drupal: Cache now functionality works', function suite(test) {
-    casper.start(getServer('drupal'), function() {
-        if (this.exists("form#user-login-form")) {
-            this.fillSelectors('form#user-login-form', {
-                'input[name="name"]':    'admin',
-                'input[name="pass"]':    getAdminPassword('drupal'),
-            }, true);
-        }
-	});
+    drupal_login();
 
-    var link = "http://www.google.com" + "?" + Math.floor(Math.random() * 100);
-
-    casper.thenOpen(getServer('drupal') + "/node/add/article", function() {
-	    this.fillSelectors('form#article-node-form', {
-	        'input[name="title"]':    'Test Page for Cache Now test',
-	        '#edit-body-und-0-value':  'Lorem ipsum: ' + link + ' and more ipsum'
-	    }, true);
-    });   
-    
-    casper.waitForText("has been created", function() {
-    	this.click("ul.tabs li:last-child a"); /* Click "Cache now" */
-    });
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for Cache Now test", link);
 
     casper.waitForText("Sucessfully cached", function() {
 		test.assertExists('a[href="' + link + '"]', "Cached link exists");
@@ -107,36 +73,15 @@ casper.test.begin('Drupal: Cache now functionality works', function suite(test) 
 		test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
     });
 
-    /* Cleanup */
-    casper.thenClick(("ul.tabs.primary li:nth-child(2) a"));
-    casper.thenClick(("#edit-delete"));
-    casper.thenClick(("#edit-submit"));
-
+    drupal_delete_current_page();
     casper.run(function() { test.done(); });
 });
 
-casper.test.begin('Drupal: View cache (using hover)', function suite(test) {
-    casper.start(getServer('drupal'), function() {
-        if (this.exists("form#user-login-form")) {
-            this.fillSelectors('form#user-login-form', {
-                'input[name="name"]':    'admin',
-                'input[name="pass"]':    getAdminPassword('drupal'),
-            }, true);
-        }
-    });
+casper.test.begin('Drupal: View cache / Test hover for cache display', function suite(test) {
+    drupal_login();
 
-    var link = "http://www.google.com" + "?" + Math.floor(Math.random() * 100);
-
-    casper.thenOpen(getServer('drupal') + "/node/add/article", function() {
-        this.fillSelectors('form#article-node-form', {
-            'input[name="title"]':    'Test Page for View cache test',
-            '#edit-body-und-0-value':  'Lorem ipsum: ' + link + ' and more ipsum'
-        }, true);
-    });   
-    
-    casper.waitForText("has been created", function() {
-        this.click("ul.tabs li:last-child a"); /* Click "Cache now" */
-    });
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for View cache test", link);
 
     casper.waitForText("Sucessfully cached", function() {
         casper.mouseEvent('mouseover', 'a[href="' + link + '"]');
@@ -163,13 +108,122 @@ casper.test.begin('Drupal: View cache (using hover)', function suite(test) {
         this.back();
     });
 
-    /* Cleanup */
+    drupal_delete_current_page();
+    casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Drupal: Cache view count incremented', function suite(test) {
+
+    drupal_login();
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for Cache view count increment test", link);
+
+    casper.waitForText("Sucessfully cached", function() {
+        casper.mouseEvent('mouseover', 'a[href="' + link + '"]');
+    });
+
+    var startViewCount;
+    casper.thenOpen(getServer('drupal') + "/admin/reports/amber/detail", function() {
+        test.assertTitle("Amber Dashboard | Site-Install", "Navigated to Amber Dashboard detail page");
+        startViewCount = this.fetchText("#block-system-main table tbody tr:first-child td:nth-child(8)");
+        if (startViewCount == "") {
+            startViewCount = 0;
+        } else {
+            startViewCount = parseInt(startViewCount);
+        }
+    });
+
+    casper.thenClick("#block-system-main table tbody tr:first-child td:nth-child(9) a");
+    casper.thenOpen(getServer('drupal') + "/admin/reports/amber/detail", function() {
+        var endViewCount = parseInt(this.fetchText("#block-system-main table tbody tr:first-child td:nth-child(8)"));
+        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
+    });
+
+    casper.then(function() {
+        this.back();
+        this.back();
+        this.back();
+    });
+
+    drupal_delete_current_page();
+    casper.run(function() { test.done(); });
+});
+
+
+casper.test.begin('Drupal: Delete cache', function suite(test) {
+
+    drupal_login();
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for delete cache test", link);
+
+    var startCacheCount;
+    casper.thenOpen(getServer('drupal') + "/admin/reports/amber", function() {
+        test.assertTitle("Amber Dashboard | Site-Install", "Navigated to Amber Dashboard summary page");
+        startCacheCount = this.fetchText("#block-system-main table tbody tr:first-child td:last-child");
+        if (startCacheCount == "") {
+            startCacheCount = 0;
+        } else {
+            startCacheCount = parseInt(startCacheCount);
+        }
+    });
+
+    casper.thenOpen(getServer('drupal') + "/admin/reports/amber/detail");
+    casper.thenClick("#block-system-main table tbody tr:first-child td:last-child a");
+    casper.thenOpen(getServer('drupal') + "/admin/reports/amber", function() {
+        var endCacheCount = parseInt(this.fetchText("#block-system-main table tbody tr:first-child td:last-child"));
+        test.assertEquals(startCacheCount - 1, endCacheCount, "Number of items in cache decreased after delete");
+    });
+
+    casper.then(function() {
+        this.back();
+        this.back();
+        this.back();
+        this.back();
+    });
+
+    drupal_delete_current_page();
+    casper.run(function() { test.done(); });
+});
+
+
+/****** Utility functions ******/
+
+function unique_link() {
+    return "http://www.google.com" + "?" + Math.floor(Math.random() * 1000);
+}
+
+/* Login */
+function drupal_login() {
+    casper.start(getServer('drupal'), function() {
+        if (this.exists("form#user-login-form")) {
+            this.fillSelectors('form#user-login-form', {
+                'input[name="name"]':    'admin',
+                'input[name="pass"]':    getAdminPassword('drupal'),
+            }, true);
+        }
+    });
+}
+
+/* Delete the page currently being viewed */
+function drupal_delete_current_page() {
     casper.thenClick(("ul.tabs.primary li:nth-child(2) a"));
     casper.thenClick(("#edit-delete"));
     casper.thenClick(("#edit-submit"));
+}
 
-    casper.run(function() { test.done(); });
-});
+function drupal_create_page_with_link_and_cache(title, link) {
+    casper.thenOpen(getServer('drupal') + "/node/add/article", function() {
+        this.fillSelectors('form#article-node-form', {
+            'input[name="title"]':    title,
+            '#edit-body-und-0-value':  'Lorem ipsum: ' + link + ' and more ipsum'
+        }, true);
+    });   
+    
+    casper.waitForText("has been created", function() {
+        this.click("ul.tabs li:last-child a"); /* Click "Cache now" */
+    });
+}
+
 
 
 
