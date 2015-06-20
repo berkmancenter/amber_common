@@ -94,6 +94,9 @@ cd /var/www/wordpress
 # Update permissions
 chown -R www-data:www-data /var/www/ /var/www/wordpress/.htaccess
 
+# Enable URL rewriting so cached content can be displayed
+/srv/wp-cli/bin/wp rewrite structure '%postname%'
+
 service apache2 restart
 
 echo Wordpress admin password: $WP_ADMIN_PASSWORD
