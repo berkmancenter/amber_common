@@ -6,8 +6,8 @@ casper.test.begin('Drupal: Site with plugin installed is up', function suite(tes
     casper.start(getServer('drupal'), function() {
     	/* Don't check the title, since that will change once content is entered.
     	   Just look for the "Powered by Drupal" text */
-        test.assertHttpStatus(200);     
-	    test.assertTextExists('Powered by');
+        test.assertHttpStatus(200, "Site is up");     
+	    test.assertTextExists('Powered by', "Site has expected content on home page");
 	});
 
     casper.run(function() { test.done(); });
@@ -22,18 +22,18 @@ casper.test.begin('Drupal: Admin pages are up', function suite(test) {
     });
 
     casper.thenOpen(getServer('drupal') + "/admin/reports/amber", function() {
-        test.assertHttpStatus(200);
-        test.assertTitle("Amber Dashboard | Site-Install");
+        test.assertHttpStatus(200, "Amber Dashboard is up");
+        test.assertTitle("Amber Dashboard | Site-Install", "Amber Dashboard has correct title");
     });
 
     casper.thenOpen(getServer('drupal') + "/admin/reports/amber/detail", function() {
-        test.assertHttpStatus(200);
-        test.assertTitle("Amber Dashboard | Site-Install");
+        test.assertHttpStatus(200, "Amber Dashboard detail page is up");
+        test.assertTitle("Amber Dashboard | Site-Install", "Amber Dashboard detail page has correct title");
     });
 
     casper.thenOpen(getServer('drupal') + "/admin/config/content/amber", function() {
-        test.assertHttpStatus(200);
-        test.assertTitle("Amber | Site-Install");
+        test.assertHttpStatus(200, "Amber configuration page is up");
+        test.assertTitle("Amber | Site-Install", "Amber configuration page has correct title");
     });
 
     casper.run(function() { test.done(); });
@@ -65,7 +65,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
     });   
     
     casper.waitForText("has been created", function() {
-        test.assertTextExists('the peanut is not technically a nut');
+        test.assertTextExists('the peanut is not technically a nut', "Test page displays correct content");
     });
 
     /* Cleanup */
@@ -97,15 +97,14 @@ casper.test.begin('Drupal: Cache now functionality works', function suite(test) 
     });   
     
     casper.waitForText("has been created", function() {
-        test.assertExists('a[href="' + link + '"]');
     	this.click("ul.tabs li:last-child a"); /* Click "Cache now" */
     });
 
     casper.waitForText("Sucessfully cached", function() {
-		test.assertExists('a[href="' + link + '"]');
-		// test.assertExists('a[href="' + link + '"][data-amber-behavior]');
-		test.assertExists('a[href="' + link + '"][data-versionurl]');
-		test.assertExists('a[href="' + link + '"][data-versiondate]');
+		test.assertExists('a[href="' + link + '"]', "Cached link exists");
+		test.assertExists('a[href="' + link + '"][data-amber-behavior]', "Cached link has data-amber-behavior attribute");
+		test.assertExists('a[href="' + link + '"][data-versionurl]', "Cached link has versionurl attribute");
+		test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
     });
 
     /* Cleanup */
@@ -115,3 +114,62 @@ casper.test.begin('Drupal: Cache now functionality works', function suite(test) 
 
     casper.run(function() { test.done(); });
 });
+
+casper.test.begin('Drupal: View cache (using hover)', function suite(test) {
+    casper.start(getServer('drupal'), function() {
+        if (this.exists("form#user-login-form")) {
+            this.fillSelectors('form#user-login-form', {
+                'input[name="name"]':    'admin',
+                'input[name="pass"]':    getAdminPassword('drupal'),
+            }, true);
+        }
+    });
+
+    var link = "http://www.google.com" + "?" + Math.floor(Math.random() * 100);
+
+    casper.thenOpen(getServer('drupal') + "/node/add/article", function() {
+        this.fillSelectors('form#article-node-form', {
+            'input[name="title"]':    'Test Page for View cache test',
+            '#edit-body-und-0-value':  'Lorem ipsum: ' + link + ' and more ipsum'
+        }, true);
+    });   
+    
+    casper.waitForText("has been created", function() {
+        this.click("ul.tabs li:last-child a"); /* Click "Cache now" */
+    });
+
+    casper.waitForText("Sucessfully cached", function() {
+        casper.mouseEvent('mouseover', 'a[href="' + link + '"]');
+    });
+
+    casper.waitUntilVisible('.amber-hover', function(){
+        test.assertExists('.amber-hover .amber-links a:first-child', "Hover popup displayed");
+    });
+
+    casper.thenClick('.amber-hover .amber-links a:first-child');
+
+    /* Check that the cached page has been loaded */
+    casper.then(function() {
+        test.assertMatch(this.currentResponse.headers.get('Memento-Datetime'), /[A-Za-z]{3}, [0-9].*/,'Memento-Datetime header found');
+        test.assertTitle('Amber', "Page framing the cached page has title Amsber");
+        test.assertExists('iframe', 'iframe for cached page exists');
+    });
+    casper.withFrame(0, function() {
+        test.assertTitle("Google", "Cached page has correct title");        
+        test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
+    })
+
+    casper.then(function() {
+        this.back();
+    });
+
+    /* Cleanup */
+    casper.thenClick(("ul.tabs.primary li:nth-child(2) a"));
+    casper.thenClick(("#edit-delete"));
+    casper.thenClick(("#edit-submit"));
+
+    casper.run(function() { test.done(); });
+});
+
+
+

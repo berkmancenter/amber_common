@@ -82,6 +82,10 @@ mysql -uroot -p$MYSQL_PASSWORD -D drupal -e "INSERT INTO filter (format, module,
 mysql -uroot -p$MYSQL_PASSWORD -D drupal -e "INSERT INTO filter (format, module, name, weight, status, settings) VALUES ('filtered_html', 'amber', 'filter_amber', 50, 1, X'613A303A7B7D');"
 drush cc all -y
 
+# Set default action for available links to hover
+drush vset amber_available_action 1
+drush vset amber_available_action_hover 0
+
 # Set Drupal admin password
 drush user-password admin --password=$DRUPAL_ADMIN_PASSWORD
 
