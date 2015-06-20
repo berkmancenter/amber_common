@@ -13,12 +13,7 @@ casper.test.begin('Wordpress: Site with plugin installed is up', function suite(
 });
 
 casper.test.begin('Wordpress: Admin pages are up', function suite(test) {
-    casper.start(getServer('wordpress') + "/wp-login.php", function() {
-        this.fillSelectors('form', {
-            'input[name="log"]':    'admin',
-            'input[name="pwd"]':    getAdminPassword('wordpress'),
-        }, true);
-    });
+    wordpress_login();
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
         test.assertHttpStatus(200, "Amber Dashboard is up");
@@ -34,12 +29,7 @@ casper.test.begin('Wordpress: Admin pages are up', function suite(test) {
 });
 
 casper.test.begin('Wordpress: Pages with test content are up before being cached', function suite(test) {
-    casper.start(getServer('wordpress') + "/wp-login.php", function() {
-        this.fillSelectors('form', {
-            'input[name="log"]':    'admin',
-            'input[name="pwd"]':    getAdminPassword('wordpress'),
-        }, true);
-    });
+    wordpress_login();
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
         casper.thenClick("button#content-html");
@@ -74,13 +64,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
 });
 
 casper.test.begin('Wordpress: "Cache now" functionality works', function suite(test) {
-    casper.start(getServer('wordpress') + "/wp-login.php", function() {
-        this.fillSelectors('form', {
-            'input[name="log"]':    'admin',
-            'input[name="pwd"]':    getAdminPassword('wordpress'),
-        }, true);
-    });
-
+    wordpress_login();
     var link = unique_link();
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
@@ -117,13 +101,7 @@ casper.test.begin('Wordpress: "Cache now" functionality works', function suite(t
 });
 
 casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
-    casper.start(getServer('wordpress') + "/wp-login.php", function() {
-        this.fillSelectors('form', {
-            'input[name="log"]':    'admin',
-            'input[name="pwd"]':    getAdminPassword('wordpress'),
-        }, true);
-    });
-
+    wordpress_login();
     var link = unique_link();
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
@@ -233,13 +211,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 */
 
 casper.test.begin('Wordpress: Delete cache', function suite(test) {
-    casper.start(getServer('wordpress') + "/wp-login.php", function() {
-        this.fillSelectors('form', {
-            'input[name="log"]':    'admin',
-            'input[name="pwd"]':    getAdminPassword('wordpress'),
-        }, true);
-    });
-
+    wordpress_login();
     var link = unique_link();
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
@@ -282,6 +254,14 @@ function unique_link() {
     return "http://www.google.com" + "?" + Math.floor(Math.random() * 1000);
 }
 
+function wordpress_login() {
+    casper.start(getServer('wordpress') + "/wp-login.php", function() {
+        this.fillSelectors('form', {
+            'input[name="log"]':    'admin',
+            'input[name="pwd"]':    getAdminPassword('wordpress'),
+        }, true);
+    });    
+}
 
 
 
