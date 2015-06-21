@@ -66,22 +66,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
 casper.test.begin('Wordpress: "Cache now" functionality works', function suite(test) {
     wordpress_login();
     var link = unique_link();
-
-    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
-        casper.thenClick("button#content-html");
-        this.fillSelectors('form[name="post"]', {
-            'input[name="post_title"]':    'Test Page for Cache Now test',
-	        'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
-        }, false);
-    });   
-     
-    casper.thenClick("#publish");
-    casper.thenClick("input#cache_now");
-
-    casper.waitForText("These links were cached", function() {
-            this.echo("Links cached, waiting for 5 seconds");
-            casper.wait(5000, function() {this.echo("Done waiting");});
-    });
+    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test", link);
 
     casper.thenClick("span#view-post-btn a");
 
@@ -103,22 +88,7 @@ casper.test.begin('Wordpress: "Cache now" functionality works', function suite(t
 casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
     wordpress_login();
     var link = unique_link();
-
-    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
-        casper.thenClick("button#content-html");
-        this.fillSelectors('form[name="post"]', {
-            'input[name="post_title"]':    'Test Page for Cache Now test',
-            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
-        }, false);
-    });   
-     
-    casper.thenClick("#publish");
-    casper.thenClick("input#cache_now");
-
-    casper.waitForText("These links were cached", function() {
-            this.echo("Links cached, waiting for 5 seconds");
-            casper.wait(5000, function() {this.echo("Done waiting");});
-    });
+    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test", link);
 
     casper.thenClick("span#view-post-btn a");
 
@@ -141,7 +111,6 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
         this.back();
     });
 
-
     /* Cleanup */
     casper.thenClick("li#wp-admin-bar-edit a");
     casper.thenClick("#delete-action a");
@@ -150,42 +119,36 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 });
 
 
-/*casper.test.begin('Wordpress: Batch cache functionality works', function suite(test) {
-    casper.start(getServer('wordpress') + "/wp-login.php", function() {
-        this.fillSelectors('form', {
-            'input[name="log"]':    'admin',
-            'input[name="pwd"]':    getAdminPassword('wordpress'),
-        }, true);
-    });
+// casper.test.begin('Wordpress: Batch cache functionality works', function suite(test) {
+//     wordpress_login();
+//     var link = unique_link();
 
-    var link = unique_link();
-
-    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
-        casper.thenClick("button#content-html");
-        this.fillSelectors('form[name="post"]', {
-            'input[name="post_title"]':    'Test Page for Cache Now test',
-            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
-        }, false);
-    });   
+//     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
+//         casper.thenClick("button#content-html");
+//         this.fillSelectors('form[name="post"]', {
+//             'input[name="post_title"]':    'Test Page for Cache Now test',
+//             'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
+//         }, false);
+//     });   
      
-    casper.thenClick("#publish");
+//     casper.thenClick("#publish");
 
-    casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
-        test.assertHttpStatus(200);
-        test.assertTitle("Amber Dashboard ‹ Amber Wordpress — WordPress");
-    });
+//     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
+//         test.assertHttpStatus(200);
+//         test.assertTitle("Amber Dashboard ‹ Amber Wordpress — WordPress");
+//     });
 
-    casper.thenClick("input#scan");
-    casper.waitForText("Done scanning content", function() { 
-        this.echo("Done scanning content");
-    });
-    casper.thenClick("input#stop");
+//     casper.thenClick("input#scan");
+//     casper.waitForText("Done scanning content", function() { 
+//         this.echo("Done scanning content");
+//     });
+//     casper.thenClick("input#stop");
 
-    casper.thenClick("input#cache_now");
-    casper.waitForText("Done preserving links", function() { 
-        this.echo("Done preserving links");
-    });
-*/
+//     casper.thenClick("input#cache_now");
+//     casper.waitForText("Done preserving links", function() { 
+//         this.echo("Done preserving links");
+//     });
+
     // casper.waitForText("These links were cached", function() {
     //         this.echo("Links cached, waiting for 5 seconds");
     //         casper.wait(5000, function() {this.echo("Done waiting");});
@@ -213,17 +176,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 casper.test.begin('Wordpress: Cache view count incremented', function suite(test) {
     wordpress_login();
     var link = unique_link();
-
-    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
-        casper.thenClick("button#content-html");
-        this.fillSelectors('form[name="post"]', {
-            'input[name="post_title"]':    'Test Page for Cache view count increment test',
-            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
-        }, false);
-    });   
-     
-    casper.thenClick("#publish");
-    casper.thenClick("input#cache_now");
+    wordpress_create_page_with_link_and_cache("Test Page for cache view increment test", link);
 
     casper.waitForText("These links were cached", function() {
             this.echo("Links cached, waiting for 5 seconds");
@@ -258,22 +211,7 @@ casper.test.begin('Wordpress: Cache view count incremented', function suite(test
 casper.test.begin('Wordpress: Delete cache', function suite(test) {
     wordpress_login();
     var link = unique_link();
-
-    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
-        casper.thenClick("button#content-html");
-        this.fillSelectors('form[name="post"]', {
-            'input[name="post_title"]':    'Test Page for Cache Now test',
-            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
-        }, false);
-    });   
-     
-    casper.thenClick("#publish");
-    casper.thenClick("input#cache_now");
-
-    casper.waitForText("These links were cached", function() {
-            this.echo("Links cached, waiting for 5 seconds");
-            casper.wait(5000, function() {this.echo("Done waiting");});
-    });
+    wordpress_create_page_with_link_and_cache("Test Page for delete cache test", link);
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
@@ -306,13 +244,34 @@ function wordpress_login() {
             'input[name="pwd"]':    getAdminPassword('wordpress'),
         }, true);
     });    
-
-    // casper.thenOpen("/wp-admin/options-general.php?page=amber-setting-admin", function() {
-    //     this.fillSelectors('form', {
-    //         'select#amber_available_action': 2,
-    //     }, true);
-    // });
 }
 
+function wordpress_configure_site() {
+    wordpress_login();
+
+    casper.thenOpen("/wp-admin/options-general.php?page=amber-setting-admin", function() {
+        this.fillSelectors('form', {
+            'select#amber_available_action': 2,            
+        }, true);
+    });
+}
+
+function wordpress_create_page_with_link_and_cache(title, link) {
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
+        casper.thenClick("button#content-html");
+        this.fillSelectors('form[name="post"]', {
+            'input[name="post_title"]':    title,
+            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
+        }, false);
+    });   
+     
+    casper.thenClick("#publish");
+    casper.thenClick("input#cache_now");
+
+    casper.waitForText("These links were cached", function() {
+            this.echo("Links cached, waiting for 5 seconds");
+            casper.wait(5000, function() {this.echo("Done waiting");});
+    });
+}
 
 
