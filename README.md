@@ -49,17 +49,13 @@ Copy ```config.js.sample``` to ```config.js``` and update the ```servers``` vari
 Run tests for each platform
 ```
 cd test
-casperjs test nginx-precache.js --includes=config.js,ws-include.js
-casperjs test apache-precache.js --includes=config.js,ws-include.js
-casperjs test drupal.js --includes=config.js
-casperjs test wordpress.js --includes=config.js
+casperjs test nginx-precache.js apache-precache.js drupal.js wordpress.js --includes=config.js,ws-include.js
 ```
 
 Wait 10 minutes for automated caching to complete on the web servers, and then run the final tests:
 
 ```
-casperjs test nginx-postcache.js --includes=config.js,ws-include.js
-casperjs test apache-postcache.js --includes=config.js,ws-include.js
+casperjs test nginx-postcache.js apache-postcache.js --includes=config.js,ws-include.js
 ```
 
 
