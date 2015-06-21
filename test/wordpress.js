@@ -122,7 +122,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 
     casper.thenClick("span#view-post-btn a");
 
-    /* Default nginx configuration uses popups for cached pages */
+    /* Testing use of popups for cached pages */
     casper.thenClick('a[href="' + link + '"]');
     casper.thenClick('a.amber-focus');
 
@@ -210,6 +210,51 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 });
 */
 
+casper.test.begin('Wordpress: Cache view count incremented', function suite(test) {
+    wordpress_login();
+    var link = unique_link();
+
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
+        casper.thenClick("button#content-html");
+        this.fillSelectors('form[name="post"]', {
+            'input[name="post_title"]':    'Test Page for Cache view count increment test',
+            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
+        }, false);
+    });   
+     
+    casper.thenClick("#publish");
+    casper.thenClick("input#cache_now");
+
+    casper.waitForText("These links were cached", function() {
+            this.echo("Links cached, waiting for 5 seconds");
+            casper.wait(5000, function() {this.echo("Done waiting");});
+    });
+
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
+
+    var startViewCount;
+    casper.then(function() {
+        startViewCount = this.fetchText(".wp-list-table tbody tr:first-child td.views");
+        if (startViewCount == "") {
+            startViewCount = 0;
+        } else {
+            startViewCount = parseInt(startViewCount);
+        }
+
+    })
+
+    casper.thenClick("table.wp-list-table tbody tr:first-child .view a");
+    casper.wait(5000, function() {this.echo("Waited 5 seconds after viewing row");});
+
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
+        var endViewCount = parseInt(this.fetchText(".wp-list-table tbody tr:first-child td.views"));
+        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
+    });
+
+    casper.run(function() { test.done(); });
+});
+
+
 casper.test.begin('Wordpress: Delete cache', function suite(test) {
     wordpress_login();
     var link = unique_link();
@@ -243,7 +288,7 @@ casper.test.begin('Wordpress: Delete cache', function suite(test) {
     casper.then(function() {
         var endCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
         test.assertEquals(startCacheCount, endCacheCount + 1, "One cache item deleted");
-    })
+    });
 
     casper.run(function() { test.done(); });
 });
@@ -261,6 +306,12 @@ function wordpress_login() {
             'input[name="pwd"]':    getAdminPassword('wordpress'),
         }, true);
     });    
+
+    // casper.thenOpen("/wp-admin/options-general.php?page=amber-setting-admin", function() {
+    //     this.fillSelectors('form', {
+    //         'select#amber_available_action': 2,
+    //     }, true);
+    // });
 }
 
 
