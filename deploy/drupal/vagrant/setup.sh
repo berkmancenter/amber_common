@@ -86,6 +86,9 @@ drush cc all -y
 drush vset amber_available_action 1
 drush vset amber_available_action_hover 0
 
+# Disable the overlay module, since it causes problems with automated integration testing
+drush dis overlay -y
+
 # Set Drupal admin password
 drush user-password admin --password=$DRUPAL_ADMIN_PASSWORD
 
