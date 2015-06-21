@@ -126,7 +126,7 @@ casper.test.begin('Drupal: Cache view count incremented', function suite(test) {
     casper.thenOpen(getServer('drupal') + "/admin/reports/amber/detail", function() {
         test.assertTitle("Amber Dashboard | Site-Install", "Navigated to Amber Dashboard detail page");
         startViewCount = this.fetchText("#block-system-main table tbody tr:first-child td:nth-child(8)");
-        if (startViewCount == "") {
+        if (!startViewCount) {
             startViewCount = 0;
         } else {
             startViewCount = parseInt(startViewCount);
@@ -160,7 +160,7 @@ casper.test.begin('Drupal: Delete cache', function suite(test) {
     casper.thenOpen(getServer('drupal') + "/admin/reports/amber", function() {
         test.assertTitle("Amber Dashboard | Site-Install", "Navigated to Amber Dashboard summary page");
         startCacheCount = this.fetchText("#block-system-main table tbody tr:first-child td:last-child");
-        if (startCacheCount == "") {
+        if (!startCacheCount) {
             startCacheCount = 0;
         } else {
             startCacheCount = parseInt(startCacheCount);

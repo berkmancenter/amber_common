@@ -46,7 +46,7 @@ casper.test.begin('Nginx: Cache view count incremented', function suite(test) {
     var startViewCount;
     casper.then(function() {
         startViewCount = this.fetchText("tr.cached td:nth-child(8)");
-        if (startViewCount == "") {
+        if (!startViewCount) {
         	startViewCount = 0;
         } else {
         	startViewCount = parseInt(startViewCount);
