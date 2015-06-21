@@ -2,6 +2,16 @@
  * Tests for the Drupal site that can be run immediately after the server comes online
  */
 
+casper.test.begin('Configuring Wordpress', function suite(test) {
+    casper.echo("Make sure the Wordpress configuration is setup to allow Amber to work.");
+    casper.echo("Needs to be run before any other tests. May be a better way of making this happen");
+
+    wordpress_login();
+    wordpress_configure_site();
+    casper.run(function() { test.done(); });
+});
+
+
 casper.test.begin('Wordpress: Site with plugin installed is up', function suite(test) {
     casper.start(getServer('wordpress'), function() {
         test.assertHttpStatus(200, "Site is up");     
@@ -113,56 +123,49 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 // casper.test.begin('Wordpress: Batch cache functionality works', function suite(test) {
 //     wordpress_login();
 //     var link = unique_link();
+//     wordpress_create_page_with_link("Test Page for batch cache test", link);
 
-//     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
-//         casper.thenClick("button#content-html");
-//         this.fillSelectors('form[name="post"]', {
-//             'input[name="post_title"]':    'Test Page for Cache Now test',
-//             'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
-//         }, false);
-//     });   
-     
-//     casper.thenClick("#publish");
+//     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
-//     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
-//         test.assertHttpStatus(200);
-//         test.assertTitle("Amber Dashboard ‹ Amber Wordpress — WordPress");
+//     var startCacheCount;
+//     var endCacheCount;
+//     casper.then(function() {
+//         startCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
 //     });
 
 //     casper.thenClick("input#scan");
 //     casper.waitForText("Done scanning content", function() { 
-//         this.echo("Done scanning content");
+//         casper.wait(5000, function() {this.echo("Done scanning content and waiting 5 seconds");});
 //     });
 //     casper.thenClick("input#stop");
-
 //     casper.thenClick("input#cache_now");
-//     casper.waitForText("Done preserving links", function() { 
-//         this.echo("Done preserving links");
+
+//     casper.waitFor(
+//         function check() {
+//             return this.evaluate(function() {
+//                 return (this.fetchText("#batch_status") == "Done preserving links");
+//             });
+//         },
+//         function then() {
+//             endCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
+//         },
+//         function onTimout() {            
+//             endCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
+//         },  
+//         30000 
+//     );
+
+
+//     casper.then(function() {
+//         this.echo(startCacheCount);
+//         this.echo(endCacheCount);
+//         test.assert(endCacheCount > startCacheCount, "Batch caching increased number of items in cache");
+//         test.assertSelectorHasText("#amber-stats tbody tr:nth-child(2) td:last-child", "0", "No more items left to cache");
 //     });
 
-    // casper.waitForText("These links were cached", function() {
-    //         this.echo("Links cached, waiting for 5 seconds");
-    //         casper.wait(5000, function() {this.echo("Done waiting");});
-    // });
+//     casper.run(function() { test.done(); });
+// });
 
-    // casper.thenClick("span#view-post-btn a");
-
-    // casper.then(function() {
-    //     test.assertExists('a[href="' + link + '"]');
-    //     test.assertTitle("Test Page for Cache Now test | Amber WordPress");
-    //     // test.assertExists('a[href="' + link + '"][data-amber-behavior]');
-    //     test.assertExists('a[href="' + link + '"][data-versionurl]');
-    //     test.assertExists('a[href="' + link + '"][data-versiondate]');
-    // });
-
-
-    // /* Cleanup */
-    // casper.thenClick("li#wp-admin-bar-edit a");
-    // casper.thenClick("#delete-action a");
-/*
-    casper.run(function() { test.done(); });
-});
-*/
 
 casper.test.begin('Wordpress: Cache view count incremented', function suite(test) {
     wordpress_login();
@@ -258,7 +261,7 @@ function wordpress_configure_site() {
     });
 }
 
-function wordpress_create_page_with_link_and_cache(title, link) {
+function wordpress_create_page_with_link(title, link) {
     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
         casper.thenClick("button#content-html");
         this.fillSelectors('form[name="post"]', {
@@ -268,6 +271,10 @@ function wordpress_create_page_with_link_and_cache(title, link) {
     });   
      
     casper.thenClick("#publish");
+}
+
+function wordpress_create_page_with_link_and_cache(title, link) {
+    wordpress_create_page_with_link(title, link);
     casper.thenClick("input#cache_now");
 
     casper.waitForText("These links were cached", function() {
