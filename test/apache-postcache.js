@@ -46,32 +46,6 @@ casper.test.begin('Apache: View cache (using hover)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
-casper.test.begin('Apache: Cache view count incremented', function suite(test) {
-    casper.start(getServer('apache') + "/amber/admin", function() { });
-
-    var startViewCount;
-    casper.then(function() {
-        startViewCount = this.fetchText("tr.cached td:nth-child(8)");
-        if (!startViewCount) {
-        	startViewCount = 0;
-        } else {
-        	startViewCount = parseInt(startViewCount);
-        }
-    });
-
-    casper.thenClick("table tr.cached a.view");
-	casper.thenOpen(getServer('nginx') + "/amber/admin");
-
-    casper.wait(5000, function() {this.echo("Waited 5 seconds after viewing cache");});
-
-    casper.then(function() {
-        var endViewCount = parseInt(this.fetchText("tr.cached td:nth-child(8)"));
-        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
-    });
-
-    casper.run(function() { test.done(); });
-});
-
 
 casper.test.begin('Apache: Delete cache', function suite(test) {
     casper.start(getServer('apache') + "/amber/admin", function() {
@@ -92,6 +66,37 @@ casper.test.begin('Apache: Delete cache', function suite(test) {
         var endCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
         test.assertEquals(startCacheCount, endCacheCount + 1, "One cache item deleted");
     })
+
+    casper.run(function() { test.done(); });
+});
+
+/* Note: This test only works when there is only ONE cached item. So, it depends 
+   on there being two cacheable items for Apache, and one being deleted by the 
+   previous test */
+casper.test.begin('Apache: Cache view count incremented', function suite(test) {
+    casper.start(getServer('apache') + "/amber/admin", function() { });
+
+    var startViewCount;
+    casper.then(function() {
+        this.debugHTML();
+        startViewCount = this.fetchText("tr.cached td:nth-child(8)");
+        if (!startViewCount) {
+            startViewCount = 0;
+        } else {
+            startViewCount = parseInt(startViewCount);
+        }
+    });
+
+    casper.thenClick("table tr.cached a.view", function() {
+        casper.wait(5000, function() {this.echo("Waited 5 seconds after viewing cache");});    
+    });
+    casper.thenOpen(getServer('apache') + "/amber/admin");
+
+    casper.waitForText("Amber Dashboard", function() {
+        this.debugHTML();
+        var endViewCount = parseInt(this.fetchText("tr.cached td:nth-child(8)"));
+        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
+    });
 
     casper.run(function() { test.done(); });
 });
