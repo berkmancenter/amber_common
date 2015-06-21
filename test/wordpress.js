@@ -14,7 +14,7 @@ casper.test.begin('Wordpress: Site with plugin installed is up', function suite(
 
 casper.test.begin('Wordpress: Admin pages are up', function suite(test) {
     wordpress_login();
-
+    wordpress_configure_site();
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
         test.assertHttpStatus(200, "Amber Dashboard is up");
         test.assertTitle("Amber Dashboard ‹ Amber Wordpress — WordPress", "Amber Dashboard has correct title");
@@ -56,10 +56,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
         test.assertTextExists('the peanut is not technically a nut', "Test page displays correct content");
     });
 
-    /* Cleanup */
-    casper.thenClick("li#wp-admin-bar-edit a");
-    casper.thenClick("#delete-action a");
-
+    wordpress_delete_current_page_being_viewed();
     casper.run(function() { test.done(); });
 });
 
@@ -78,10 +75,7 @@ casper.test.begin('Wordpress: "Cache now" functionality works', function suite(t
         test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
     });
 
-    /* Cleanup */
-    casper.thenClick("li#wp-admin-bar-edit a");
-    casper.thenClick("#delete-action a");
-
+    wordpress_delete_current_page_being_viewed();
     casper.run(function() { test.done(); });
 });
 
@@ -111,10 +105,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
         this.back();
     });
 
-    /* Cleanup */
-    casper.thenClick("li#wp-admin-bar-edit a");
-    casper.thenClick("#delete-action a");
-
+    wordpress_delete_current_page_being_viewed();
     casper.run(function() { test.done(); });
 });
 
@@ -178,11 +169,6 @@ casper.test.begin('Wordpress: Cache view count incremented', function suite(test
     var link = unique_link();
     wordpress_create_page_with_link_and_cache("Test Page for cache view increment test", link);
 
-    casper.waitForText("These links were cached", function() {
-            this.echo("Links cached, waiting for 5 seconds");
-            casper.wait(5000, function() {this.echo("Done waiting");});
-    });
-
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
     var startViewCount;
@@ -204,6 +190,12 @@ casper.test.begin('Wordpress: Cache view count incremented', function suite(test
         test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
     });
 
+    casper.then(function() {
+        this.back();
+        this.back();
+        this.back();
+    });
+    wordpress_delete_current_page_being_edited();
     casper.run(function() { test.done(); });
 });
 
@@ -228,6 +220,12 @@ casper.test.begin('Wordpress: Delete cache', function suite(test) {
         test.assertEquals(startCacheCount, endCacheCount + 1, "One cache item deleted");
     });
 
+    casper.then(function() {
+        this.back();
+        this.back();
+    });
+
+    wordpress_delete_current_page_being_edited();
     casper.run(function() { test.done(); });
 });
 
@@ -246,12 +244,16 @@ function wordpress_login() {
     });    
 }
 
+/* Enable permalinks (requried to view cache), and set 'site available' behavior to popup */
 function wordpress_configure_site() {
-    wordpress_login();
-
-    casper.thenOpen("/wp-admin/options-general.php?page=amber-setting-admin", function() {
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/options-general.php?page=amber-setting-admin", function() {
         this.fillSelectors('form', {
             'select#amber_available_action': 2,            
+        }, true);
+    });
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/options-permalink.php", function() {
+        this.click('input[name="selection"][value="/%postname%/"]');
+        this.fillSelectors('form', {
         }, true);
     });
 }
@@ -273,5 +275,17 @@ function wordpress_create_page_with_link_and_cache(title, link) {
             casper.wait(5000, function() {this.echo("Done waiting");});
     });
 }
+
+/* Delete the page currently being viewed */
+function wordpress_delete_current_page_being_viewed() {
+    casper.thenClick("li#wp-admin-bar-edit a");
+    casper.thenClick("#delete-action a");
+}
+
+/* Delete the page currently being edited */
+function wordpress_delete_current_page_being_edited() {
+    casper.thenClick("#delete-action a");
+}
+
 
 
