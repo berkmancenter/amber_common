@@ -1,0 +1,28 @@
+casper.options.verbose = true;
+
+var servers = {
+	'drupal' : 'http://xx.xx.xx.xx',
+	'wordpress' : 'http://xx.xx.xx.xx',
+	'apache' : 'http://xx.xx.xx.xx',
+	'nginx' : 'http://xx.xx.xx.xx'
+}
+
+var passwords = {
+	'drupal' : 'amber',
+	'wordpress' : 'amber',
+}
+
+var web_server_pages = {
+	'apache' : ['/'],
+	'nginx' : ['/']
+}
+
+/* Utility functions */
+
+function getServer(platform) {
+	return servers[platform];
+}
+
+function getAdminPassword(platform) {
+	return passwords[platform];
+}

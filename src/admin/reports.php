@@ -268,14 +268,14 @@
 		<td valign="top">
 			<table border=1>
 				<tbody>
-					<tr><td>Captures preserved</td><td><?php print(cache_size()); ?></td></tr>
-					<tr><td>Links to capture</td><td><?php print(queue_size()); ?></td></tr>
-					<tr><td>Last check</td><td><?php print(last_check()); ?></td></tr>
-					<tr><td>Disk space used</td><td><?php print(disk_usage() . " of " . $config['amber_max_disk']); ?> MB</td></tr>
-					<tr><td>Configuration file</td><td><?php print($_SERVER['AMBER_CONFIG']); ?></td></tr>
+					<tr class="preserved"><td>Captures preserved</td><td><?php print(cache_size()); ?></td></tr>
+					<tr class="to-capture"><td>Links to capture</td><td><?php print(queue_size()); ?></td></tr>
+					<tr class="last-check"><td>Last check</td><td><?php print(last_check()); ?></td></tr>
+					<tr class="disk-used"><td>Disk space used</td><td><?php print(disk_usage() . " of " . $config['amber_max_disk']); ?> MB</td></tr>
+					<tr class="config-file"><td>Configuration file</td><td><?php print($_SERVER['AMBER_CONFIG']); ?></td></tr>
 				</tbody>
 			</table>
-			<a href="<?php print $script_location ?>?delete=all">Delete all captures</a>
+			<a class="delete-all" href="<?php print $script_location ?>?delete=all">Delete all captures</a>
 		</td>
 
 		<td valign="top">
@@ -334,7 +334,7 @@ if ($total_items > 0) { ?>
 <?php 
 	
 	foreach ($data as $row) {
-		print "<tr>";
+		print(isset($row['location']) ? "<tr class='cached'>" : "<tr>");
 		print("<td>" . htmlspecialchars(parse_url($row['url'],PHP_URL_HOST)) . "</td>");
 		print("<td>" . "<a href='" . htmlspecialchars($row['url']) . "'>" . htmlspecialchars($row['url']) . "</a>" . "</td>");
 		print("<td>" . (is_null($row['status']) ? "" : ($row['status'] ? "Up" : "Down")) . "</td>");
@@ -343,8 +343,8 @@ if ($total_items > 0) { ?>
 		print("<td>" . (isset($row['size']) ? round($row['size']/1024,2) : (isset($row['message']) ? htmlspecialchars($row['message']) : "")) . "</td>");
 		print("<td>" . (isset($row['activity_date']) ? date("r", $row['activity_date']) : "") . "</td>");
 		print("<td>" . $row['views'] . "</td>");
-		print("<td>" . (isset($row['location']) ? "<a href='/" . htmlspecialchars($row['location']) . "'>View</a>" : "") . "</td>");
-		print("<td>" . "<a href='" .$script_location . "?delete=" . $row['id'] . "'>Delete</a>" . "</td>");
+		print("<td>" . (isset($row['location']) ? "<a class='view' href='/" . htmlspecialchars($row['location']) . "'>View</a>" : "") . "</td>");
+		print("<td>" . "<a class='delete' href='" .$script_location . "?delete=" . $row['id'] . "'>Delete</a>" . "</td>");
 		print "</tr>";
 	}
 
