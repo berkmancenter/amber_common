@@ -64,6 +64,14 @@ casper.test.begin('Nginx: Cache view count incremented', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+// the following must be performed before the Delete cache test at the end
+
+casper.test.begin('Nginx: W03_normal', function suite(test) {
+  testW03_normal('nginx', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
 casper.test.begin('Nginx: Delete cache', function suite(test) {
     casper.start(getServer('nginx') + "/amber/admin", function() { });
 

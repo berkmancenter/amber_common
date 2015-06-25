@@ -49,4 +49,18 @@ function testAmberAdminPageCheckURLsAndClearCache(platform, linkCountOnHomePage,
 	});
 }
 
+// the following must be performed after the delete-all test above
+
+function testW03_normal(platform, test, pre) {
+  if ( pre ) {
+    casper.start( getServer(platform) + "/data/W03_normal.html", function() {
+        test.assertHttpStatus(200);
+        test.assertTitle("W03_normal / F01");
+      } );
+  } else {
+    casper.start( getServer(platform) + "/amber/admin", function() {
+      test.assertTextExists('amberlink.org/fetcher', "amberlink.org has been cached");
+    } );
+  }
+}
 

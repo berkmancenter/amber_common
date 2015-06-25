@@ -40,4 +40,12 @@ casper.test.begin('Nginx: Link detection works', function suite(test) {
 });
 
 
+// the following must be performed after the ClearCache test above
+
+casper.test.begin('Nginx: W03_normal', function suite(test) {
+  testW03_normal('nginx', test, true);
+
+  casper.run(function() { test.done(); });
+});
+
 
