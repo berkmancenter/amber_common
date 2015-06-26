@@ -53,13 +53,26 @@ function testAmberAdminPageCheckURLsAndClearCache(platform, linkCountOnHomePage,
 
 function testW03_normal(platform, test, pre) {
   if ( pre ) {
-    casper.start( getServer(platform) + "/data/W03_normal.html", function() {
+    casper.start( getServer(platform) + '/data/W03_normal.html', function() {
         test.assertHttpStatus(200);
-        test.assertTitle("W03_normal / F01");
+        test.assertTitle('W03_normal / F01');
       } );
   } else {
-    casper.start( getServer(platform) + "/amber/admin", function() {
-      test.assertTextExists('amberlink.org/fetcher', "amberlink.org has been cached");
+    casper.start( getServer(platform) + '/amber/admin', function() {
+      test.assertSelectorHasText( '.cached a', 'amberlink.org/fetcher', 'amberlink.org has been cached' );
+    } );
+  }
+}
+
+function testW03_robots(platform, test, pre) {
+  if ( pre ) {
+    casper.start( getServer(platform) + '/data/W03_robots.html', function() {
+        test.assertHttpStatus(200);
+        test.assertTitle('W03_robots');
+      } );
+  } else {
+    casper.start( getServer(platform) + '/amber/admin', function() {
+      test.assertSelectorHasText( 'td', 'Blocked by robots.txt', 'surii.net blocked by robots.txt' );
     } );
   }
 }

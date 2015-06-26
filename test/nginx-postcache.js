@@ -72,6 +72,12 @@ casper.test.begin('Nginx: W03_normal', function suite(test) {
   casper.run(function() { test.done(); });
 });
 
+casper.test.begin('Nginx: W03_robots', function suite(test) {
+  testW03_robots('nginx', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
 casper.test.begin('Nginx: Delete cache', function suite(test) {
     casper.start(getServer('nginx') + "/amber/admin", function() { });
 
@@ -80,7 +86,7 @@ casper.test.begin('Nginx: Delete cache', function suite(test) {
         startCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
     })
 
-    casper.thenClick("table tr.cached a.delete");
+    casper.thenClick("table tr.cached:first-child a.delete");
     casper.wait(5000, function() {this.echo("Waited 5 seconds after deleting row");});
 
     casper.then(function() {
