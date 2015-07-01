@@ -74,7 +74,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
 casper.test.begin('Wordpress: "Cache now" functionality works', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test | " + link, link);
 
     casper.thenClick("span#view-post-btn a");
 
@@ -93,7 +93,7 @@ casper.test.begin('Wordpress: "Cache now" functionality works', function suite(t
 casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test | " + link, link);
 
     casper.thenClick("span#view-post-btn a");
 
@@ -108,7 +108,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
         test.assertExists('iframe', 'iframe for cached page exists');
     });
     casper.withFrame(0, function() {
-        test.assertTitle("Google", "Cached page has correct title");        
+        test.assertTitle('AMBER', "Cached page has correct title");        
         test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
     })
 
@@ -124,7 +124,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 // casper.test.begin('Wordpress: Batch cache functionality works', function suite(test) {
 //     wordpress_login();
 //     var link = unique_link();
-//     wordpress_create_page_with_link("Test Page for batch cache test", link);
+//     wordpress_create_page_with_link("Test Page for batch cache test | " + link, link);
 
 //     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
@@ -171,7 +171,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 casper.test.begin('Wordpress: Cache view count incremented', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for cache view increment test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for cache view increment test | " + link, link);
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
@@ -207,7 +207,7 @@ casper.test.begin('Wordpress: Cache view count incremented', function suite(test
 casper.test.begin('Wordpress: Delete cache', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for delete cache test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for delete cache test | " + link, link);
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
@@ -236,7 +236,7 @@ casper.test.begin('Wordpress: Delete cache', function suite(test) {
 /****** Utility functions ******/
 
 function unique_link() {
-    return "http://www.google.com" + "?" + Math.floor(Math.random() * 1000);
+    return "http://amberlink.org/" + "?" + Date.now(0);
 }
 
 function wordpress_login() {
@@ -267,7 +267,7 @@ function wordpress_create_page_with_link(title, link) {
         casper.thenClick("button#content-html");
         this.fillSelectors('form[name="post"]', {
             'input[name="post_title"]':    title,
-            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
+            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">' + title + '</a> and more ipsum'
         }, false);
     });   
      
