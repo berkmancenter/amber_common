@@ -46,30 +46,6 @@ casper.test.begin('Apache: View cache (using hover)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
-
-casper.test.begin('Apache: Delete cache', function suite(test) {
-    casper.start(getServer('apache') + "/amber/admin", function() {
-		test.assertHttpStatus(200);
-		test.assertSelectorHasText('h1','Amber Dashboard');
-	});
-
-    var startCacheCount;
-    casper.then(function() {
-        startCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
-    })
-
-    casper.thenClick("table tr.cached a.delete");
-    casper.then(function() {this.echo("Waiting 5 seconds after deleting row");})
-    casper.wait(5000, function() {});
-
-    casper.then(function() {
-        var endCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
-        test.assertEquals(startCacheCount, endCacheCount + 1, "One cache item deleted");
-    })
-
-    casper.run(function() { test.done(); });
-});
-
 /* Note: This test only works when there is only ONE cached item. So, it depends 
    on there being two cacheable items for Apache, and one being deleted by the 
    previous test */
@@ -97,6 +73,29 @@ casper.test.begin('Apache: Cache view count incremented', function suite(test) {
         var endViewCount = parseInt(this.fetchText("tr.cached td:nth-child(8)"));
         test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
     });
+
+    casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Apache: Delete cache', function suite(test) {
+    casper.start(getServer('apache') + "/amber/admin", function() {
+		test.assertHttpStatus(200);
+		test.assertSelectorHasText('h1','Amber Dashboard');
+	});
+
+    var startCacheCount;
+    casper.then(function() {
+        startCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
+    })
+
+    casper.thenClick("table tr.cached a.delete");
+    casper.then(function() {this.echo("Waiting 5 seconds after deleting row");})
+    casper.wait(5000, function() {});
+
+    casper.then(function() {
+        var endCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
+        test.assertEquals(startCacheCount, endCacheCount + 1, "One cache item deleted");
+    })
 
     casper.run(function() { test.done(); });
 });
