@@ -272,6 +272,7 @@ function wordpress_create_page_with_link(title, link) {
     });   
      
     casper.thenClick("#publish");
+    casper.wait(5000, function() { this.echo( 'Done waiting for Publish' ) } );
 }
 
 function wordpress_create_page_with_link_and_cache(title, link) {
