@@ -39,3 +39,18 @@ casper.test.begin('Apache: Link detection works', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+
+// the following must be performed after the ClearCache test above
+
+casper.test.begin('apache: W03_normal', function suite(test) {
+  testW03_normal('apache', test, true);
+
+  casper.run(function() { test.done(); });
+});
+
+casper.test.begin('apache: W03_robots', function suite(test) {
+  testW03_robots('apache', test, true);
+
+  casper.run(function() { test.done(); });
+});
+

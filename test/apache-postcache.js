@@ -46,9 +46,6 @@ casper.test.begin('Apache: View cache (using hover)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
-/* Note: This test only works when there is only ONE cached item. So, it depends 
-   on there being two cacheable items for Apache, and one being deleted by the 
-   previous test */
 casper.test.begin('Apache: Cache view count incremented', function suite(test) {
     casper.start(getServer('apache') + "/amber/admin", function() { });
 
@@ -75,6 +72,20 @@ casper.test.begin('Apache: Cache view count incremented', function suite(test) {
     });
 
     casper.run(function() { test.done(); });
+});
+
+// the following must be performed before the Delete cache test at the end
+
+casper.test.begin('apache: W03_normal', function suite(test) {
+  testW03_normal('apache', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
+casper.test.begin('apache: W03_robots', function suite(test) {
+  testW03_robots('apache', test, false);
+
+  casper.run(function() { test.done(); });
 });
 
 casper.test.begin('Apache: Delete cache', function suite(test) {
