@@ -49,7 +49,9 @@ function testAmberAdminPageCheckURLsAndClearCache(platform, linkCountOnHomePage,
 	});
 }
 
+//
 // the following must be performed after the delete-all test above
+//
 
 function testW03_normal(platform, test, pre) {
   if ( pre ) {
@@ -92,5 +94,31 @@ function testW06_exclude_regex(platform, test, pre) {
       test.assertExists( 'tr.cached[data-url="http://api.jquery.com/addClass/"]', 'api.jquery.com/addClass has been cached' );
     } );
   }
+}
+
+// postcache-only tests
+
+function testViewCountIncremented( platform, test ) {
+  var startViewCount;
+  var testRow = 'tr[data-url="http://amberlink.org/fetcher/"]';
+
+  casper.start( getServer(platform) + "/amber/admin" )
+  .then( function() {
+    startViewCount = this.fetchText(testRow + ' td:nth-child(8)');
+    startViewCount = startViewCount ? parseInt(startViewCount) : 0;
+  } )
+  .thenClick( testRow + ' a.view', function() {
+    casper.wait( 5000, function() {
+      this.echo( 'Waited 5 seconds after viewing cache' );
+    } );
+  } )
+  .thenOpen( getServer(platform) + "/amber/admin" )
+  .waitForText( 'Amber Dashboard', function() {
+    var endViewCount = parseInt( this.fetchText( testRow + ' td:nth-child(8)' ) );
+    test.assertEquals( startViewCount + 1, endViewCount, 'Cache view count incremented' );
+  } )
+  .run( function() {
+    test.done();
+  } );
 }
 

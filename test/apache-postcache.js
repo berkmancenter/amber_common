@@ -48,30 +48,6 @@ casper.test.begin('Apache: View cache (using hover)', function suite(test) {
 
 // the following must be performed before the Delete cache test at the end
 
-casper.test.begin( 'Apache: Cache view count incremented', function suite(test) {
-  var startViewCount;
-  var testRow = 'tr[data-url="http://amberlink.org/fetcher/"]';
-
-  casper.start( getServer('apache') + "/amber/admin" )
-  .then( function() {
-    startViewCount = this.fetchText(testRow + ' td:nth-child(8)');
-    startViewCount = startViewCount ? parseInt(startViewCount) : 0;
-  } )
-  .thenClick( testRow + ' a.view', function() {
-    casper.wait( 5000, function() {
-      this.echo( 'Waited 5 seconds after viewing cache' );
-    } );
-  } )
-  .thenOpen( getServer('apache') + "/amber/admin" )
-  .waitForText( 'Amber Dashboard', function() {
-    var endViewCount = parseInt( this.fetchText( testRow + ' td:nth-child(8)' ) );
-    test.assertEquals( startViewCount + 1, endViewCount, 'Cache view count incremented' );
-  } )
-  .run( function() {
-    test.done();
-  } );
-} );
-
 casper.test.begin('apache: W03_normal', function suite(test) {
   testW03_normal('apache', test, false);
 
@@ -87,6 +63,11 @@ casper.test.begin('apache: W03_robots', function suite(test) {
 casper.test.begin('apache: W06_exclude_regex', function suite(test) {
   testW06_exclude_regex('apache', test, false);
 
+  casper.run(function() { test.done(); });
+});
+
+casper.test.begin('apache: Cache view count incremented', function suite(test) {
+  testViewCountIncremented( 'apache', test );
   casper.run(function() { test.done(); });
 });
 
