@@ -54,3 +54,9 @@ casper.test.begin('Nginx: W03_robots', function suite(test) {
   casper.run(function() { test.done(); });
 });
 
+casper.test.begin('Nginx: W06_exclude_regex', function suite(test) {
+  testW06_exclude_regex('nginx', test, true);
+
+  casper.run(function() { test.done(); });
+});
+

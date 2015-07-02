@@ -78,6 +78,12 @@ casper.test.begin('Nginx: W03_robots', function suite(test) {
   casper.run(function() { test.done(); });
 });
 
+casper.test.begin('Nginx: W06_exclude_regex', function suite(test) {
+  testW06_exclude_regex('nginx', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
 casper.test.begin('Nginx: Delete cache', function suite(test) {
     casper.start(getServer('nginx') + "/amber/admin", function() { });
 

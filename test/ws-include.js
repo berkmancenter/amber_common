@@ -80,3 +80,17 @@ function testW03_robots(platform, test, pre) {
   }
 }
 
+function testW06_exclude_regex(platform, test, pre) {
+  if ( pre ) {
+    casper.start( getServer(platform) + '/data/W06_exclude_regex.html', function() {
+        test.assertHttpStatus(200);
+        test.assertTitle('W06_exclude_regex');
+      } );
+  } else {
+    casper.start( getServer(platform) + '/amber/admin', function() {
+      test.assertDoesntExist( 'tr[data-url="http://api.jquery.com/jQuery.ajax/"]', 'api.jquery.com/jQuery.ajax has been excluded' );
+      test.assertExists( 'tr.cached[data-url="http://api.jquery.com/addClass/"]', 'api.jquery.com/addClass has been cached' );
+    } );
+  }
+}
+
