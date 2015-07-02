@@ -59,7 +59,10 @@ function testW03_normal(platform, test, pre) {
       } );
   } else {
     casper.start( getServer(platform) + '/amber/admin', function() {
-      test.assertSelectorHasText( '.cached a', 'amberlink.org/fetcher', 'amberlink.org has been cached' );
+      test.assertSelectorHasText( 'tr.cached[data-url="http://amberlink.org/fetcher/"] a', 'amberlink.org/fetcher', 'amberlink.org has been cached' );
+    } )
+    .thenOpen( getServer(platform) + '/data/W03_normal.html', function() {
+      test.assertExists('a[data-issue="11806"]');
     } );
   }
 }
