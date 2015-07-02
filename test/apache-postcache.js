@@ -46,35 +46,31 @@ casper.test.begin('Apache: View cache (using hover)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
-casper.test.begin('Apache: Cache view count incremented', function suite(test) {
-    casper.start(getServer('apache') + "/amber/admin", function() { });
-
-    var startViewCount;
-    casper.then(function() {
-        this.debugHTML();
-        startViewCount = this.fetchText("tr.cached td:nth-child(8)");
-        if (!startViewCount) {
-            startViewCount = 0;
-        } else {
-            startViewCount = parseInt(startViewCount);
-        }
-    });
-
-    casper.thenClick("table tr.cached a.view", function() {
-        casper.wait(5000, function() {this.echo("Waited 5 seconds after viewing cache");});    
-    });
-    casper.thenOpen(getServer('apache') + "/amber/admin");
-
-    casper.waitForText("Amber Dashboard", function() {
-        this.debugHTML();
-        var endViewCount = parseInt(this.fetchText("tr.cached td:nth-child(8)"));
-        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
-    });
-
-    casper.run(function() { test.done(); });
-});
-
 // the following must be performed before the Delete cache test at the end
+
+casper.test.begin( 'Apache: Cache view count incremented', function suite(test) {
+  var startViewCount;
+  var testRow = 'tr[data-url="http://amberlink.org/fetcher/"]';
+
+  casper.start( getServer('apache') + "/amber/admin" )
+  .then( function() {
+    startViewCount = this.fetchText(testRow + ' td:nth-child(8)');
+    startViewCount = startViewCount ? parseInt(startViewCount) : 0;
+  } )
+  .thenClick( testRow + ' a.view', function() {
+    casper.wait( 5000, function() {
+      this.echo( 'Waited 5 seconds after viewing cache' );
+    } );
+  } )
+  .thenOpen( getServer('apache') + "/amber/admin" )
+  .waitForText( 'Amber Dashboard', function() {
+    var endViewCount = parseInt( this.fetchText( testRow + ' td:nth-child(8)' ) );
+    test.assertEquals( startViewCount + 1, endViewCount, 'Cache view count incremented' );
+  } )
+  .run( function() {
+    test.done();
+  } );
+} );
 
 casper.test.begin('apache: W03_normal', function suite(test) {
   testW03_normal('apache', test, false);
