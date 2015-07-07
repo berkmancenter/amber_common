@@ -6,6 +6,11 @@
  * - pages to be tested have been warmed up
  */
 
+casper.options.pageSettings = {
+    userName: 'ubuntu',
+    password: getAdminPassword( 'apache' )
+};
+
 casper.test.begin('Apache: Scheduled cache functionality works', function suite(test) {
     casper.start(getServer('apache'), function() {
 
@@ -56,6 +61,12 @@ casper.test.begin('apache: W03_normal', function suite(test) {
 
 casper.test.begin('apache: W03_robots', function suite(test) {
   testW03_robots('apache', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
+casper.test.begin('apache: W03_malicious', function suite(test) {
+  testW03_malicious('apache', test, false);
 
   casper.run(function() { test.done(); });
 });

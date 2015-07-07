@@ -64,7 +64,7 @@ function testW03_normal(platform, test, pre) {
       test.assertSelectorHasText( 'tr.cached[data-url="http://amberlink.org/fetcher/"] a', 'amberlink.org/fetcher', 'amberlink.org has been cached' );
     } )
     .thenOpen( getServer(platform) + '/data/W03_normal.html', function() {
-      test.assertExists('a[data-issue="11806"]');
+      test.assertExists('span[data-issue="11806"]');
     } );
   }
 }
@@ -78,6 +78,31 @@ function testW03_robots(platform, test, pre) {
   } else {
     casper.start( getServer(platform) + '/amber/admin', function() {
       test.assertSelectorHasText( 'td', 'Blocked by robots.txt', 'surii.net blocked by robots.txt' );
+    } );
+  }
+}
+
+function testW03_malicious(platform, test, pre) {
+  if ( pre ) {
+    casper.start( getServer(platform) + '/data/W03_malicious.html', function() {
+        test.assertHttpStatus(200);
+        test.assertTitle('W03_malicious');
+      } );
+  } else {
+    var testRow = 'tr[data-url="http://trippingthebits.com/amber/ws-malicious.html"]';
+
+    casper.start( getServer(platform) + "/amber/admin" )
+    .thenClick( testRow + ' a.view', function() {
+      casper.wait( 5000, function() {
+        this.echo( 'Waited 5 seconds after viewing cache' );
+        test.assertTitle('Malicious Amber WS-Edition', 'Page framing the cached page has title Amber');
+        test.assertExists('iframe', 'iframe for cached page exists');
+      } )
+      .waitForText( 'Amber Dashboard', function() {
+        casper.withFrame( 0, function() {
+          test.assertExists(testRow, 'admin row visible in cache');
+        } );
+      } );
     } );
   }
 }
@@ -121,4 +146,3 @@ function testViewCountIncremented( platform, test ) {
     test.done();
   } );
 }
-

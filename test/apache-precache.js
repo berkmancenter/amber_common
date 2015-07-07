@@ -2,6 +2,11 @@
  * Tests for the Apache pages that can be run immediately after the server comes online
  */
 
+casper.options.pageSettings = {
+    userName: 'ubuntu',
+    password: getAdminPassword( 'apache' )
+};
+
 casper.test.begin('Apache: Site with plugin installed is up', function suite(test) {
     casper.start(getServer('apache'), function() {
 		test.assertHttpStatus(200);    	
@@ -50,6 +55,12 @@ casper.test.begin('apache: W03_normal', function suite(test) {
 
 casper.test.begin('apache: W03_robots', function suite(test) {
   testW03_robots('apache', test, true);
+
+  casper.run(function() { test.done(); });
+});
+
+casper.test.begin('apache: W03_malicious', function suite(test) {
+  testW03_malicious('apache', test, true);
 
   casper.run(function() { test.done(); });
 });

@@ -1,14 +1,12 @@
 <!doctype html>
 <html>
-  <head><title>Malicious apache</title></head>
+  <head><title>Malicious Amber WS-Edition</title></head>
   <body>
-    <h1>Malicious apache</h1>
+    <h1>Malicious Amber WS-Edition</h1>
 
-    <p>This page will attempt to access content on apache that it shouldn't be able to, even if you're signed into apache while looking at it.</p>
+    <p>This page will attempt to access content on the admin pages from within the cached version of itself.</p>
 
-    <p>First, what can I do with WordPress in developer tools while directly on the site?</p>
-
-    <p>The following can get the HTML for the new post form:</p>
+    <p>The following tries to get the HTML for the Amber admin page on nginx or apache:</p>
 
     <pre><code>jQuery.get( '/amber/admin/', function( result ) { console.log( result ); } )</code></pre>
 
