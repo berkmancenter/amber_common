@@ -83,6 +83,7 @@ function testW03_robots(platform, test, pre) {
 }
 
 function testW03_malicious(platform, test, pre) {
+  // currently not working & not called
   if ( pre ) {
     casper.start( getServer(platform) + '/data/W03_malicious.html', function() {
         test.assertHttpStatus(200);

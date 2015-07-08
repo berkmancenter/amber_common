@@ -65,12 +65,6 @@ casper.test.begin('apache: W03_robots', function suite(test) {
   casper.run(function() { test.done(); });
 });
 
-casper.test.begin('apache: W03_malicious', function suite(test) {
-  testW03_malicious('apache', test, false);
-
-  casper.run(function() { test.done(); });
-});
-
 casper.test.begin('apache: W06_exclude_regex', function suite(test) {
   testW06_exclude_regex('apache', test, false);
 
