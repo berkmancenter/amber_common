@@ -40,28 +40,29 @@ casper.test.begin('Nginx: View cache (using popup)', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+// the following must be performed before the Delete cache test at the end
+
+casper.test.begin('Nginx: W03_normal', function suite(test) {
+  testW03_normal('nginx', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Nginx: W03_robots', function suite(test) {
+  testW03_robots('nginx', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Nginx: W06_exclude_regex', function suite(test) {
+  testW06_exclude_regex('nginx', test, false);
+
+  casper.run(function() { test.done(); });
+});
+
 casper.test.begin('Nginx: Cache view count incremented', function suite(test) {
-    casper.start(getServer('nginx') + "/amber/admin", function() { });
-
-    var startViewCount;
-    casper.then(function() {
-        startViewCount = this.fetchText("tr.cached td:nth-child(8)");
-        if (!startViewCount) {
-        	startViewCount = 0;
-        } else {
-        	startViewCount = parseInt(startViewCount);
-        }
-    });
-
-    casper.thenClick("table tr.cached a.view");
-	casper.thenOpen(getServer('nginx') + "/amber/admin");
-
-    casper.then(function() {
-        var endViewCount = parseInt(this.fetchText("tr.cached td:nth-child(8)"));
-        test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
-    });
-
-    casper.run(function() { test.done(); });
+  testViewCountIncremented( 'nginx', test );
+  casper.run(function() { test.done(); });
 });
 
 casper.test.begin('Nginx: Delete cache', function suite(test) {
@@ -72,7 +73,7 @@ casper.test.begin('Nginx: Delete cache', function suite(test) {
         startCacheCount = parseInt(this.fetchText("tr.preserved td:last-child"));
     })
 
-    casper.thenClick("table tr.cached a.delete");
+    casper.thenClick("table tr.cached:first-child a.delete");
     casper.wait(5000, function() {this.echo("Waited 5 seconds after deleting row");});
 
     casper.then(function() {

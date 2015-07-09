@@ -1,3 +1,7 @@
 .vagrant
 .DS_Store
 config.js
+
+#vim
+*.swp
+*.swo

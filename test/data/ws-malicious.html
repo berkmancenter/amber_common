@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head><title>Malicious Amber WS-Edition</title></head>
+  <body>
+    <h1>Malicious Amber WS-Edition</h1>
+
+    <p>This page will attempt to access content on the admin pages from within the cached version of itself.</p>
+
+    <p>The following tries to get the HTML for the Amber admin page on nginx or apache:</p>
+
+    <pre><code>jQuery.get( '/amber/admin/', function( result ) { console.log( result ); } )</code></pre>
+
+    <h2>output</h2>
+
+    <div id="output"></div>
+
+    <script>
+      var req = new XMLHttpRequest();
+      req.onload = function() {
+        document.getElementById( 'output' ).innerHTML = this.responseText;
+      };
+      req.open( 'get', '/amber/admin/', true );
+      req.send();
+    </script>
+  </body>
+</html>
+

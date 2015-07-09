@@ -1,5 +1,5 @@
 /**
- * Tests for the Drupal site that can be run immediately after the server comes online
+ * Tests for the WordPress site that can be run immediately after the server comes online
  */
 
 casper.test.begin('Configuring Wordpress', function suite(test) {
@@ -15,7 +15,8 @@ casper.test.begin('Configuring Wordpress', function suite(test) {
 casper.test.begin('Wordpress: Site with plugin installed is up', function suite(test) {
     casper.start(getServer('wordpress'), function() {
         test.assertHttpStatus(200, "Site is up");     
-        test.assertTitle('Amber WordPress | Just another WordPress site', "Site has expected title");
+        test.assertTitleMatch(/Amber/, "Site has Amber in title");
+        test.assertTitleMatch(/WordPress/, "Site has WordPress in title");
         test.assertTextExists('Proudly powered by WordPress', "Site has expected content on home page");
 	});
 
@@ -27,12 +28,12 @@ casper.test.begin('Wordpress: Admin pages are up', function suite(test) {
     wordpress_configure_site();
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
         test.assertHttpStatus(200, "Amber Dashboard is up");
-        test.assertTitle("Amber Dashboard ‹ Amber Wordpress — WordPress", "Amber Dashboard has correct title");
+        test.assertTitleMatch(/Amber Dashboard/, "Amber Dashboard has correct title");
     });
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/options-general.php?page=amber-setting-admin", function() {
         test.assertHttpStatus(200, "Amber Settings page is up");
-        test.assertTitle("Amber Settings ‹ Amber Wordpress — WordPress", "Amber Settings page has correct title");
+        test.assertTitleMatch(/Amber Settings/, "Amber Settings page has correct title");
     });
 
     casper.run(function() { test.done(); });
@@ -62,7 +63,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
     casper.wait(5000, function() {this.echo("Waited for 5 seconds");})    
 
     casper.then(function() {
-        test.assertTitle("Test 1 – Small page with no links | Amber WordPress", "Test page has correct title");
+        test.assertTitleMatch(/Test 1/, "Test page has correct title");
         test.assertTextExists('the peanut is not technically a nut', "Test page displays correct content");
     });
 
@@ -73,12 +74,12 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
 casper.test.begin('Wordpress: "Cache now" functionality works', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test | " + link, link);
 
     casper.thenClick("span#view-post-btn a");
 
     casper.then(function() {
-        test.assertTitle("Test Page for Cache Now test | Amber WordPress", "Page with cached link has correct title");
+        test.assertTitleMatch(/Test Page for Cache Now test/, "Page with cached link has correct title");
         test.assertExists('a[href="' + link + '"]', "Cached link exists");
         test.assertExists('a[href="' + link + '"][data-amber-behavior]', "Cached link has data-amber-behavior attribute");
         test.assertExists('a[href="' + link + '"][data-versionurl]', "Cached link has versionurl attribute");
@@ -92,7 +93,7 @@ casper.test.begin('Wordpress: "Cache now" functionality works', function suite(t
 casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test | " + link, link);
 
     casper.thenClick("span#view-post-btn a");
 
@@ -103,11 +104,11 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
     /* Check that the cached page has been loaded */
     casper.then(function() {
         test.assertMatch(this.currentResponse.headers.get('Memento-Datetime'), /[A-Za-z]{3}, [0-9].*/,'Memento-Datetime header found');
-        test.assertTitle('Amber', "Page framing the cached page has title Amsber");
+        test.assertTitle('Amber', "Page framing the cached page has title Amber");
         test.assertExists('iframe', 'iframe for cached page exists');
     });
     casper.withFrame(0, function() {
-        test.assertTitle("Google", "Cached page has correct title");        
+        test.assertTitle('AMBER', "Cached page has correct title");        
         test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
     })
 
@@ -123,7 +124,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 // casper.test.begin('Wordpress: Batch cache functionality works', function suite(test) {
 //     wordpress_login();
 //     var link = unique_link();
-//     wordpress_create_page_with_link("Test Page for batch cache test", link);
+//     wordpress_create_page_with_link("Test Page for batch cache test | " + link, link);
 
 //     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
@@ -170,7 +171,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 casper.test.begin('Wordpress: Cache view count incremented', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for cache view increment test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for cache view increment test | " + link, link);
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
@@ -206,7 +207,7 @@ casper.test.begin('Wordpress: Cache view count incremented', function suite(test
 casper.test.begin('Wordpress: Delete cache', function suite(test) {
     wordpress_login();
     var link = unique_link();
-    wordpress_create_page_with_link_and_cache("Test Page for delete cache test", link);
+    wordpress_create_page_with_link_and_cache("Test Page for delete cache test | " + link, link);
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
 
@@ -235,7 +236,7 @@ casper.test.begin('Wordpress: Delete cache', function suite(test) {
 /****** Utility functions ******/
 
 function unique_link() {
-    return "http://www.google.com" + "?" + Math.floor(Math.random() * 1000);
+    return "http://amberlink.org/" + "?" + Date.now(0);
 }
 
 function wordpress_login() {
@@ -266,11 +267,12 @@ function wordpress_create_page_with_link(title, link) {
         casper.thenClick("button#content-html");
         this.fillSelectors('form[name="post"]', {
             'input[name="post_title"]':    title,
-            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">Google</a> and more ipsum'
+            'textarea[name="content"]':  'Lorem ipsum: <a href="' + link + '">' + title + '</a> and more ipsum'
         }, false);
     });   
      
     casper.thenClick("#publish");
+    casper.wait(5000, function() { this.echo( 'Done waiting for Publish' ) } );
 }
 
 function wordpress_create_page_with_link_and_cache(title, link) {
