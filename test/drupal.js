@@ -96,7 +96,7 @@ casper.test.begin('Drupal: View cache / Test hover for cache display', function 
     /* Check that the cached page has been loaded */
     casper.then(function() {
         test.assertMatch(this.currentResponse.headers.get('Memento-Datetime'), /[A-Za-z]{3}, [0-9].*/,'Memento-Datetime header found');
-        test.assertTitle('Amber', "Page framing the cached page has title Amsber");
+        test.assertTitle('Amber', "Page framing the cached page has title Amber");
         test.assertExists('iframe', 'iframe for cached page exists');
     });
     casper.withFrame(0, function() {
