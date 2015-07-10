@@ -108,7 +108,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
         test.assertExists('iframe', 'iframe for cached page exists');
     });
     casper.withFrame(0, function() {
-        test.assertTitle('AMBER', "Cached page has correct title");        
+        test.assertTitle('Google', "Cached page has correct title");        
         test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
     })
 
@@ -119,54 +119,6 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
     wordpress_delete_current_page_being_viewed();
     casper.run(function() { test.done(); });
 });
-
-
-// casper.test.begin('Wordpress: Batch cache functionality works', function suite(test) {
-//     wordpress_login();
-//     var link = unique_link();
-//     wordpress_create_page_with_link("Test Page for batch cache test | " + link, link);
-
-//     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard");
-
-//     var startCacheCount;
-//     var endCacheCount;
-//     casper.then(function() {
-//         startCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
-//     });
-
-//     casper.thenClick("input#scan");
-//     casper.waitForText("Done scanning content", function() { 
-//         casper.wait(5000, function() {this.echo("Done scanning content and waiting 5 seconds");});
-//     });
-//     casper.thenClick("input#stop");
-//     casper.thenClick("input#cache_now");
-
-//     casper.waitFor(
-//         function check() {
-//             return this.evaluate(function() {
-//                 return (this.fetchText("#batch_status") == "Done preserving links");
-//             });
-//         },
-//         function then() {
-//             endCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
-//         },
-//         function onTimout() {            
-//             endCacheCount = parseInt(this.fetchText("#amber-stats tbody tr:first-child td:last-child"));
-//         },  
-//         30000 
-//     );
-
-
-//     casper.then(function() {
-//         this.echo(startCacheCount);
-//         this.echo(endCacheCount);
-//         test.assert(endCacheCount > startCacheCount, "Batch caching increased number of items in cache");
-//         test.assertSelectorHasText("#amber-stats tbody tr:nth-child(2) td:last-child", "0", "No more items left to cache");
-//     });
-
-//     casper.run(function() { test.done(); });
-// });
-
 
 casper.test.begin('Wordpress: Cache view count incremented', function suite(test) {
     wordpress_login();
@@ -236,7 +188,7 @@ casper.test.begin('Wordpress: Delete cache', function suite(test) {
 /****** Utility functions ******/
 
 function unique_link() {
-    return "http://amberlink.org/" + "?" + Date.now(0);
+    return "http://google.com" + "?" + Date.now(0);
 }
 
 function wordpress_login() {
