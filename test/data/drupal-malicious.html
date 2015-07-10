@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head><title>Malicious Drupal</title></head>
+  <body>
+    <h1>Malicious Drupal</h1>
+
+    <p>This page will attempt to access content on Drupal that it shouldn't be able to, even if you're signed into Drupal while looking at it.</p>
+
+    <p>A script on this page attempts to get the HTML for the new article form.</p>
+
+    <h2>output</h2>
+
+    <div id="output"></div>
+
+    <script>
+      var req = new XMLHttpRequest();
+      req.onload = function() {
+        document.getElementById( 'output' ).innerHTML = this.responseText;
+      };
+      req.open( 'get', '/node/add/article', true );
+      req.send();
+    </script>
+  </body>
+</html>
+
