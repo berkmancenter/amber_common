@@ -58,6 +58,15 @@ Wait 10 minutes for automated caching to complete on the web servers, and then r
 casperjs test nginx-postcache.js apache-postcache.js --includes=config.js,ws-include.js
 ```
 
+## Creating Github releases
+
+```create_release.sh --platform=[drupal|wordpress|nginx|apache|common|all] --version=VERSION --commit=COMMIT --description=DESCRIPTION```
+
+Where:
+
+* ```VERSION``` is the version number of the release (e.g. 1.2); and
+* ```COMMIT``` is the version of the code to use for the release - a git tag/hash/branch from the relevant Github repository; and
+* ```DESCRIPTION``` is the text to be used for the release description
 
 
 

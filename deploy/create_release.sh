@@ -8,7 +8,7 @@ function report () {
 }
 
 # Validation messages
-USAGE="Usage: create_release.sh --platform=[drupal|wordpress|nginx|apache|common|all] --release=RELEASE --commit=COMMIT --description=DESCRIPTION"
+USAGE="Usage: create_release.sh --platform=[drupal|wordpress|nginx|apache|common|all] --version=VERSION --commit=COMMIT --description=DESCRIPTION"
 ENVIRONMENT="The following environment variables must be set in order to create the release: GITHUB_ACCESS_TOKEN"
 
 for i in "$@"
@@ -18,8 +18,8 @@ case $i in
     PLATFORM="${i#*=}"
     shift # past argument=value
     ;;
-    --release=*)
-    RELEASE="${i#*=}"
+    --version=*)
+    VERSION="${i#*=}"
     shift # past argument=value
     ;;
     --commit=*)
@@ -37,7 +37,7 @@ esac
 done
 
 # Make sure the correct parameters have been passed
-if [[ -z "$PLATFORM" || -z "$RELEASE"  || -z "$COMMIT"  || -z "$DESCRIPTION" ]]; then
+if [[ -z "$PLATFORM" || -z "$VERSION"  || -z "$COMMIT"  || -z "$DESCRIPTION" ]]; then
 	echo $USAGE
 	exit 1
 fi
@@ -61,7 +61,7 @@ case $PLATFORM in
 esac	
 
 
-API_JSON=$(printf '{"tag_name": "v%s","target_commitish": "%s","name": "Version %s","body": "%s","draft": false,"prerelease": false}' $RELEASE $COMMIT $RELEASE "$DESCRIPTION")
+API_JSON=$(printf '{"tag_name": "v%s","target_commitish": "%s","name": "Version %s","body": "%s","draft": false,"prerelease": false}' $VERSION $COMMIT $VERSION "$DESCRIPTION")
 
 for P in $PLATFORM; do
 	curl --data "$API_JSON" https://api.github.com/repos/berkmancenter/amber_${P}/releases?access_token=${GITHUB_ACCESS_TOKEN}
