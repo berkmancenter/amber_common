@@ -97,7 +97,7 @@ for P in $PLATFORM; do
 	if [ "${SET_VIRTUAL_IP}" -eq 1 ] 
 	then
 		# Set the IP address for the new server to the elastic IP defined in $AMBER_[platform]_ELASTIC_IP
-		type ec2-associate-address >/dev/null 2>/dev/null && test "${!IP}" && echo ec2-associate-address ${!IP} --instance $INSTANCE_ID && report "Server available with $P release $RELEASE and instance id: $INSTANCE_ID and IP: ${!IP}"
+		type ec2-associate-address >/dev/null 2>/dev/null && test "${!IP}" && ec2-associate-address ${!IP} --instance $INSTANCE_ID && report "Server available with $P release $RELEASE and instance id: $INSTANCE_ID and IP: ${!IP}"
 	else
 		report "Server available with $P release $RELEASE and instance id: $INSTANCE_ID"
 	fi
