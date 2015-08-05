@@ -36,6 +36,7 @@ casper.test.begin('Drupal: Admin pages are up', function suite(test) {
 
 casper.test.begin('Drupal: Pages with test content are up before being cached', function suite(test) {
     drupal_login();
+    drupal_use_local();
 
     casper.thenOpen(getServer('drupal') + "/node/add/article", function() {
         this.fillSelectors('form#article-node-form', {
@@ -62,6 +63,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
 
 casper.test.begin('Drupal: Cache now functionality works', function suite(test) {
     drupal_login();
+    drupal_use_local();
 
     var link = unique_link();
     drupal_create_page_with_link_and_cache("Test Page for Cache Now test", link);
@@ -78,7 +80,9 @@ casper.test.begin('Drupal: Cache now functionality works', function suite(test) 
 });
 
 casper.test.begin('Drupal: View cache / Test hover for cache display', function suite(test) {
+    casper.verbose = true;
     drupal_login();
+    drupal_use_local();
 
     var link = unique_link();
     drupal_create_page_with_link_and_cache("Test Page for View cache test", link);
@@ -100,7 +104,7 @@ casper.test.begin('Drupal: View cache / Test hover for cache display', function 
         test.assertExists('iframe', 'iframe for cached page exists');
     });
     casper.withFrame(0, function() {
-        test.assertTitle("Google", "Cached page has correct title");        
+        test.assertTitle("Bing", "Cached page has correct title");        
         test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
     })
 
@@ -115,6 +119,7 @@ casper.test.begin('Drupal: View cache / Test hover for cache display', function 
 casper.test.begin('Drupal: Cache view count incremented', function suite(test) {
 
     drupal_login();
+    drupal_use_local();
     var link = unique_link();
     drupal_create_page_with_link_and_cache("Test Page for Cache view count increment test", link);
 
@@ -153,6 +158,7 @@ casper.test.begin('Drupal: Cache view count incremented', function suite(test) {
 casper.test.begin('Drupal: Delete cache', function suite(test) {
 
     drupal_login();
+    drupal_use_local();
     var link = unique_link();
     drupal_create_page_with_link_and_cache("Test Page for delete cache test", link);
 
@@ -185,11 +191,55 @@ casper.test.begin('Drupal: Delete cache', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+/* IA Testing */
+
+casper.test.begin('Drupal: Internet Archive : Cache now functionality works', function suite(test) {
+    drupal_login();
+    drupal_use_ia();
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for Cache Now test with Internet Archive", link);
+
+    casper.waitForText("Sucessfully cached", function() {
+        test.assertExists('a[href="' + link + '"]', "Cached link exists");
+        test.assertExists('a[href="' + link + '"][data-amber-behavior]', "Cached link has data-amber-behavior attribute");
+        test.assertExists('a[href="' + link + '"][data-versionurl]', "Cached link has versionurl attribute");
+        test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
+    });
+
+    drupal_delete_current_page();
+    casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Drupal: Internet Archive : View cache / Test hover for cache display', function suite(test) {
+    drupal_login();
+    drupal_use_ia();
+
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for View cache test with Internet Archive", link);
+    casper.waitForText("Sucessfully cached", function() {
+        casper.mouseEvent('mouseover', 'a[href="' + link + '"]');
+    });
+    casper.waitUntilVisible('.amber-hover', function(){
+        test.assertExists('.amber-hover .amber-links a:first-child', "Hover popup displayed");
+    });
+    casper.thenClick('.amber-hover .amber-links a:first-child');
+    /* Check that the cached page has been loaded */
+    casper.then(function() {
+        test.assertTitle('Bing', "Cached page has correct title");
+    });
+    casper.then(function() {
+        this.back();
+    });
+    drupal_delete_current_page();
+    casper.run(function() { test.done(); });
+});
+
+
 
 /****** Utility functions ******/
 
 function unique_link() {
-    return "http://www.google.com" + "?" + Math.floor(Math.random() * 1000);
+    return "http://www.bing.com" + "?" + Math.floor(Math.random() * 1000);
 }
 
 /* Login */
@@ -221,6 +271,22 @@ function drupal_create_page_with_link_and_cache(title, link) {
     
     casper.waitForText("has been created", function() {
         this.click("ul.tabs li:last-child a"); /* Click "Cache now" */
+    });
+}
+
+function drupal_use_local() {
+    casper.thenOpen(getServer('drupal') + "/admin/config/content/amber", function() {
+        this.fillSelectors('form', {
+            'select[name="amber_backend"]': "0", /* Do not use number 0! */
+        }, true);
+    });
+}
+
+function drupal_use_ia() {
+    casper.thenOpen(getServer('drupal') + "/admin/config/content/amber", function() {
+        this.fillSelectors('form', {
+            'select[name="amber_backend"]': "2",            
+        }, true);
     });
 }
 
