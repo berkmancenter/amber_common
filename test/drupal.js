@@ -277,6 +277,55 @@ casper.test.begin('Drupal: Perma : View cache / Test hover for cache display', f
     casper.run(function() { test.done(); });
 });
 
+/* AWS Testing */
+casper.test.begin('Drupal: AWS : Cache now functionality works', function suite(test) {
+    drupal_login();
+    drupal_use_aws();
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for Cache Now test with AWS", link);
+
+    casper.waitForText("Sucessfully cached", function() {
+        test.assertExists('a[href="' + link + '"]', "Cached link exists");
+        test.assertExists('a[href="' + link + '"][data-amber-behavior]', "Cached link has data-amber-behavior attribute");
+        test.assertExists('a[href="' + link + '"][data-versionurl]', "Cached link has versionurl attribute");
+        test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
+    });
+
+    drupal_delete_current_page();
+    casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Drupal: AWS : View cache / Test hover for cache display', function suite(test) {
+    drupal_login();
+    drupal_use_aws();
+
+    var link = unique_link();
+    drupal_create_page_with_link_and_cache("Test Page for View cache test with AWS", link);
+    casper.waitForText("Sucessfully cached", function() {
+        casper.mouseEvent('mouseover', 'a[href="' + link + '"]');
+    });
+    casper.waitUntilVisible('.amber-hover', function(){
+        test.assertExists('.amber-hover .amber-links a.amber-cache-link', "Hover popup displayed");
+    });
+    casper.thenClick('.amber-hover .amber-links a.amber-cache-link');
+    /* Check that the cached page has been loaded */
+    casper.then(function() {
+        test.assertMatch(this.currentResponse.headers.get('Memento-Datetime'), /[A-Za-z]{3}, [0-9].*/,'Memento-Datetime header found');
+        test.assertTitle('Amber', "Page framing the cached page has title Amber");
+        test.assertExists('iframe', 'iframe for cached page exists');
+    });
+    casper.withFrame(0, function() {
+        test.assertTitle("Bing", "Cached page has correct title");        
+        test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
+    })
+    casper.then(function() {
+        this.back();
+    });
+    drupal_delete_current_page();
+    casper.run(function() { test.done(); });
+});
+
+
 
 /****** Utility functions ******/
 
@@ -328,7 +377,7 @@ function drupal_use_perma() {
     casper.thenOpen(getServer('drupal') + "/admin/config/content/amber", function() {
         this.fillSelectors('form', {
             'select[name="amber_backend"]': "1",
-            '#edit-amber-perma-apikey':  perma_key,
+            '#edit-amber-perma-apikey':  keys['perma'],
             '#edit-amber-perma-server-url':  "http://perma-stage.org",
             '#edit-amber-perma-server-api-url':  "https://api.perma-stage.org",
 
@@ -343,6 +392,19 @@ function drupal_use_ia() {
         }, true);
     });
 }
+
+function drupal_use_aws() {
+    casper.thenOpen(getServer('drupal') + "/admin/config/content/amber", function() {
+        this.fillSelectors('form', {
+            'select[name="amber_backend"]': "3",
+            '#edit-amber-aws-access-key':  keys['aws_access'],
+            '#edit-amber-aws-secret-key':  keys['aws_secret'],
+            '#edit-amber-aws-bucket':  keys['aws_bucket'],
+        }, true);
+    });
+}
+
+
 
 
 

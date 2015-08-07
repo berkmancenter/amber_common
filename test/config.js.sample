@@ -17,6 +17,13 @@ var web_server_pages = {
 	'nginx' : ['/']
 }
 
+var keys = {
+	'perma' : 'PERMA_ACCESS_KEY',
+	'aws_access' : 'AWS_ACCESS_KEY',
+	'aws_secret' : 'AWS_SECRET_KEY',
+	'aws_bucket' : 'AWS_S3_BUCKET_NAME',
+}
+
 /* Utility functions */
 
 function getServer(platform) {

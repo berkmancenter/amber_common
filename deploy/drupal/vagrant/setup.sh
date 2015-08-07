@@ -92,6 +92,14 @@ drush dis overlay -y
 # Set Drupal admin password
 drush user-password admin --password=$DRUPAL_ADMIN_PASSWORD
 
+# Install latest AWS library into Drupal
+cd /var/www/sites/all/libraries
+mkdir aws
+cd aws
+wget https://github.com/aws/aws-sdk-php/releases/download/$(curl -s https://api.github.com/repos/aws/aws-sdk-php/releases | grep tag_name | head -n 1 | cut -d '"' -f 4)/aws.zip
+unzip aws.zip
+rim aws.zip
+
 service apache2 restart
 
 # Install any provided public keys
