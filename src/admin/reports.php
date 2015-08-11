@@ -2,7 +2,7 @@
 	/* Avoid printing any output until we know we don't want to redirect */
 	ob_start();
 
-	require_once '../AmberStorage.php';
+	require_once '../backends/amber/AmberStorage.php';
 	require_once '../AmberStatus.php';
 	require_once '../AmberDB.php';
 
@@ -63,13 +63,13 @@
 		$storage = new AmberStorage($config['cache']);
 		$status = new AmberStatus(new AmberPDO($db));
 		if ($id == "all") {
-			$storage->clear_cache();
+			$storage->delete_all();
 			$status->delete_all();
 			$query = $db->query("DELETE FROM amber_queue");
 			$result = $query->fetch();
 			$query->closeCursor();
 		} else {
-			$storage->clear_cache_item($id);
+			$storage->delete($id);
 			$status->delete($id);
 		}
 

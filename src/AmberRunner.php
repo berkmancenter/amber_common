@@ -1,8 +1,8 @@
 <?php
 
 require_once 'AmberChecker.php';
-require_once 'AmberFetcher.php';
-require_once 'AmberStorage.php';
+require_once 'backends/amber/AmberFetcher.php';
+require_once 'backends/amber/AmberStorage.php';
 require_once 'AmberStatus.php';
 
 $config = array();
