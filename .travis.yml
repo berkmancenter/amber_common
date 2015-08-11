@@ -7,4 +7,4 @@ php:
   - 5.5
 
 script:
-  - phpunit .
+  - phpunit  --exclude-group ExternalInterfaces .
