@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname( __FILE__ ) . '/../../AmberInterfaces.php';
+
 /**
  * The metadata is of the form:
  *
@@ -32,15 +34,6 @@
  *
  */
 
-interface iAmberStorage {
-  function get($id);
-  function get_asset($id, $path);
-  function get_metadata($key);
-  function get_id($url);
-  function save($url, $root, array $headers = array(), array $assets = array());
-  function clear_cache();
-}
-
 class AmberStorage implements iAmberStorage {
 
   /* The default ISO8601 date string formatter doesn't include the colons in the time-zone component, which
@@ -53,6 +46,9 @@ class AmberStorage implements iAmberStorage {
     $this->name = 'amber'; // Used to identify the metadata that belongs to this implementation of iAmberStorage
   }
 
+  public function provider_id() {
+    return 0;
+  }
 
   public function get($id) {
     $result = NULL;
@@ -171,13 +167,15 @@ class AmberStorage implements iAmberStorage {
   /**
    *  Delete the entire contents of the cache
    */
-  public function clear_cache() {
+  public function delete_all() {
     if ($this->file_root) {
       $this->rrmdir($this->file_root);
     }
+    return TRUE;
   }
 
-  public function clear_cache_item($id) {
+  public function delete($cache_metadata) {
+    $id = $cache_metadata['id'];
     $path = $this->get_cache_item_path($id);
     if ($path) {
       $dir = dirname($path);
@@ -185,6 +183,7 @@ class AmberStorage implements iAmberStorage {
         $this->rrmdir($dir);
       }
     }
+    return TRUE;
   }
 
   /**
@@ -192,7 +191,7 @@ class AmberStorage implements iAmberStorage {
    * @param string $url to be hashed
    * @return string MD5 hash of the url
    */
-  private function url_hash($url) {
+  protected function url_hash($url) {
     //TODO: Normalize URLs (consider: https://github.com/glenscott/url-normalizer)
     return md5($url);
   }
@@ -223,7 +222,7 @@ class AmberStorage implements iAmberStorage {
    * @param $id string
    * @return string path to the file that contains the metadata
    */
-  private function get_cache_item_metadata_path($id) {
+  protected function get_cache_item_metadata_path($id) {
     $path = join(DIRECTORY_SEPARATOR, array($this->file_root, $id, "${id}.json"));
     return ($this->is_within_cache_directory($path)) ? $path : NULL;
   }
@@ -234,7 +233,7 @@ class AmberStorage implements iAmberStorage {
    * @param $asset_path string with the path to the asset
    * @return string path to the file that contains the root cached item
    */
-  private function get_cache_item_path($id, $asset_path = NULL) {
+  protected function get_cache_item_path($id, $asset_path = NULL) {
     if ($asset_path) {
       $path = join(DIRECTORY_SEPARATOR, array_merge(array($this->file_root, $id, "assets"), explode('/',$asset_path)));
     } else {
@@ -248,7 +247,7 @@ class AmberStorage implements iAmberStorage {
    * @param string $id cached document id
    * @return array metadata
    */
-  private function get_cache_metadata($id) {
+  protected function get_cache_metadata($id) {
     $path = realpath($this->get_cache_item_metadata_path($id));
     if (($path === false) || !file_exists($path)) {
       /* File does not exist. Do not log an error, since there are many cases in which this is expected */
@@ -278,7 +277,7 @@ class AmberStorage implements iAmberStorage {
    * @param $metadata array with the metadata to save
    * @return bool
    */
-  private function save_cache_metadata($id, $metadata) {
+  protected function save_cache_metadata($id, $metadata) {
     $path = $this->get_cache_item_metadata_path($id);
     $file = fopen($path,'w');
     if (!$file) {

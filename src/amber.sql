@@ -22,6 +22,8 @@ CREATE TABLE amber_check (
   last_checked   INTEGER,
   next_check     INTEGER,
   message        TEXT NOT NULL,
+  provider       INTEGER,
+  provider_id    TEXT NOT NULL,
   PRIMARY KEY  (id)
 );
 
