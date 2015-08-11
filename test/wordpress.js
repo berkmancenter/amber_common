@@ -26,6 +26,7 @@ casper.test.begin('Wordpress: Site with plugin installed is up', function suite(
 casper.test.begin('Wordpress: Admin pages are up', function suite(test) {
     wordpress_login();
     wordpress_configure_site();
+    wordpress_use_local();    
     casper.thenOpen(getServer('wordpress') + "/wp-admin/tools.php?page=amber-dashboard", function() {
         test.assertHttpStatus(200, "Amber Dashboard is up");
         test.assertTitleMatch(/Amber Dashboard/, "Amber Dashboard has correct title");
@@ -41,6 +42,7 @@ casper.test.begin('Wordpress: Admin pages are up', function suite(test) {
 
 casper.test.begin('Wordpress: Pages with test content are up before being cached', function suite(test) {
     wordpress_login();
+    wordpress_use_local();    
 
     casper.thenOpen(getServer('wordpress') + "/wp-admin/post-new.php?post_type=page", function() {
         casper.thenClick("button#content-html");
@@ -73,6 +75,7 @@ Because, in botanical terms, "nut" specifically refers to indehiscent fruit, the
 
 casper.test.begin('Wordpress: "Cache now" functionality works', function suite(test) {
     wordpress_login();
+    wordpress_use_local();    
     var link = unique_link();
     wordpress_create_page_with_link_and_cache("Test Page for Cache Now test | " + link, link);
 
@@ -92,6 +95,7 @@ casper.test.begin('Wordpress: "Cache now" functionality works', function suite(t
 
 casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
     wordpress_login();
+    wordpress_use_local();    
     var link = unique_link();
     wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test | " + link, link);
 
@@ -108,7 +112,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
         test.assertExists('iframe', 'iframe for cached page exists');
     });
     casper.withFrame(0, function() {
-        test.assertTitle('Google', "Cached page has correct title");        
+        test.assertTitle('Bing', "Cached page has correct title");        
         test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
     })
 
@@ -122,6 +126,7 @@ casper.test.begin('Wordpress: View cache / Test popup', function suite(test) {
 
 casper.test.begin('Wordpress: Cache view count incremented', function suite(test) {
     wordpress_login();
+    wordpress_use_local();    
     var link = unique_link();
     wordpress_create_page_with_link_and_cache("Test Page for cache view increment test | " + link, link);
 
@@ -158,6 +163,7 @@ casper.test.begin('Wordpress: Cache view count incremented', function suite(test
 
 casper.test.begin('Wordpress: Delete cache', function suite(test) {
     wordpress_login();
+    wordpress_use_local();    
     var link = unique_link();
     wordpress_create_page_with_link_and_cache("Test Page for delete cache test | " + link, link);
 
@@ -185,10 +191,155 @@ casper.test.begin('Wordpress: Delete cache', function suite(test) {
     casper.run(function() { test.done(); });
 });
 
+/* Perma Testing */
+casper.test.begin('Wordpress: Perma : "Cache now" functionality works', function suite(test) {
+    wordpress_login();
+    wordpress_use_perma();
+    var link = unique_link();
+    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test | " + link, link);
+
+    casper.thenClick("span#view-post-btn a");
+
+    casper.then(function() {
+        test.assertTitleMatch(/Test Page for Cache Now test/, "Page with cached link has correct title");
+        test.assertExists('a[href="' + link + '"]', "Cached link exists");
+        test.assertExists('a[href="' + link + '"][data-amber-behavior]', "Cached link has data-amber-behavior attribute");
+        test.assertExists('a[href="' + link + '"][data-versionurl]', "Cached link has versionurl attribute");
+        test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
+    });
+
+    wordpress_delete_current_page_being_viewed();
+    casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Wordpress: Perma: View cache / Test popup', function suite(test) {
+    wordpress_login();
+    wordpress_use_perma();    
+    var link = unique_link();
+    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test | " + link, link);
+
+    casper.thenClick("span#view-post-btn a");
+
+    /* Testing use of popups for cached pages */
+    casper.thenClick('a[href="' + link + '"]');
+    casper.thenClick('a.amber-focus');
+
+    /* Check that the cached page has been loaded */
+    casper.waitForText("Live page view", function() {
+        test.assertTitleMatch(/perma.*bing.*/i, "Cached page has correct title");
+    });
+
+    casper.then(function() {
+        this.back();
+    });
+
+    wordpress_delete_current_page_being_viewed();
+    casper.run(function() { test.done(); });
+});
+
+/* IA Testing */
+casper.test.begin('Wordpress: Internet Archive: "Cache now" functionality works', function suite(test) {
+    wordpress_login();
+    wordpress_use_ia();
+    var link = unique_link();
+    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test | " + link, link);
+
+    casper.thenClick("span#view-post-btn a");
+
+    casper.then(function() {
+        test.assertTitleMatch(/Test Page for Cache Now test/, "Page with cached link has correct title");
+        test.assertExists('a[href="' + link + '"]', "Cached link exists");
+        test.assertExists('a[href="' + link + '"][data-amber-behavior]', "Cached link has data-amber-behavior attribute");
+        test.assertExists('a[href="' + link + '"][data-versionurl]', "Cached link has versionurl attribute");
+        test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
+    });
+
+    wordpress_delete_current_page_being_viewed();
+    casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Wordpress: Internet Archive: View cache / Test popup', function suite(test) {
+    wordpress_login();
+    wordpress_use_ia();    
+    var link = unique_link();
+    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test | " + link, link);
+
+    casper.thenClick("span#view-post-btn a");
+
+    /* Testing use of popups for cached pages */
+    casper.thenClick('a[href="' + link + '"]');
+    casper.thenClick('a.amber-focus');
+
+    /* Check that the cached page has been loaded */
+    casper.then(function() {
+        test.assertTitle('Bing', "Cached page has correct title");
+    });
+
+    casper.then(function() {
+        this.back();
+    });
+
+    wordpress_delete_current_page_being_viewed();
+    casper.run(function() { test.done(); });
+});
+
+/* AWS Testing */
+casper.test.begin('Wordpress: AWS: "Cache now" functionality works', function suite(test) {
+    wordpress_login();
+    wordpress_use_aws();
+    var link = unique_link();
+    wordpress_create_page_with_link_and_cache("Test Page for Cache Now test | " + link, link);
+
+    casper.thenClick("span#view-post-btn a");
+
+    casper.then(function() {
+        test.assertTitleMatch(/Test Page for Cache Now test/, "Page with cached link has correct title");
+        test.assertExists('a[href="' + link + '"]', "Cached link exists");
+        test.assertExists('a[href="' + link + '"][data-amber-behavior]', "Cached link has data-amber-behavior attribute");
+        test.assertExists('a[href="' + link + '"][data-versionurl]', "Cached link has versionurl attribute");
+        test.assertExists('a[href="' + link + '"][data-versiondate]', "Cached link has data-versiondate attribute");
+    });
+
+    wordpress_delete_current_page_being_viewed();
+    casper.run(function() { test.done(); });
+});
+
+casper.test.begin('Wordpress: AWS: View cache / Test popup', function suite(test) {
+    wordpress_login();
+    wordpress_use_aws();    
+    var link = unique_link();
+    wordpress_create_page_with_link_and_cache("Test Page for View cache / Test Popup test | " + link, link);
+
+    casper.thenClick("span#view-post-btn a");
+
+    /* Testing use of popups for cached pages */
+    casper.thenClick('a[href="' + link + '"]');
+    casper.thenClick('a.amber-focus');
+
+    /* Check that the cached page has been loaded */
+    casper.then(function() {
+        test.assertMatch(this.currentResponse.headers.get('Memento-Datetime'), /[A-Za-z]{3}, [0-9].*/,'Memento-Datetime header found');
+        test.assertTitle('Amber', "Page framing the cached page has title Amber");
+        test.assertExists('iframe', 'iframe for cached page exists');
+    });
+    casper.withFrame(0, function() {
+        test.assertTitle('Bing', "Cached page has correct title");        
+        test.assertTextExists('You are viewing an archive', "Embedded Amber banner found");
+    })
+
+    casper.then(function() {
+        this.back();
+    });
+
+    wordpress_delete_current_page_being_viewed();
+    casper.run(function() { test.done(); });
+});
+
+
 /****** Utility functions ******/
 
 function unique_link() {
-    return "http://google.com" + "?" + Date.now(0);
+    return "http://www.bing.com" + "?" + Date.now(0);
 }
 
 function wordpress_login() {
@@ -210,6 +361,44 @@ function wordpress_configure_site() {
     casper.thenOpen(getServer('wordpress') + "/wp-admin/options-permalink.php", function() {
         this.click('input[name="selection"][value="/%postname%/"]');
         this.fillSelectors('form', {
+        }, true);
+    });
+}
+
+function wordpress_use_local() {
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/options-general.php?page=amber-setting-admin", function() {
+        this.fillSelectors('form', {
+            'select#amber_backend': "0",            
+        }, true);
+    });
+}
+
+function wordpress_use_perma() {
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/options-general.php?page=amber-setting-admin", function() {
+        this.fillSelectors('form', {
+            'select#amber_backend': "1",            
+            '#amber_perma_api_key':  keys['perma'],
+            '#amber_perma_server_url':  "http://perma-stage.org",
+            '#amber_perma_api_server_url':  "https://api.perma-stage.org",
+        }, true);
+    });
+}
+
+function wordpress_use_ia() {
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/options-general.php?page=amber-setting-admin", function() {
+        this.fillSelectors('form', {
+            'select#amber_backend': "2",            
+        }, true);
+    });
+}
+
+function wordpress_use_aws() {
+    casper.thenOpen(getServer('wordpress') + "/wp-admin/options-general.php?page=amber-setting-admin", function() {
+        this.fillSelectors('form', {
+            'select#amber_backend': "3", 
+            '#amber_aws_access_key':  keys['aws_access'],
+            '#amber_aws_secret_key':  keys['aws_secret'],
+            '#amber_aws_bucket':  keys['aws_bucket'],
         }, true);
     });
 }
