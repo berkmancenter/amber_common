@@ -6,12 +6,14 @@ CREATE TABLE amber_activity (
 );
 
 CREATE TABLE amber_cache (
-  id         TEXT NOT NULL,
-  url        TEXT NOT NULL,
-  location   TEXT NOT NULL,
-  date       INTEGER NOT NULL,
-  type       TEXT NOT NULL,
-  size       INTEGER NOT NULL,
+  id             TEXT NOT NULL,
+  url            TEXT NOT NULL,
+  location       TEXT NOT NULL,
+  date           INTEGER NOT NULL,
+  type           TEXT NOT NULL,
+  size           INTEGER NOT NULL,
+  provider       INTEGER,
+  provider_id    TEXT NOT NULL,
   PRIMARY KEY  (id)
 );
 
@@ -22,8 +24,6 @@ CREATE TABLE amber_check (
   last_checked   INTEGER,
   next_check     INTEGER,
   message        TEXT NOT NULL,
-  provider       INTEGER,
-  provider_id    TEXT NOT NULL,
   PRIMARY KEY  (id)
 );
 
