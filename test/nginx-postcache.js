@@ -66,7 +66,7 @@ casper.test.begin('Nginx: Cache view count incremented', function suite(test) {
 });
 
 casper.test.begin('apache: Export data', function suite(test) {
-  testExportResults('nginx');
+  testExportResults('nginx', test);
   casper.run(function() { test.done(); });
 });
 

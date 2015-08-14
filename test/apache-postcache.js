@@ -77,7 +77,7 @@ casper.test.begin('apache: Cache view count incremented', function suite(test) {
 });
 
 casper.test.begin('apache: Export data', function suite(test) {
-  testExportResults('apache');
+  testExportResults('apache', test);
   casper.run(function() { test.done(); });
 });
 
