@@ -77,7 +77,7 @@
 
 	/* Export contents of the dashboard detail page as CSV */
 	function export() {
-	  $data = get_report();
+	  $data = get_report(1, PHP_INT_MAX);
 
 	  $header = array(
 	    'Site',
