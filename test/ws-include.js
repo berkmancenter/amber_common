@@ -147,3 +147,11 @@ function testViewCountIncremented( platform, test ) {
     test.done();
   } );
 }
+
+function testExportResults(plaftorm) {
+    casper.start( getServer(platform) + "/amber/admin?export" , function() {
+      test.assertHttpStatus(200);
+    });
+}
+
+

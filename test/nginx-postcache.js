@@ -65,6 +65,11 @@ casper.test.begin('Nginx: Cache view count incremented', function suite(test) {
   casper.run(function() { test.done(); });
 });
 
+casper.test.begin('apache: Export data', function suite(test) {
+  testExportResults('nginx');
+  casper.run(function() { test.done(); });
+});
+
 casper.test.begin('Nginx: Delete cache', function suite(test) {
     casper.start(getServer('nginx') + "/amber/admin", function() { });
 

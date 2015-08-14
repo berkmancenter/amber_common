@@ -76,6 +76,11 @@ casper.test.begin('apache: Cache view count incremented', function suite(test) {
   casper.run(function() { test.done(); });
 });
 
+casper.test.begin('apache: Export data', function suite(test) {
+  testExportResults('apache');
+  casper.run(function() { test.done(); });
+});
+
 casper.test.begin('Apache: Delete cache', function suite(test) {
     casper.start(getServer('apache') + "/amber/admin", function() {
 		test.assertHttpStatus(200);
