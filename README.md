@@ -1,5 +1,5 @@
-[![Build Status - master](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
-[![Build Status - develop](https://travis-ci.org/berkmancenter/amber_common.png?branch=develop)](https://travis-ci.org/berkmancenter/amber_common)
+Master: [![Build Status - master](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
+Develop: [![Build Status - develop](https://travis-ci.org/berkmancenter/amber_common.png?branch=develop)](https://travis-ci.org/berkmancenter/amber_common)
 
 # Contents
 
