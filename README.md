@@ -1,8 +1,9 @@
-[![Build Status](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
+[![Build Status - master](https://travis-ci.org/berkmancenter/amber_common.png?branch=master)](https://travis-ci.org/berkmancenter/amber_common)
+[![Build Status - develop](https://travis-ci.org/berkmancenter/amber_common.png?branch=develop)](https://travis-ci.org/berkmancenter/amber_common)
 
 # Contents
 
-* Any code that is shared across the different platform-specific Amber implementations
+* Shared code and tests for the different platform-specific Amber implementations
 * Scripts to deploy sample websites to AWS with Amber intalled for each of the Amber plaforms (Drupal, Wordpress, Nginx, Apache)
 * Integration test suites for each platform
 
@@ -38,11 +39,11 @@ Where:
 * ```RELEASE``` is the version of the code to deploy - a git tag/hash/branch from the relevant Github repository; and
 * ```PASSWORD``` is the CMS admin password to set on the new site (Drupal and Wordpress only)
 
-## Test Suite Requirements
+## Integration Test Suite Requirements
 
 * CasperJS 1.1 - (http://casperjs.readthedocs.org/en/latest/installation.html)
 
-## Test Suite Execution
+## Integration Test Suite Execution
 
 Copy ```config.js.sample``` to ```config.js``` and update the ```servers``` variable with the IP addresses of the target servers for each plaform, and the ```passwords``` variable with the admin passwords for the Drupal and Wordpress sites.
 
@@ -57,6 +58,26 @@ Wait 10 minutes for automated caching to complete on the web servers, and then r
 ```
 casperjs test nginx-postcache.js apache-postcache.js --includes=config.js,ws-include.js
 ```
+
+## Shared Code Test Suite Requirements
+
+* phpunit
+
+## Shared Code Test Suite Execution
+
+```phpunit .```
+
+Some of the tests (for integration with Perma and AWS S3) will be skipped unless the required credentials are provided and supporting libraries installed. 
+
+To run the Perma tests the following environment variable must be set:
+
+* PERMA_API_KEY = Valid Perma API key for the staging environment
+
+To run the AWS tests, the AWS library must be downloaded from https://github.com/aws/aws-sdk-php/releases and the following environment variables set:
+
+* AWS_ACCESS_KEY_ID = AWS access key
+* AWS_SECRET_ACCESS_KEY = AWS secret key
+* AWS_LIBRARY_PATH = Path to aws-autoloader.php from the AWS library
 
 ## Creating Github releases
 
