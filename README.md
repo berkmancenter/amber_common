@@ -4,7 +4,7 @@ Develop: [![Build Status - develop](https://travis-ci.org/berkmancenter/amber_co
 # Contents
 
 * Shared code and tests for the different platform-specific Amber implementations
-* Scripts to deploy sample websites to AWS with Amber intalled for each of the Amber plaforms (Drupal, Wordpress, Nginx, Apache)
+* Scripts to deploy sample websites to AWS with Amber intalled for each of the Amber platforms (Drupal, Wordpress, Nginx, Apache)
 * Integration test suites for each platform
 
 ## Deployment Requirements
