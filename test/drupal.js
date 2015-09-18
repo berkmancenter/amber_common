@@ -136,9 +136,11 @@ casper.test.begin('Drupal: Cache view count incremented', function suite(test) {
         } else {
             startViewCount = parseInt(startViewCount);
         }
+        test.assertEquals(startViewCount, 0, "Starting view count is zero");
+
     });
 
-    casper.thenClick("#block-system-main table tbody tr:first-child td:nth-child(9) a");
+    casper.thenClick("#block-system-main table tbody tr:first-child td:nth-child(10) a");
     casper.thenOpen(getServer('drupal') + "/admin/reports/amber/detail", function() {
         var endViewCount = parseInt(this.fetchText("#block-system-main table tbody tr:first-child td:nth-child(8)"));
         test.assertEquals(startViewCount + 1, endViewCount, "Cache view count incremented");
