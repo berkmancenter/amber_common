@@ -136,8 +136,6 @@ casper.test.begin('Drupal: Cache view count incremented', function suite(test) {
         } else {
             startViewCount = parseInt(startViewCount);
         }
-        test.assertEquals(startViewCount, 0, "Starting view count is zero");
-
     });
 
     casper.thenClick("#block-system-main table tbody tr:first-child td:nth-child(10) a");
