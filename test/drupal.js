@@ -378,8 +378,8 @@ function drupal_use_perma() {
         this.fillSelectors('form', {
             'select[name="amber_backend"]': "1",
             '#edit-amber-perma-apikey':  keys['perma'],
-            '#edit-amber-perma-server-url':  "http://perma-stage.org",
-            '#edit-amber-perma-server-api-url':  "https://api.perma-stage.org",
+            '#edit-amber-perma-server-url':  "http://perma.cc",
+            '#edit-amber-perma-server-api-url':  "https://api.perma.cc",
 
         }, true);
     });

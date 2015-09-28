@@ -378,8 +378,8 @@ function wordpress_use_perma() {
         this.fillSelectors('form', {
             'select#amber_backend': "1",            
             '#amber_perma_api_key':  keys['perma'],
-            '#amber_perma_server_url':  "http://perma-stage.org",
-            '#amber_perma_api_server_url':  "https://api.perma-stage.org",
+            '#amber_perma_server_url':  "http://perma.cc",
+            '#amber_perma_api_server_url':  "https://api.perma.cc",
         }, true);
     });
 }
