@@ -7,24 +7,48 @@ var amber = {
   translations : {
     en : {
       interstitial_html_up :
-      '<div class="amber-interstitial amber-up"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">This page should be available</div><div class="amber-cache-text">{{NAME}} has a cache from {{DATE}}</div>' +
-      '<a class="amber-focus" href="{{CACHE}}">View the cache</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">Continue to the page</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
+'<div class="amber-interstitial amber-up"><a href="#" class="amber-close"></a><div class="amber-body">\
+<div class="amber-status-text">\This page should be available</div><div class="amber-cache-text">{{NAME}} has a snapshot from {{DATE}}</div>\
+<a class="amber-focus amber-cache-link" href="{{CACHE}}">View the snapshot</a><a class="amber-memento-link" href="#">\
+{{MEMENTO_MESSAGE}}</a><div class="amber-iframe-container"><a href="{{LINK}}"></a>\
+<iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">Continue to the page</a></div>\
+<a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
       interstitial_html_down :
-      '<div class="amber-interstitial amber-down"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">This page may not be available</div><div class="amber-cache-text">{{NAME}} has a cache from {{DATE}}</div>' +
-      '<a class="amber-focus" href="{{CACHE}}">View the cache</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">Continue to the page</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
-      hover_html_up   : '<div class="amber-hover amber-up"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">This page should be available</div><div class="amber-cache-text">{{NAME}} has a cache from {{DATE}}</div></div><div class="amber-links"><a href="{{CACHE}}">View the cache</a><a href="{{LINK}}" class="amber-focus">Continue to the page</a></div><div class="amber-arrow"></div></div>',
-      hover_html_down : '<div class="amber-hover amber-down"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">This page may not be available</div><div class="amber-cache-text">{{NAME}} has a cache from {{DATE}}</div></div><div class="amber-links"><a href="{{CACHE}}" class="amber-focus">View the cache</a><a href="{{LINK}}">Continue to the page</a></div><div class="amber-arrow"></div></div>',
-      this_site: "This site"
+'<div class="amber-interstitial amber-down"><a href="#" class="amber-close"></a><div class="amber-body">\
+<div class="amber-status-text">This page may not be available</div><div class="amber-cache-text">{{NAME}} has a snapshot from {{DATE}}</div>\
+<a class="amber-focus amber-cache-link" href="{{CACHE}}">View the snapshot</a><a class="amber-memento-link" href="#">\
+{{MEMENTO_MESSAGE}}</a><div class="amber-iframe-container"><a href="{{LINK}}"></a>\
+<iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">Continue to the page</a></div>\
+<a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
+      hover_html_up   : 
+'<div class="amber-hover amber-up"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a>\
+<div class="amber-text"><div class="amber-status-text">This page should be available</div>\
+<div class="amber-cache-text">{{NAME}} has a snapshot from {{DATE}}</div></div>\
+<a class="amber-memento-link" href="#">{{MEMENTO_MESSAGE}}</a>\
+<div class="amber-links"><a class="amber-cache-link" href="{{CACHE}}">View the snapshot</a>\
+<a href="{{LINK}}" class="amber-focus">Continue to the page</a></div><div class="amber-arrow"></div>\
+</div>',
+      hover_html_down : 
+'<div class="amber-hover amber-down"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a>\
+<div class="amber-text"><div class="amber-status-text">This page may not be available</div>\
+<div class="amber-cache-text">{{NAME}} has a snapshot from {{DATE}}</div></div>\
+<a class="amber-memento-link" href="#">{{MEMENTO_MESSAGE}}</a>\
+<div class="amber-links"><a class="amber-cache-link amber-focus" href="{{CACHE}}">View the snapshot</a>\
+<a href="{{LINK}}">Continue to the page</a></div>\
+<div class="amber-arrow"></div></div>',
+      this_site: "This site",
+      timegate_with_date: 'Another archive has an alternate snapshot from {{MEMENTO_DATE}}',
+      timegate_without_date: 'Another archive has an alternate snapshot'
     },
     fa : {
       interstitial_html_up :
       '<div class="amber-interstitial"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">این سایت باید در دسترس باشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div>' +
-      '<a class="amber-focus" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
+      '<a class="amber-focus amber-cache-link" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
       interstitial_html_down :
       '<div class="amber-interstitial"><a href="#" class="amber-close"></a><div class="amber-body"><div class="amber-status-text">این وب سایت ممکن است در دسترس نباشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div>' +
-      '<a class="amber-focus" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
-      hover_html_up   : '<div class="amber-hover amber-up"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این سایت باید در دسترس باشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a href="{{CACHE}}">دیدن نسخه ذخیره</a><a href="{{LINK}}" class="amber-focus">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
-      hover_html_down : '<div class="amber-hover amber-down"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این وب سایت ممکن است در دسترس نباشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a href="{{CACHE}}" class="amber-focus">دیدن نسخه ذخیره</a><a href="{{LINK}}">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
+      '<a class="amber-focus amber-cache-link" href="{{CACHE}}">دیدن نسخه ذخیره</a><div class="amber-iframe-container"><a href="{{LINK}}"></a><iframe sandbox="" src="{{LINK}}"/></div><a class="amber-original-link" href="{{LINK}}">دیدن لینک زنده</a></div><a class="amber-info" href="http://amberlink.org" target="_blank">i</a></div>',
+      hover_html_up   : '<div class="amber-hover amber-up"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این سایت باید در دسترس باشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a class="amber-cache-link" href="{{CACHE}}">دیدن نسخه ذخیره</a><a href="{{LINK}}" class="amber-focus">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
+      hover_html_down : '<div class="amber-hover amber-down"><a class="amber-info" href="http://amberlink.org" target="_blank">i</a><div class="amber-text"><div class="amber-status-text">این وب سایت ممکن است در دسترس نباشد</div><div class="amber-cache-text"> {{NAME}} یک نسخه ذخیره از {{DATE}} دارد</div></div><div class="amber-links"><a class="amber-cache-link amber-focus" href="{{CACHE}}">دیدن نسخه ذخیره</a><a href="{{LINK}}">دیدن لینک زنده</a></div><div class="amber-arrow"></div></div>',
       this_site: "این وب سایت"
       }
     },
@@ -149,6 +173,7 @@ var amber = {
     var cache = amber.parse_cache(this.getAttribute("data-versionurl"), this.getAttribute("data-versiondate"));
 
     if (amber.execute_action(behavior,"popup") && cache.default) {
+
       /* Add the window to the DOM */
       var element = document.createElement('div');
       element.className = "amber-overlay";
@@ -192,6 +217,29 @@ var amber = {
         });
       }
       e.preventDefault();
+      amber.attach_cache_view_event();
+
+      /* Start looking for mementos */
+      amber.get_memento(this.getAttribute('href'), this.getAttribute('data-versiondate'),
+        function(response) {
+          if (response['url']) {
+            var cachelink = document.querySelectorAll(".amber-interstitial .amber-memento-link")[0];
+            var linktext;
+            cachelink.setAttribute('href', response['url']);
+            if (response['date']) {
+              linktext = amber.replace_args(
+                amber.get_text("timegate_with_date"), 
+                {'{{MEMENTO_DATE}}' : amber.format_date_from_string(response['date'])});
+            } else {
+              linktext = amber.get_text("timegate_without_date");
+            }
+            cachelink.innerHTML = amber.replace_args(cachelink.innerHTML, {
+                '{{MEMENTO_MESSAGE}}' : linktext,
+              });
+
+            cachelink.className = cachelink.className + " found";
+          }
+        });
     }
   },
 
@@ -257,6 +305,36 @@ var amber = {
         hover.style.top = pos.top + "px";
         amber.util_addEventListener(hover, 'mouseover', amber.start_popup_hover);
         amber.util_addEventListener(hover, 'mouseout', amber.end_popup_hover_function(hover));
+  
+        amber.attach_cache_view_event();
+
+        amber.get_memento(t.getAttribute('href'), t.getAttribute('data-versiondate'),
+        function(response) {
+          if (response['url']) {
+            /* Set URL */
+            var cachelink = document.querySelectorAll(".amber-hover .amber-memento-link")[0];
+            if (cachelink == undefined) {
+              return; /* The hover may have gone away */
+            }
+            var linktext;
+            cachelink.setAttribute('href', response['url']);
+            if (response['date']) {
+              linktext = amber.replace_args(
+                amber.get_text("timegate_with_date"), 
+                {'{{MEMENTO_DATE}}' : amber.format_date_from_string(response['date'])});
+            } else {
+              linktext = amber.get_text("timegate_without_date");
+            }
+            cachelink.innerHTML = amber.replace_args(cachelink.innerHTML, {
+                '{{MEMENTO_MESSAGE}}' : linktext,
+              });
+            /* Update hover div */
+            var hover = document.querySelectorAll(".amber-hover")[0];
+            hover.className = hover.className + " memento-found";
+            hover.style.top = (pos.top - 20) + "px";
+          }
+        });
+
       }, delay * 1000);
       this.setAttribute("amber-timer",timer);
     }
@@ -278,10 +356,102 @@ var amber = {
     }
   },
 
+  attach_cache_view_event : function() {
+    /* Clicking on the cache link will log an event */
+    amber.util_forEachElement(".amber-cache-link", function(el, i) {
+      var href = encodeURIComponent(el.getAttribute("href"));
+      amber.util_addEventListener(el, 'click', function(e) {
+        var request = new XMLHttpRequest();
+        request.onload = function() {
+          if (request.readyState === 4) {
+            window.location = decodeURIComponent(href);
+          }
+        };
+        // Send synchronous notification, to ensure it's sent completely before the page unloads
+        // This would be a good place to use navigator.sendBeacon(), once it has more support
+        request.open('GET', '/amber/logcacheview?cache=' + href + '&t=' + new Date().getTime(), false);
+        request.send();
+      });
+    });    
+  },
+
   clear_hover : function (e) {
     var hover = document.querySelectorAll(".amber-hover")[0];
     if (typeof hover != typeof undefined)
       hover.parentNode.removeChild(hover);
+  },
+
+  /* Add event listeners for amber-annotated links */
+  update_link_event_listeners : function() {
+    /* First, clear any pre-existing listeners */
+    amber.util_forEachElement("a[data-versionurl]", function(e, i) {
+      amber.util_clearEventListener(e, 'click', amber.show_cache);
+      amber.util_clearEventListener(e, 'click', amber.show_interstitial);
+      amber.util_clearEventListener(e, 'mouseover', amber.start_link_hover);
+      amber.util_clearEventListener(e, 'mouseout', amber.end_link_hover);
+      amber.util_clearEventListener(e, 'click', amber.clear_hover);
+    });
+
+    /* Now add new listeners, based on the behavior desired */
+    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=cache]", function(e, i) {
+      amber.util_addEventListener(e, 'click', amber.show_cache);
+    });
+    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=popup]", function(e, i) {
+      amber.util_addEventListener(e, 'click', amber.show_interstitial);
+    });
+    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=hover]", function(e, i) {
+      amber.util_addEventListener(e, 'mouseover', amber.start_link_hover);
+      amber.util_addEventListener(e, 'mouseout', amber.end_link_hover);
+      amber.util_addEventListener(e, 'click', amber.clear_hover);
+    });
+  },
+
+  /* Update data-* attributes based on updated availability information */
+  update_availability : function(availability) {
+    var data = availability.data;
+    if (data) {
+      for (var i = 0; i < data.length; i++) {
+        amber.util_forEachElement("a[href='" + data[i].url + "']", function(e, index) {
+          e.setAttribute('data-amber-behavior', data[i].behavior);
+        });
+      };
+      amber.update_link_event_listeners();
+    }
+  },
+
+  /* Call the server to see if there's updated availability information for cached URLs */
+  get_availability : function() {
+    var request, params = "", urls = [];
+    amber.util_forEachElement("a[data-versionurl]", function(e, i) {
+      params && (params += "&");
+      params += "url[]=" + encodeURIComponent(e.href);
+    });
+
+    if (params && (amber.country != undefined)) {
+      params += "&country=" + amber.country;
+
+      request = new XMLHttpRequest();
+      request.open('POST', "/amber/status");
+      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      request.onload = function() {
+        if (request.readyState === 4) {
+          amber.update_availability(JSON.parse(request.responseText));
+        }
+      };
+      request.send(params);
+    } 
+  },
+
+  /* Get memento URL for a given URL and date, and execute a function on the result */
+  get_memento : function(href, date, callback) {
+    var request = new XMLHttpRequest();
+    request.onload = function() {
+      if (request.readyState === 4) {
+        callback(JSON.parse(request.responseText));
+      }
+    };
+    request.open('GET', '/amber/memento?date=' + date + '&url=' + href);
+    request.send();
   },
 
   /* Utility functions to provide support for IE8+ */
@@ -292,6 +462,15 @@ var amber = {
       el.attachEvent('on' + eventName, function(){
         handler.call(el);
       });
+    }
+  },
+
+  util_clearEventListener : function (el, eventName, handler) {
+    if (el.removeEventListener) {
+      el.removeEventListener(eventName, handler);
+    } else {
+      // el.detachEvent('on' + eventName);
+      // TODO: Clear the event for IE7-9. See http://ejohn.org/blog/flexible-javascript-events/
     }
   },
 
@@ -330,31 +509,30 @@ var amber = {
 
 amber.util_ready(function($) {
 
-    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=cache]", function(e, i) {
-      amber.util_addEventListener(e, 'click', amber.show_cache);
-    });
-    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=popup]", function(e, i) {
-      amber.util_addEventListener(e, 'click', amber.show_interstitial);
-    });
-    amber.util_forEachElement("a[data-versionurl][data-amber-behavior*=hover]", function(e, i) {
-      amber.util_addEventListener(e, 'mouseover', amber.start_link_hover);
-      amber.util_addEventListener(e, 'mouseout', amber.end_link_hover);
-      amber.util_addEventListener(e, 'click', amber.clear_hover);
-    });
+    amber.update_link_event_listeners();
     amber.util_addEventListener(window, 'unload', amber.clear_hover);
+    amber.get_country();
 
-    if (amber.country_specific_behavior_exists()) {
-      amber.get_country();
+    /* Drupal-specific configuration */
+    if ((typeof Drupal != 'undefined') && (typeof Drupal.settings.amber != 'undefined')) {
+      amber.name = Drupal.settings.amber.name;
+      amber.lookup_availability = Drupal.settings.amber.lookup_availability;
     }
 
-    /* Drupal-specific code */
-    if ((typeof Drupal != 'undefined') && (typeof Drupal.settings.amber != 'undefined')){
-      amber.name = Drupal.settings.amber.name;
+    /* Wordpress-specific configuration */
+    if (typeof amber_config != 'undefined') {
+      amber.name = amber_config.site_name;
+      amber.lookup_availability = amber_config.lookup_availability;
     }
 
     /* Set the locale, based on global variable */
     if (typeof amber_locale != 'undefined') {
       amber.set_locale(amber_locale);
+    }
+
+    /* Get availability information from NetClerk */
+    if (amber.lookup_availability != 'undefined' && amber.lookup_availability) {
+      amber.get_availability();
     }
 
 });

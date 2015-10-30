@@ -69,6 +69,22 @@
   margin-bottom: 50px;
 }
 
+.amber-interstitial a.amber-memento-link {
+  display: none;
+}
+
+.amber-interstitial a.amber-memento-link.found {
+  color: white;
+  top: -40px;
+  height: 10px;
+  margin: 0 auto -10px auto;
+  position: relative;
+  display: block;
+  width: 250px;
+  font-size: 12px;
+  line-height: 14px;
+}
+
 .amber-iframe-container {
   height: 140px;
   width: 230px;
@@ -125,7 +141,7 @@
  color: white;             
  border-radius: 4px;
  background-color: #5b88b3;
- min-width: 350px;
+ min-width: 355px;
  z-index: 999999;
 }
 
@@ -146,6 +162,10 @@
   line-height: 20px;
   padding: 8px 0 4px;
   background-color: #34495e;
+}
+
+.amber-hover.memento-found .amber-text {
+  padding-bottom: 0;
 }
 
 .amber-hover .amber-status-text {
@@ -195,6 +215,23 @@
 .amber-hover .amber-links a:hover {
   color: white !important;
 }
+
+.amber-hover a.amber-memento-link {
+  display: none;
+}
+
+.amber-hover.memento-found a.amber-memento-link {
+  color: white !important;
+  display: block;
+  height: 20px;
+  padding-left: 40px;
+  padding-bottom: 4px;
+  font-size: 10px;
+  line-height: 20px;
+  background-color: #34495e;
+  z-index: 9999999;
+}
+
 
 .amber-hover a.amber-focus {
   font-weight: bold;

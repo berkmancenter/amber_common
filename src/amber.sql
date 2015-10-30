@@ -12,9 +12,9 @@ CREATE TABLE amber_cache (
   date           INTEGER NOT NULL,
   type           TEXT NOT NULL,
   size           INTEGER NOT NULL,
-  provider       INTEGER,
+  provider       INTEGER DEFAULT 0,
   provider_id    TEXT NOT NULL,
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (id, provider)
 );
 
 CREATE TABLE amber_check (
