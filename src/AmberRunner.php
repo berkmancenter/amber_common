@@ -101,8 +101,7 @@ function cache($url) {
     $status->save_check($update);
 
     /* Now cache the item if we should */
-    $existing_cache = $status->get_cache($url);
-    if ($update['status'] && ((isset($config['amber_update_strategy']) && $config['amber_update_strategy']) || !$existing_cache)) {
+    if ($update['status'] && ((isset($config['amber_update_strategy']) && $config['amber_update_strategy']) || !$status->has_cache($url))) {
       amber_log("Caching ${url}");
       try {
         $cache_metadata = $fetcher->fetch($url);
