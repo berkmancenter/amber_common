@@ -12,7 +12,7 @@ class AmberFetcher implements iAmberFetcher {
     $this->storage = $storage;
     $this->assetHelper = new AmberAssetHelper($storage);
     $this->maxFileSize = isset($options['amber_max_file']) ? $options['amber_max_file'] : 1000;
-    $this->headerText = isset($options['header_text']) ? $options['header_text'] : "You are viewing an archive of <a style='font-weight:bold !important; color:white !important' href='{{url}}'>{{url}}</a> created on {{date}}";
+    $this->headerText = isset($options['header_text']) ? $options['header_text'] : "You are viewing a snapshot of <a style='font-weight:bold !important; color:white !important' href='{{url}}'>{{url}}</a> created on {{date}}";
     $this->excludedContentTypes = isset($options['amber_excluded_formats']) ? $options['amber_excluded_formats'] : array();
   }
 
@@ -22,7 +22,6 @@ class AmberFetcher implements iAmberFetcher {
    * @return 
    */
   public function fetch($url) {
-
     if (!$url) {
       throw new RuntimeException("Empty URL");
     }
@@ -44,6 +43,7 @@ class AmberFetcher implements iAmberFetcher {
     if ($size == 0) {
       throw new RuntimeException("Empty document"); 
     }
+
     // Get other assets
     if (isset($root_item['headers']['Content-Type']) &&
         ($content_type = $root_item['headers']['Content-Type']) &&

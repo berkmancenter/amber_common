@@ -239,7 +239,7 @@ class AmberNetworkUtils {
         curl_setopt($ch, CURLOPT_URL, $newurl);
         $response = curl_exec($ch);
         $response_info = curl_getinfo($ch);
-        if ($response_info['http_code'] == 301 || $response_info['http_code'] == 302) {
+        if (in_array($response_info['http_code'], array(301,302,307,308))) {
           $newurl = $response_info['redirect_url'];
         } else if ($meta = AmberNetworkUtils::find_meta_redirect($response)) {
           $newurl = $meta;
@@ -287,7 +287,7 @@ class AmberNetworkUtils {
   public static function find_urls_requiring_redirects($urls) {
     $result = array();
     foreach ($urls as $url => $data) {
-      if (($data['info']['http_code'] == 301) || ($data['info']['http_code'] == 302)) {
+      if (in_array($data['info']['http_code'], array(301,302,307,308))) {
         $result[$url] = $data;
       } else if (AmberNetworkUtils::find_meta_redirect($data['body'])) {
         $result[$url] = $data;
