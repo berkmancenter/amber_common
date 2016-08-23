@@ -22,10 +22,10 @@ class AmberMementoService implements iAmberMementoService {
 					$this->token = $registrations[$this->serverUrl];
 				}
 			}
-      $this->siteUrl = $options['site_url'];
-      if (strpos($this->siteUrl, 'http') < 0) {
-        $this->siteUrl = "http://".$this->siteUrl;
-      }
+			$this->siteUrl = $options['site_url'];
+			if (strpos($this->siteUrl, 'http') < 0) {
+				$this->siteUrl = "http://".$this->siteUrl;
+			}
 		}
 	}
 
@@ -89,9 +89,9 @@ class AmberMementoService implements iAmberMementoService {
 			return false;
 		}
 		$url = rtrim($url, '/');
-    if (strpos($url, 'http') < 0) {
-      $url = "http://".$url;
-    }
+		if (strpos($url, 'http') < 0) {
+			$url = "http://".$url;
+		}
 		if($this->token != '') {
 			$success = true;
 			$message = '';

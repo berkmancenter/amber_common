@@ -102,7 +102,6 @@ class AmberNetworkUtils {
     if (AmberNetworkUtils::curl_installed()) {
       $result = array();
       try {
-				error_log($urls[0]);
         $options = array(
           CURLOPT_FAILONERROR => TRUE,      /* Don't ignore HTTP errors */
                                             /* Follow redirects? */
@@ -349,36 +348,36 @@ class AmberNetworkUtils {
     }
   }
 
-	/**
-	 * Make POST request to APIs.
-	 * @param string $url URL of the API Endpoint.
-	 * @param array $fields API Payload.
-	 * @return array response of the API call (generally array)
-	 */
-	public static function make_post_call($url, $fields, $json=true) {
-		$query = http_build_query($fields);
-		$options = array(
-			CURLOPT_RETURNTRANSFER => true,     // return web page
-			CURLOPT_HEADER         => false,    // don't return headers
-			CURLOPT_FOLLOWLOCATION => AmberNetworkUtils::curl_redirects_allowed(),     // follow redirects
-			CURLOPT_ENCODING       => "",       // handle all encodings
-			CURLOPT_USERAGENT      => AmberNetworkUtils::get_user_agent_string(), // who am i
-			CURLOPT_AUTOREFERER    => true,     // set referer on redirect
-			CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect
-			CURLOPT_TIMEOUT        => 5,      // timeout on response
-			CURLOPT_MAXREDIRS      => 10,       // stop after 10 redirects
-			CURLOPT_POST           => 1,        // Post request enabled
-			CURLOPT_POSTFIELDS     => $query
-		);
-		$ch = curl_init($url);
-		curl_setopt_array($ch, $options);
-		$content = curl_exec($ch);
-		if($json) {
-			$content = json_decode($content);
-		}
-		$header  = curl_getinfo( $ch );
-		curl_close($ch);
-		return array($header, $content);
-	}
+  /**
+   * Make POST request to APIs.
+   * @param string $url URL of the API Endpoint.
+   * @param array $fields API Payload.
+   * @return array response of the API call (generally array)
+   */
+  public static function make_post_call($url, $fields, $json=true) {
+    $query = http_build_query($fields);
+    $options = array(
+      CURLOPT_RETURNTRANSFER => true,     // return web page
+      CURLOPT_HEADER         => false,    // don't return headers
+      CURLOPT_FOLLOWLOCATION => AmberNetworkUtils::curl_redirects_allowed(),     // follow redirects
+      CURLOPT_ENCODING       => "",       // handle all encodings
+      CURLOPT_USERAGENT      => AmberNetworkUtils::get_user_agent_string(), // who am i
+      CURLOPT_AUTOREFERER    => true,     // set referer on redirect
+      CURLOPT_CONNECTTIMEOUT => 5,      // timeout on connect
+      CURLOPT_TIMEOUT        => 5,      // timeout on response
+      CURLOPT_MAXREDIRS      => 10,       // stop after 10 redirects
+      CURLOPT_POST           => 1,        // Post request enabled
+      CURLOPT_POSTFIELDS     => $query
+    );
+    $ch = curl_init($url);
+    curl_setopt_array($ch, $options);
+    $content = curl_exec($ch);
+    if($json) {
+      $content = json_decode($content);
+    }
+    $header  = curl_getinfo( $ch );
+    curl_close($ch);
+    return array($header, $content);
+  }
 
 }
