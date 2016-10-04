@@ -5,20 +5,20 @@ if [[ -z "$1" ]]; then
 	export RELEASE_TAG=master
 else
 	export RELEASE_TAG=$1
-fi	
+fi
 
 if [[ -z "$2" ]]; then
 	echo "Site URL not specified. Required for Wordpress. Dying now"
 	exit 1
 else
 	export SITE_URL=$2
-fi	
+fi
 
 if [[ -z "$3" ]]; then
 	echo "Site admin password not specified. A Wordpress admin password will be generated"
 else
 	export WP_ADMIN_PASSWORD=$3
-fi	
+fi
 
 # Make mysql-install non-interactive, so it doesn't prompt for password
 export DEBIAN_FRONTEND=noninteractive
@@ -35,22 +35,22 @@ echo "extension=php_pdo_mysql.dll" | sudo tee -a /etc/php5/apache2/php.ini
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 mv /usr/local/bin/composer.phar /usr/local/bin/composer
 
-rm -rf /var/www/ ; cd /var; mkdir www; cd www; 
+rm -rf /var/www/ ; cd /var; mkdir www; cd www;
 
 cd /srv
 sudo git clone git://github.com/wp-cli/wp-cli.git
 cd wp-cli
 sudo composer install
 
-# Generate random passwords 
+# Generate random passwords
 MYSQL_PASSWORD=`pwgen -c -n -1 12`
 WP_DB_PASSWORD=`pwgen -c -n -1 12`
 
 if [[ -z "$WP_ADMIN_PASSWORD" ]]; then
 	export WP_ADMIN_PASSWORD=`pwgen -1 8`
-fi	
+fi
 
-# This is so the passwords show up in logs. 
+# This is so the passwords show up in logs.
 echo mysql root password: $MYSQL_PASSWORD
 echo wp db password: $WP_DB_PASSWORD
 echo wp admin password: $WP_ADMIN_PASSWORD
@@ -59,7 +59,7 @@ echo $WP_DB_PASSWORD > /wp-db-pw.txt
 echo $WP_ADMIN_PASSWORD > /wp-admin-pw.txt
 
 # Set database password and prep for Drupal install
-mysqladmin -u root --password=changeme password $MYSQL_PASSWORD 
+mysqladmin -u root --password=changeme password $MYSQL_PASSWORD
 mysql -uroot -p$MYSQL_PASSWORD -e "CREATE DATABASE wp; GRANT ALL PRIVILEGES ON wp.* TO 'wp'@'localhost' IDENTIFIED BY '$WP_DB_PASSWORD'; FLUSH PRIVILEGES;"
 
 # Fix apache configuration
@@ -85,14 +85,14 @@ PHP
 cd /usr/local/src
 git clone https://github.com/berkmancenter/amber_wordpress.git
 git -C /usr/local/src/amber_wordpress checkout $RELEASE_TAG
-mv /usr/local/src/amber_wordpress/amber /var/www/wordpress/wp-content/plugins
+mv /usr/local/src/amber_wordpress /var/www/wordpress/wp-content/plugins/amber
 cd /var/www/wordpress
 
 # Activate the plugin
-/srv/wp-cli/bin/wp plugin activate amber --allow-root 
+/srv/wp-cli/bin/wp plugin activate amber --allow-root
 
 # Update permissions
-chown -R www-data:www-data /var/www/ /var/www/wordpress/.htaccess
+chown -R www-data:www-data /var/www/
 
 service apache2 restart
 
